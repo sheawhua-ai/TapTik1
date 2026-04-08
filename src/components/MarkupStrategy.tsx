@@ -1,0 +1,304 @@
+import { useState, useRef, useEffect } from "react";
+import { Plus, X, AlertCircle, ChevronDown, Search } from "lucide-react";
+
+function MultiSelectDropdown({ label, options, selected, onChange, placeholder }: any) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [search, setSearch] = useState('');
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const filteredOptions = options.filter((o: any) => o.label.toLowerCase().includes(search.toLowerCase()));
+  
+  return (
+    <div className="relative" ref={dropdownRef}>
+      <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-2">{label}</label>
+      <div 
+        className="w-full border border-zinc-200 px-3 py-2 text-sm bg-white cursor-pointer flex justify-between items-center"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <span className="truncate text-zinc-600">
+          {selected.length > 0 
+            ? selected.map((s: any) => options.find((o: any) => o.value === s)?.label).join(', ') 
+            : placeholder}
+        </span>
+        <ChevronDown size={14} className="text-zinc-400" />
+      </div>
+      {isOpen && (
+        <div className="absolute z-10 w-full mt-1 bg-white border border-zinc-200 shadow-lg max-h-60 flex flex-col">
+          <div className="p-2 border-b border-zinc-100 flex items-center gap-2 bg-zinc-50">
+            <Search size={14} className="text-zinc-400" />
+            <input 
+              type="text" 
+              placeholder="搜索..." 
+              className="w-full bg-transparent text-xs outline-none"
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+            />
+          </div>
+          <div className="overflow-y-auto p-1 flex flex-col">
+            {filteredOptions.length > 0 ? filteredOptions.map((opt: any) => (
+              <label key={opt.value} className="flex items-center gap-2 text-xs cursor-pointer hover:bg-zinc-50 p-2">
+                <input 
+                  type="checkbox" 
+                  checked={selected.includes(opt.value)}
+                  onChange={() => {
+                    if (selected.includes(opt.value)) onChange(selected.filter((v: any) => v !== opt.value));
+                    else onChange([...selected, opt.value]);
+                  }}
+                  className="accent-black"
+                />
+                {opt.label}
+              </label>
+            )) : (
+              <div className="p-2 text-xs text-zinc-400 text-center">无匹配项</div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export function MarkupStrategy() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [strategyName, setStrategyName] = useState('');
+  const [markupRate, setMarkupRate] = useState('');
+  const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+
+  const markupValue = Number(markupRate) || 0;
+  const isSaveDisabled = !strategyName || !markupRate;
+
+  const supplyPrice = 100;
+  const sellingPrice = markupValue ? (supplyPrice * (1 + markupValue / 100)).toFixed(2) : '0.00';
+  const profit = markupValue ? (Number(sellingPrice) - supplyPrice).toFixed(2) : '0.00';
+  const calculatedGrossMargin = markupValue ? ((markupValue / (100 + markupValue)) * 100).toFixed(2) : '0.00';
+
+  const brands = [
+    { value: 'chanel', label: 'CHANEL' },
+    { value: 'rolex', label: 'Rolex' },
+    { value: 'represent', label: 'Represent' },
+  ];
+
+  const categories = [
+    { value: 'clothing', label: '服饰' },
+    { value: 'watches', label: '腕表' },
+    { value: 'bags', label: '包袋' },
+  ];
+
+  return (
+    <div className="max-w-7xl mx-auto">
+      <div className="flex justify-between items-end mb-8">
+        <div>
+          <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-[0.2em] mb-2">Distributor Dashboard</div>
+          <h1 className="text-3xl font-black tracking-tighter uppercase mb-2">配置加价策略</h1>
+          <p className="text-sm text-zinc-500">设置您的分销利润空间和定价规则</p>
+        </div>
+        <button 
+          onClick={() => setIsModalOpen(true)}
+          className="bg-black text-white px-6 py-3 text-xs font-bold uppercase tracking-widest hover:bg-zinc-800 transition-colors flex items-center gap-2"
+        >
+          <Plus size={16} />
+          新增策略
+        </button>
+      </div>
+
+      {/* Global P0 Configuration */}
+      <div className="bg-white border border-zinc-200 p-6 mb-8 shadow-sm">
+        <div className="flex items-center gap-2 mb-4">
+          <h2 className="text-base font-black tracking-tight">全局配置</h2>
+          <div className="group relative">
+            <AlertCircle size={14} className="text-zinc-400 cursor-help" />
+            <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-64 bg-black text-white text-xs p-2 hidden group-hover:block z-10">
+              所有加价策略需要先查看供货商中是否有自营，有自营则跟价自营。
+            </div>
+          </div>
+        </div>
+        
+        <div className="grid grid-cols-2 gap-8">
+          <div className="flex items-start justify-between bg-zinc-50 p-4 border border-zinc-200">
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="bg-red-100 text-red-800 text-[9px] font-black px-1.5 py-0.5">P0</span>
+                <div className="text-sm font-bold">一口价利润保护</div>
+              </div>
+              <div className="text-[10px] text-zinc-500 max-w-[280px]">仅针对设置了一口价的商品生效。当利润低于此比例时，商品将自动下架。</div>
+              <div className="mt-3 flex items-center gap-2">
+                <span className="text-xs font-bold">低于</span>
+                <input type="number" defaultValue={10} className="w-16 border border-zinc-200 px-2 py-1 text-xs text-center focus:border-black focus:ring-0 outline-none" />
+                <span className="text-xs font-bold">% 利润自动下架</span>
+              </div>
+            </div>
+            <label className="relative inline-flex items-center cursor-pointer mt-1">
+              <input type="checkbox" className="sr-only peer" defaultChecked />
+              <div className="w-11 h-6 bg-zinc-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-black"></div>
+            </label>
+          </div>
+
+          <div className="flex items-start justify-between bg-zinc-50 p-4 border border-zinc-200">
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="bg-orange-100 text-orange-800 text-[9px] font-black px-1.5 py-0.5">P1</span>
+                <div className="text-sm font-bold">跟随自营零售价锁定</div>
+              </div>
+              <div className="text-[10px] text-zinc-500 max-w-[280px]">开启后，若集市商品有对应的自营商品，您的售价将始终与自营建议零售价保持一致，不可自定义加价。</div>
+            </div>
+            <label className="relative inline-flex items-center cursor-pointer mt-1">
+              <input type="checkbox" className="sr-only peer" defaultChecked />
+              <div className="w-11 h-6 bg-zinc-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-black"></div>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-white border border-zinc-200 shadow-sm">
+        <div className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-zinc-200 bg-zinc-50 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
+          <div className="col-span-4">策略名称</div>
+          <div className="col-span-4">适用范围 (品牌/分类)</div>
+          <div className="col-span-2 text-center">加价规则</div>
+          <div className="col-span-2 text-right">操作</div>
+        </div>
+
+        {/* Strategy Row 1 */}
+        <div className="grid grid-cols-12 gap-4 px-6 py-6 border-b border-zinc-200 items-center hover:bg-zinc-50 transition-colors">
+          <div className="col-span-4">
+            <div className="text-sm font-bold">默认全局加价</div>
+            <div className="text-[10px] text-zinc-400 mt-1">创建于 2024-01-01</div>
+          </div>
+          <div className="col-span-4 flex flex-wrap gap-1">
+            <span className="bg-zinc-100 text-zinc-600 px-2 py-1 text-[10px] font-bold">全部品牌</span>
+            <span className="bg-zinc-100 text-zinc-600 px-2 py-1 text-[10px] font-bold">全部分类</span>
+          </div>
+          <div className="col-span-2 text-center">
+            <div className="text-sm font-bold text-emerald-600">+ 15%</div>
+            <div className="text-[10px] text-zinc-400 mt-1">毛利率约 13.0%</div>
+          </div>
+          <div className="col-span-2 text-right">
+            <button className="text-xs font-bold text-zinc-500 hover:text-black transition-colors mr-4">编辑</button>
+            <button className="text-xs font-bold text-red-500 hover:text-red-700 transition-colors">删除</button>
+          </div>
+        </div>
+
+        {/* Strategy Row 2 */}
+        <div className="grid grid-cols-12 gap-4 px-6 py-6 border-b border-zinc-200 items-center hover:bg-zinc-50 transition-colors">
+          <div className="col-span-4">
+            <div className="text-sm font-bold">高奢腕表策略</div>
+            <div className="text-[10px] text-zinc-400 mt-1">创建于 2024-03-15</div>
+          </div>
+          <div className="col-span-4 flex flex-wrap gap-1">
+            {/* Brands */}
+            <span className="bg-zinc-100 text-zinc-600 px-2 py-1 text-[10px] font-bold">Rolex</span>
+            <span className="bg-zinc-100 text-zinc-600 px-2 py-1 text-[10px] font-bold">Patek Philippe</span>
+            <span className="bg-zinc-100 text-zinc-600 px-2 py-1 text-[10px] font-bold">3+</span>
+            {/* Categories */}
+            <span className="bg-orange-50 text-orange-600 px-2 py-1 text-[10px] font-bold">腕表</span>
+          </div>
+          <div className="col-span-2 text-center">
+            <div className="text-sm font-bold text-emerald-600">+ 8%</div>
+            <div className="text-[10px] text-zinc-400 mt-1">毛利率约 7.4%</div>
+          </div>
+          <div className="col-span-2 text-right">
+            <button className="text-xs font-bold text-zinc-500 hover:text-black transition-colors mr-4">编辑</button>
+            <button className="text-xs font-bold text-red-500 hover:text-red-700 transition-colors">删除</button>
+          </div>
+        </div>
+      </div>
+
+      {/* Add Strategy Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setIsModalOpen(false)}></div>
+          <div className="relative bg-white w-[600px] shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-100">
+              <h2 className="text-lg font-black uppercase tracking-tight">新增加价策略</h2>
+              <button onClick={() => setIsModalOpen(false)} className="text-zinc-400 hover:text-black transition-colors"><X size={20} /></button>
+            </div>
+            
+            <div className="p-6 space-y-6">
+              <div>
+                <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-2">策略名称</label>
+                <input 
+                  type="text" 
+                  value={strategyName}
+                  onChange={(e) => setStrategyName(e.target.value)}
+                  placeholder="例如：美妆类目加价" 
+                  className="w-full border border-zinc-200 px-3 py-2 text-sm focus:border-black focus:ring-0 outline-none" 
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <MultiSelectDropdown 
+                  label="适用品牌 (可选)" 
+                  options={brands} 
+                  selected={selectedBrands} 
+                  onChange={setSelectedBrands} 
+                  placeholder="全部品牌" 
+                />
+                <MultiSelectDropdown 
+                  label="适用分类 (可选)" 
+                  options={categories} 
+                  selected={selectedCategories} 
+                  onChange={setSelectedCategories} 
+                  placeholder="全部分类" 
+                />
+              </div>
+
+              <div className="border-t border-zinc-100 pt-6">
+                <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-2">顺加加价率 (%)</label>
+                <div className="flex items-center gap-2 mb-3">
+                  <input 
+                    type="number" 
+                    placeholder="例如: 25" 
+                    value={markupRate}
+                    onChange={(e) => setMarkupRate(e.target.value)}
+                    className="w-32 border border-zinc-200 px-3 py-2 text-sm focus:border-black focus:ring-0 outline-none" 
+                  />
+                  <span className="text-sm font-bold">%</span>
+                </div>
+                
+                {markupRate && (
+                  <div className="bg-zinc-50 p-4 border border-zinc-200 text-sm">
+                    <div className="text-zinc-500 mb-2">示例: 假设集市供货价为 ¥100</div>
+                    <div className="font-mono mb-1">
+                      分销零售价 = 供货价 × (1 + 顺加加价率) = <span className="font-bold text-black">¥{sellingPrice}</span>
+                    </div>
+                    <div className="font-mono mb-1">
+                      预计利润 = 分销零售价 - 供货价 = <span className="font-bold text-emerald-600">¥{profit}</span>
+                    </div>
+                    <div className="font-mono text-zinc-500 text-xs mt-2 pt-2 border-t border-zinc-200">
+                      折合毛利率 ≈ {calculatedGrossMargin}%
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="p-6 border-t border-zinc-100 bg-zinc-50 flex justify-end gap-3">
+              <button onClick={() => setIsModalOpen(false)} className="px-6 py-2 text-xs font-bold text-zinc-600 hover:text-black transition-colors">取消</button>
+              <button 
+                onClick={() => setIsModalOpen(false)} 
+                disabled={isSaveDisabled}
+                className={`px-6 py-2 text-xs font-bold transition-colors ${
+                  isSaveDisabled 
+                    ? 'bg-zinc-200 text-zinc-400 cursor-not-allowed' 
+                    : 'bg-black text-white hover:bg-zinc-800'
+                }`}
+              >
+                保存策略
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
