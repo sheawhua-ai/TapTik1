@@ -74,6 +74,7 @@ export function MarkupStrategy() {
   const [markupRate, setMarkupRate] = useState('');
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [isSelfOperatedPriority, setIsSelfOperatedPriority] = useState(true);
 
   const markupValue = Number(markupRate) || 0;
   const isSaveDisabled = !strategyName || !markupRate;
@@ -112,52 +113,33 @@ export function MarkupStrategy() {
         </button>
       </div>
 
-      {/* Global P0 Configuration */}
-      <div className="bg-white border border-zinc-200 p-6 mb-8 shadow-sm">
-        <div className="flex items-center gap-2 mb-4">
-          <h2 className="text-base font-black tracking-tight">全局配置</h2>
-          <div className="group relative">
-            <AlertCircle size={14} className="text-zinc-400 cursor-help" />
-            <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-64 bg-black text-white text-xs p-2 hidden group-hover:block z-10">
-              所有加价策略需要先查看供货商中是否有自营，有自营则跟价自营。
+      {/* Self-operated Priority Toggle */}
+      <div className="bg-white border border-zinc-200 p-6 mb-8 shadow-sm flex items-center justify-between">
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            <h2 className="text-base font-black tracking-tight">自营优先</h2>
+            <div className="group relative">
+              <AlertCircle size={14} className="text-zinc-400 cursor-help" />
+              <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-64 bg-black text-white text-xs p-2 hidden group-hover:block z-10 text-center">
+                开启时，商品优先展现自营有库存的 SKU 价格。关闭时，按 SKU 最低供应价展现。
+              </div>
             </div>
           </div>
+          <p className="text-xs text-zinc-500">
+            {isSelfOperatedPriority 
+              ? "当前状态：已开启。商品优先展现自营有库存的 SKU 价格。" 
+              : "当前状态：已关闭。商品按 SKU 最低供应价展现。"}
+          </p>
         </div>
-        
-        <div className="grid grid-cols-2 gap-8">
-          <div className="flex items-start justify-between bg-zinc-50 p-4 border border-zinc-200">
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <span className="bg-red-100 text-red-800 text-[9px] font-black px-1.5 py-0.5">P0</span>
-                <div className="text-sm font-bold">一口价利润保护</div>
-              </div>
-              <div className="text-[10px] text-zinc-500 max-w-[280px]">仅针对设置了一口价的商品生效。当利润低于此比例时，商品将自动下架。</div>
-              <div className="mt-3 flex items-center gap-2">
-                <span className="text-xs font-bold">低于</span>
-                <input type="number" defaultValue={10} className="w-16 border border-zinc-200 px-2 py-1 text-xs text-center focus:border-black focus:ring-0 outline-none" />
-                <span className="text-xs font-bold">% 利润自动下架</span>
-              </div>
-            </div>
-            <label className="relative inline-flex items-center cursor-pointer mt-1">
-              <input type="checkbox" className="sr-only peer" defaultChecked />
-              <div className="w-11 h-6 bg-zinc-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-black"></div>
-            </label>
-          </div>
-
-          <div className="flex items-start justify-between bg-zinc-50 p-4 border border-zinc-200">
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <span className="bg-orange-100 text-orange-800 text-[9px] font-black px-1.5 py-0.5">P1</span>
-                <div className="text-sm font-bold">跟随自营零售价锁定</div>
-              </div>
-              <div className="text-[10px] text-zinc-500 max-w-[280px]">开启后，若集市商品有对应的自营商品，您的售价将始终与自营建议零售价保持一致，不可自定义加价。</div>
-            </div>
-            <label className="relative inline-flex items-center cursor-pointer mt-1">
-              <input type="checkbox" className="sr-only peer" defaultChecked />
-              <div className="w-11 h-6 bg-zinc-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-black"></div>
-            </label>
-          </div>
-        </div>
+        <label className="relative inline-flex items-center cursor-pointer">
+          <input 
+            type="checkbox" 
+            className="sr-only peer" 
+            checked={isSelfOperatedPriority}
+            onChange={(e) => setIsSelfOperatedPriority(e.target.checked)}
+          />
+          <div className="w-11 h-6 bg-zinc-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-black"></div>
+        </label>
       </div>
 
       <div className="bg-white border border-zinc-200 shadow-sm">

@@ -11,6 +11,7 @@ import { MarketplaceOnSale } from './components/MarketplaceOnSale';
 import { MarketplaceSelection } from './components/MarketplaceSelection';
 import { MarkupStrategy } from './components/MarkupStrategy';
 import { MySelections } from './components/MySelections';
+import { WarehouseManagement } from './components/WarehouseManagement';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('product');
@@ -39,6 +40,7 @@ export default function App() {
           {activeTab === 'campaign' && <CampaignManagement />}
           {activeTab === 'order' && <OrderManagement />}
           {activeTab === 'finance' && <FinanceAudit />}
+          {activeTab === 'warehouse' && <WarehouseManagement />}
         </main>
       </div>
 

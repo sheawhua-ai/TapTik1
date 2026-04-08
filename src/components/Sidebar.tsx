@@ -1,4 +1,4 @@
-import { Package, Layers, ReceiptText, Wallet, Store, ShoppingBag, Settings, ListPlus, ArrowUpRight, CheckSquare, ListOrdered } from 'lucide-react';
+import { Package, Layers, ReceiptText, Wallet, Store, ShoppingBag, Settings, ListPlus, ArrowUpRight, CheckSquare, ListOrdered, Building2 } from 'lucide-react';
 
 interface SidebarProps {
   activeTab: string;
@@ -22,6 +22,7 @@ export function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
     { id: 'campaign', label: '货单管理', icon: Layers },
     { id: 'order', label: '订单管理', icon: ReceiptText },
     { id: 'finance', label: '财务审计', icon: Wallet },
+    { id: 'warehouse', label: '仓库管理', icon: Building2 },
   ];
 
   return (
