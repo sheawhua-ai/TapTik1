@@ -193,19 +193,18 @@ export function MarketplaceSelection() {
 
       <div className="bg-white border border-zinc-200 shadow-sm">
         <div className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-zinc-200 bg-zinc-50 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
-          <div className="col-span-4">商品信息</div>
+          <div className="col-span-5">商品信息</div>
           <div className="col-span-1 text-center">库存</div>
           <div className="col-span-2 text-right">集市价</div>
           <div className="col-span-1 text-center">供应商数</div>
-          <div className="col-span-1 text-center">加价策略</div>
-          <div className="col-span-2 text-right">一口价 (¥)</div>
+          <div className="col-span-2 text-center">加价策略</div>
           <div className="col-span-1 text-center">操作</div>
         </div>
 
         {/* Row 1 */}
         <div className="border-b border-zinc-200">
           <div className="grid grid-cols-12 gap-4 px-6 py-4 items-center hover:bg-zinc-50 transition-colors">
-            <div className="col-span-4 flex gap-4 items-center">
+            <div className="col-span-5 flex gap-4 items-center">
               <div className="w-12 h-12 bg-zinc-100 p-1 flex-shrink-0">
                 <img src="https://images.unsplash.com/photo-1556821840-3a63f95609a7?auto=format&fit=crop&w=100&q=80" className="w-full h-full object-contain mix-blend-multiply" />
               </div>
@@ -220,11 +219,8 @@ export function MarketplaceSelection() {
               <div className="text-[10px] text-zinc-400 font-normal">约 ¥1,180 (含税)</div>
             </div>
             <div className="col-span-1 text-center text-xs">2</div>
-            <div className="col-span-1 text-center">
+            <div className="col-span-2 text-center">
               <span className="text-orange-500 text-xs font-bold">未配置</span>
-            </div>
-            <div className="col-span-2 flex justify-end">
-              <input type="number" placeholder="设置一口价" className="w-24 border border-zinc-200 px-2 py-1 text-xs text-right focus:border-black focus:ring-0 outline-none" />
             </div>
             <div className="col-span-1 text-center">
               <button 
@@ -240,7 +236,7 @@ export function MarketplaceSelection() {
         {/* Row 2 */}
         <div className="border-b border-zinc-200">
           <div className="grid grid-cols-12 gap-4 px-6 py-4 items-center hover:bg-zinc-50 transition-colors">
-            <div className="col-span-4 flex gap-4 items-center">
+            <div className="col-span-5 flex gap-4 items-center">
               <div className="w-12 h-12 bg-zinc-100 p-1 flex-shrink-0">
                 <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=100&q=80" className="w-full h-full object-contain mix-blend-multiply" />
               </div>
@@ -252,11 +248,8 @@ export function MarketplaceSelection() {
             <div className="col-span-1 text-center text-xs font-bold">42</div>
             <div className="col-span-2 text-right text-xs font-bold">¥899.00</div>
             <div className="col-span-1 text-center text-xs">1</div>
-            <div className="col-span-1 text-center">
+            <div className="col-span-2 text-center">
               <span className="text-emerald-600 text-xs font-bold">默认全局加价</span>
-            </div>
-            <div className="col-span-2 flex justify-end">
-              <input type="number" placeholder="设置一口价" className="w-24 border border-zinc-200 px-2 py-1 text-xs text-right focus:border-black focus:ring-0 outline-none" />
             </div>
             <div className="col-span-1 text-center">
               <button 
@@ -327,7 +320,7 @@ export function MarketplaceSelection() {
                       <tr className="bg-zinc-50 border-b border-zinc-200 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
                         <th className="p-4 font-bold">规格 (尺码)</th>
                         <th className="p-4 font-bold">所在地</th>
-                        <th className="p-4 font-bold">商家</th>
+                        <th className="p-4 font-bold">当前排队商家</th>
                         <th className="p-4 font-bold text-right">集市供货价</th>
                         <th className="p-4 font-bold text-right">建议零售价</th>
                         <th className="p-4 font-bold text-right">库存</th>
