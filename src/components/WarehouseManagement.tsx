@@ -2,13 +2,57 @@ import { Search, Edit, Trash2, X } from "lucide-react";
 import { useState } from "react";
 
 const INITIAL_WAREHOUSES = [
-  { id: '1', name: 'UNIBUY香港', code: '1567-001', currency: 'HKD', paymentPlatform: 'WALLTY', dropshipping: true, skuCount: 5128 },
-  { id: '2', name: 'UNIBUY大陆', code: '1567-002', currency: 'CNY', paymentPlatform: 'WEIXIN', dropshipping: true, skuCount: 0 },
+  { id: '1', name: 'UNIBUY香港', code: '1567-001', currency: 'HKD', dropshipping: true, skuCount: 5128 },
+  { id: '2', name: 'UNIBUY大陆', code: '1567-002', currency: 'CNY', dropshipping: true, skuCount: 0 },
 ];
 
 export function WarehouseManagement() {
   const [warehouses, setWarehouses] = useState(INITIAL_WAREHOUSES);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingWarehouse, setEditingWarehouse] = useState<any>(null);
+  
+  // Add Modal State
+  const [addName, setAddName] = useState('');
+  const [addLocation, setAddLocation] = useState('');
+  const [addDropshipping, setAddDropshipping] = useState(true);
+
+  // Edit Modal State
+  const [editDropshipping, setEditDropshipping] = useState(false);
+
+  const handleAddWarehouse = () => {
+    if (!addName || !addLocation) {
+      alert('请填写必填项');
+      return;
+    }
+    const newWarehouse = {
+      id: Date.now().toString(),
+      name: addName,
+      code: `1567-00${warehouses.length + 1}`,
+      currency: addLocation === 'hk' ? 'HKD' : 'CNY',
+      dropshipping: addDropshipping,
+      skuCount: 0
+    };
+    setWarehouses([...warehouses, newWarehouse]);
+    setIsAddModalOpen(false);
+    setAddName('');
+    setAddLocation('');
+    setAddDropshipping(true);
+  };
+
+  const openEditModal = (warehouse: any) => {
+    setEditingWarehouse(warehouse);
+    setEditDropshipping(warehouse.dropshipping);
+    setIsEditModalOpen(true);
+  };
+
+  const handleEditWarehouse = () => {
+    setWarehouses(warehouses.map(w => 
+      w.id === editingWarehouse.id ? { ...w, dropshipping: editDropshipping } : w
+    ));
+    setIsEditModalOpen(false);
+    setEditingWarehouse(null);
+  };
 
   return (
     <div className="max-w-7xl mx-auto flex flex-col h-[calc(100vh-80px)]">
@@ -29,16 +73,16 @@ export function WarehouseManagement() {
               className="w-full border border-zinc-200 px-4 py-2 text-sm focus:border-black focus:ring-0 outline-none" 
             />
           </div>
-          <button className="bg-teal-500 text-white text-sm px-6 py-2 hover:bg-teal-600 transition-colors">
+          <button className="bg-black text-white text-sm px-6 py-2 hover:bg-zinc-800 transition-colors font-bold">
             查询
           </button>
-          <button className="bg-zinc-100 text-zinc-600 text-sm px-6 py-2 hover:bg-zinc-200 transition-colors">
+          <button className="bg-white border border-zinc-200 text-zinc-600 text-sm px-6 py-2 hover:border-black hover:text-black transition-colors font-bold">
             重置
           </button>
         </div>
         <button 
           onClick={() => setIsAddModalOpen(true)}
-          className="bg-teal-500 text-white text-sm px-6 py-2 hover:bg-teal-600 transition-colors"
+          className="bg-black text-white text-sm px-6 py-2 hover:bg-zinc-800 transition-colors font-bold"
         >
           新增仓库
         </button>
@@ -52,7 +96,6 @@ export function WarehouseManagement() {
                 <th className="p-4 font-medium text-center">仓库名称</th>
                 <th className="p-4 font-medium text-center">仓库编码</th>
                 <th className="p-4 font-medium text-center">币种</th>
-                <th className="p-4 font-medium text-center">支付平台</th>
                 <th className="p-4 font-medium text-center">订单代发</th>
                 <th className="p-4 font-medium text-center">SKU数量</th>
                 <th className="p-4 font-medium text-center">操作</th>
@@ -64,19 +107,18 @@ export function WarehouseManagement() {
                   <td className="p-4">{warehouse.name}</td>
                   <td className="p-4">{warehouse.code}</td>
                   <td className="p-4">{warehouse.currency}</td>
-                  <td className="p-4">{warehouse.paymentPlatform}</td>
                   <td className="p-4">
                     {warehouse.dropshipping ? (
-                      <span className="text-teal-500 border border-teal-500 px-2 py-0.5 text-xs rounded-sm">支持</span>
+                      <span className="text-black border border-black px-2 py-0.5 text-xs font-bold">支持</span>
                     ) : (
-                      <span className="text-zinc-400 border border-zinc-200 px-2 py-0.5 text-xs rounded-sm">不支持</span>
+                      <span className="text-zinc-400 border border-zinc-200 px-2 py-0.5 text-xs font-bold">不支持</span>
                     )}
                   </td>
                   <td className="p-4">{warehouse.skuCount}</td>
                   <td className="p-4">
-                    <div className="flex items-center justify-center gap-3 text-teal-500">
-                      <button className="hover:text-teal-700 transition-colors">修改</button>
-                      <button className="hover:text-teal-700 transition-colors">删除</button>
+                    <div className="flex items-center justify-center gap-3 text-black font-bold">
+                      <button onClick={() => openEditModal(warehouse)} className="hover:text-zinc-500 transition-colors">修改</button>
+                      <button className="hover:text-zinc-500 transition-colors">删除</button>
                     </div>
                   </td>
                 </tr>
@@ -93,7 +135,7 @@ export function WarehouseManagement() {
             </select>
             <div className="flex items-center gap-2">
               <button className="text-zinc-400 hover:text-black">&lt;</button>
-              <span className="text-teal-500 font-bold">1</span>
+              <span className="text-black font-bold">1</span>
               <button className="text-zinc-400 hover:text-black">&gt;</button>
             </div>
             <div className="flex items-center gap-2">
@@ -116,41 +158,113 @@ export function WarehouseManagement() {
             
             <div className="p-6 flex flex-col gap-5">
               <div className="flex items-center gap-4">
-                <label className="w-24 text-right text-sm"><span className="text-red-500 mr-1">*</span>仓库名称</label>
-                <input type="text" placeholder="请输入仓库名称" className="flex-1 border border-zinc-200 px-3 py-2 text-sm focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none rounded-sm" />
+                <label className="w-24 text-right text-sm font-bold"><span className="text-red-500 mr-1">*</span>仓库名称</label>
+                <input 
+                  type="text" 
+                  placeholder="请输入仓库名称" 
+                  value={addName}
+                  onChange={(e) => setAddName(e.target.value)}
+                  className="flex-1 border border-zinc-200 px-3 py-2 text-sm focus:border-black focus:ring-1 focus:ring-black outline-none" 
+                />
               </div>
               <div className="flex items-center gap-4">
-                <label className="w-24 text-right text-sm"><span className="text-red-500 mr-1">*</span>所在地</label>
-                <select className="flex-1 border border-zinc-200 px-3 py-2 text-sm focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none rounded-sm bg-white text-zinc-500">
+                <label className="w-24 text-right text-sm font-bold"><span className="text-red-500 mr-1">*</span>所在地</label>
+                <select 
+                  value={addLocation}
+                  onChange={(e) => setAddLocation(e.target.value)}
+                  className="flex-1 border border-zinc-200 px-3 py-2 text-sm focus:border-black focus:ring-1 focus:ring-black outline-none bg-white text-zinc-500"
+                >
                   <option value="">请选择所在地</option>
                   <option value="hk">香港</option>
                   <option value="cn">中国大陆</option>
                 </select>
               </div>
               <div className="flex items-center gap-4">
-                <label className="w-24 text-right text-sm"><span className="text-red-500 mr-1">*</span>币种</label>
-                <input type="text" placeholder="选择所在地后自动填充" disabled className="flex-1 border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm outline-none rounded-sm text-zinc-400" />
+                <label className="w-24 text-right text-sm font-bold"><span className="text-red-500 mr-1">*</span>币种</label>
+                <input 
+                  type="text" 
+                  placeholder="选择所在地后自动填充" 
+                  value={addLocation === 'hk' ? 'HKD' : addLocation === 'cn' ? 'CNY' : ''}
+                  disabled 
+                  className="flex-1 border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm outline-none text-zinc-400" 
+                />
               </div>
               <div className="flex items-center gap-4">
-                <label className="w-24 text-right text-sm"><span className="text-red-500 mr-1">*</span>支付平台</label>
-                <select disabled className="flex-1 border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm outline-none rounded-sm text-zinc-400">
-                  <option value="">选择所在地后自动填充</option>
-                </select>
-              </div>
-              <div className="flex items-center gap-4">
-                <label className="w-24 text-right text-sm">订单代发</label>
+                <label className="w-24 text-right text-sm font-bold">订单代发</label>
                 <div className="flex-1 flex items-center">
                   <div className="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
-                    <input type="checkbox" name="toggle" id="toggle" defaultChecked className="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer transition-transform duration-200 ease-in-out translate-x-5 border-teal-500" style={{ top: '2px', left: '2px' }}/>
-                    <label htmlFor="toggle" className="toggle-label block overflow-hidden h-6 rounded-full bg-teal-500 cursor-pointer"></label>
+                    <input 
+                      type="checkbox" 
+                      id="add-toggle" 
+                      checked={addDropshipping}
+                      onChange={(e) => setAddDropshipping(e.target.checked)}
+                      className={`toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer transition-transform duration-200 ease-in-out ${addDropshipping ? 'translate-x-5 border-black' : 'translate-x-0 border-zinc-300'}`} 
+                      style={{ top: '2px', left: '2px' }}
+                    />
+                    <label 
+                      htmlFor="add-toggle" 
+                      className={`toggle-label block overflow-hidden h-6 rounded-full cursor-pointer ${addDropshipping ? 'bg-black' : 'bg-zinc-300'}`}
+                    ></label>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="px-6 py-4 border-t border-zinc-100 flex justify-end gap-3">
-              <button onClick={() => setIsAddModalOpen(false)} className="px-6 py-2 border border-zinc-200 text-sm hover:bg-zinc-50 transition-colors rounded-sm">取消</button>
-              <button onClick={() => setIsAddModalOpen(false)} className="px-6 py-2 bg-teal-500 text-white text-sm hover:bg-teal-600 transition-colors rounded-sm">确定</button>
+            <div className="px-6 py-4 border-t border-zinc-100 flex justify-end gap-3 bg-zinc-50">
+              <button onClick={() => setIsAddModalOpen(false)} className="px-6 py-2 border border-zinc-200 text-sm font-bold hover:border-black transition-colors bg-white">取消</button>
+              <button onClick={handleAddWarehouse} className="px-6 py-2 bg-black text-white text-sm font-bold hover:bg-zinc-800 transition-colors">确定</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Modal */}
+      {isEditModalOpen && editingWarehouse && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setIsEditModalOpen(false)}></div>
+          <div className="relative w-[600px] bg-white shadow-2xl rounded-sm overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-100">
+              <h2 className="text-lg font-medium">修改仓库</h2>
+              <button onClick={() => setIsEditModalOpen(false)} className="text-zinc-400 hover:text-black transition-colors"><X size={20} /></button>
+            </div>
+            
+            <div className="p-6 flex flex-col gap-5">
+              <div className="flex items-center gap-4">
+                <label className="w-24 text-right text-sm font-bold">仓库名称</label>
+                <input type="text" value={editingWarehouse.name} disabled className="flex-1 border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm outline-none text-zinc-400" />
+              </div>
+              <div className="flex items-center gap-4">
+                <label className="w-24 text-right text-sm font-bold">仓库编码</label>
+                <input type="text" value={editingWarehouse.code} disabled className="flex-1 border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm outline-none text-zinc-400" />
+              </div>
+              <div className="flex items-center gap-4">
+                <label className="w-24 text-right text-sm font-bold">币种</label>
+                <input type="text" value={editingWarehouse.currency} disabled className="flex-1 border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm outline-none text-zinc-400" />
+              </div>
+              <div className="flex items-center gap-4">
+                <label className="w-24 text-right text-sm font-bold">订单代发</label>
+                <div className="flex-1 flex items-center">
+                  <div className="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+                    <input 
+                      type="checkbox" 
+                      id="edit-toggle" 
+                      checked={editDropshipping}
+                      onChange={(e) => setEditDropshipping(e.target.checked)}
+                      className={`toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer transition-transform duration-200 ease-in-out ${editDropshipping ? 'translate-x-5 border-black' : 'translate-x-0 border-zinc-300'}`} 
+                      style={{ top: '2px', left: '2px' }}
+                    />
+                    <label 
+                      htmlFor="edit-toggle" 
+                      className={`toggle-label block overflow-hidden h-6 rounded-full cursor-pointer ${editDropshipping ? 'bg-black' : 'bg-zinc-300'}`}
+                    ></label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="px-6 py-4 border-t border-zinc-100 flex justify-end gap-3 bg-zinc-50">
+              <button onClick={() => setIsEditModalOpen(false)} className="px-6 py-2 border border-zinc-200 text-sm font-bold hover:border-black transition-colors bg-white">取消</button>
+              <button onClick={handleEditWarehouse} className="px-6 py-2 bg-black text-white text-sm font-bold hover:bg-zinc-800 transition-colors">确定</button>
             </div>
           </div>
         </div>
