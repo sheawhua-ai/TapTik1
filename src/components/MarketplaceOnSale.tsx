@@ -173,13 +173,12 @@ export function MarketplaceOnSale() {
             <div className="text-xs font-bold">Alexander McQueen</div>
             <div className="text-[10px] text-zinc-500">配饰</div>
           </div>
-          <div className="col-span-2 flex justify-end">
-            <div className="flex items-center border border-zinc-200 bg-white px-2 py-1 w-24">
-              <span className="text-xs text-zinc-400 mr-1">¥</span>
-              <input type="number" placeholder="未设置" className="w-full text-xs font-bold outline-none text-right" />
-            </div>
+          <div className="col-span-2 text-right">
+            <div className="text-xs font-bold">¥800.00</div>
           </div>
-          <div className="col-span-2 text-right text-xs font-bold text-zinc-400">¥780.00</div>
+          <div className="col-span-2 text-right">
+            <div className="text-xs font-bold text-zinc-400">¥780.00</div>
+          </div>
           <div className="col-span-1 flex flex-col items-center gap-2">
             <button onClick={() => setSelectedSpu('mcqueen1')} className="text-[10px] font-bold text-black hover:underline">查看详情</button>
           </div>
@@ -203,13 +202,14 @@ export function MarketplaceOnSale() {
             <div className="text-xs font-bold">Alexander McQueen</div>
             <div className="text-[10px] text-zinc-500">配饰</div>
           </div>
-          <div className="col-span-2 flex justify-end">
-            <div className="flex items-center border border-zinc-200 bg-white px-2 py-1 w-24">
-              <span className="text-xs text-zinc-400 mr-1">¥</span>
-              <input type="number" defaultValue={1440} className="w-full text-xs font-bold outline-none text-right" />
-            </div>
+          <div className="col-span-2 text-right">
+            <div className="text-xs font-bold">¥1,320.00</div>
+            <div className="text-[10px] text-zinc-400 mt-1">HK$1,440.00</div>
           </div>
-          <div className="col-span-2 text-right text-xs font-bold text-zinc-400">¥1440.00</div>
+          <div className="col-span-2 text-right">
+            <div className="text-xs font-bold text-zinc-400">¥1,320.00</div>
+            <div className="text-[10px] text-zinc-400 mt-1">HK$1,440.00</div>
+          </div>
           <div className="col-span-1 flex flex-col items-center gap-2">
             <button onClick={() => setSelectedSpu('mcqueen2')} className="text-[10px] font-bold text-black hover:underline">查看详情</button>
           </div>
@@ -285,7 +285,14 @@ export function MarketplaceOnSale() {
                             <td className="p-4 font-bold text-zinc-800">均码</td>
                             <td className="p-4"><span className="bg-emerald-50 text-emerald-600 border border-emerald-100 px-2 py-1 text-[10px] font-bold uppercase tracking-wider">中国大陆</span></td>
                             <td className="p-4 font-mono text-xs text-zinc-500">554602J16KG1000-01</td>
-                            <td className="p-4 text-right font-bold text-zinc-800">¥800</td>
+                            <td className="p-4 text-right">
+                              <div className="flex items-center justify-end">
+                                <div className="flex items-center border border-zinc-200 bg-white px-2 py-1 w-24">
+                                  <span className="text-xs text-zinc-400 mr-1">¥</span>
+                                  <input type="number" defaultValue={800} className="w-full text-xs font-bold outline-none text-right" />
+                                </div>
+                              </div>
+                            </td>
                             <td className="p-4 text-right font-bold text-zinc-400">¥780</td>
                             <td className="p-4 text-right font-bold">12</td>
                           </tr>
@@ -302,8 +309,13 @@ export function MarketplaceOnSale() {
                             </td>
                             <td className="p-4 font-mono text-xs text-zinc-500">554602J16KG1000-01</td>
                             <td className="p-4 text-right">
-                              <div className="font-bold text-zinc-800">HK$820</div>
-                              <div className="text-[10px] text-zinc-400 mt-1">约 ¥750 (含税)</div>
+                              <div className="flex flex-col items-end gap-1">
+                                <div className="flex items-center border border-zinc-200 bg-white px-2 py-1 w-24">
+                                  <span className="text-xs text-zinc-400 mr-1">HK$</span>
+                                  <input type="number" defaultValue={820} className="w-full text-xs font-bold outline-none text-right" />
+                                </div>
+                                <div className="text-[10px] text-zinc-400">约 ¥750 (含税)</div>
+                              </div>
                             </td>
                             <td className="p-4 text-right">
                               <div className="font-bold text-zinc-400">HK$850</div>
@@ -320,7 +332,7 @@ export function MarketplaceOnSale() {
             </div>
             
             <div className="p-6 border-t border-zinc-200 bg-white flex justify-between items-center">
-              <button onClick={() => setSelectedSpu(null)} className="px-6 py-3 text-xs font-bold text-red-600 hover:bg-red-50 border border-red-200 transition-colors">移除选品</button>
+              <button onClick={() => setSelectedSpu(null)} className="px-6 py-3 text-xs font-bold text-red-600 hover:bg-red-50 border border-red-200 transition-colors">从集市下架</button>
               <div className="flex gap-3">
                 <button onClick={() => setSelectedSpu(null)} className="px-6 py-3 text-xs font-bold text-zinc-600 hover:text-black transition-colors">关闭</button>
                 <button onClick={() => setSelectedSpu(null)} className="bg-black text-white px-8 py-3 text-xs font-bold hover:bg-zinc-800 transition-colors">保存修改</button>

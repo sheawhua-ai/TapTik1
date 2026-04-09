@@ -19,6 +19,7 @@ export function WarehouseManagement() {
 
   // Edit Modal State
   const [editDropshipping, setEditDropshipping] = useState(false);
+  const [editName, setEditName] = useState('');
 
   const handleAddWarehouse = () => {
     if (!addName || !addLocation) {
@@ -43,12 +44,17 @@ export function WarehouseManagement() {
   const openEditModal = (warehouse: any) => {
     setEditingWarehouse(warehouse);
     setEditDropshipping(warehouse.dropshipping);
+    setEditName(warehouse.name);
     setIsEditModalOpen(true);
   };
 
   const handleEditWarehouse = () => {
+    if (!editName) {
+      alert('请填写仓库名称');
+      return;
+    }
     setWarehouses(warehouses.map(w => 
-      w.id === editingWarehouse.id ? { ...w, dropshipping: editDropshipping } : w
+      w.id === editingWarehouse.id ? { ...w, dropshipping: editDropshipping, name: editName } : w
     ));
     setIsEditModalOpen(false);
     setEditingWarehouse(null);
@@ -230,8 +236,13 @@ export function WarehouseManagement() {
             
             <div className="p-6 flex flex-col gap-5">
               <div className="flex items-center gap-4">
-                <label className="w-24 text-right text-sm font-bold">仓库名称</label>
-                <input type="text" value={editingWarehouse.name} disabled className="flex-1 border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm outline-none text-zinc-400" />
+                <label className="w-24 text-right text-sm font-bold"><span className="text-red-500 mr-1">*</span>仓库名称</label>
+                <input 
+                  type="text" 
+                  value={editName} 
+                  onChange={(e) => setEditName(e.target.value)}
+                  className="flex-1 border border-zinc-200 px-3 py-2 text-sm focus:border-black focus:ring-1 focus:ring-black outline-none" 
+                />
               </div>
               <div className="flex items-center gap-4">
                 <label className="w-24 text-right text-sm font-bold">仓库编码</label>

@@ -1,72 +1,8 @@
 import { Search, X, Copy, Plus, ChevronDown } from "lucide-react";
-import { useState, useRef, useEffect } from "react";
-
-function MultiSelectDropdown({ label, options, selected, onChange, placeholder }: any) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [search, setSearch] = useState('');
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  const filteredOptions = options.filter((o: any) => o.label.toLowerCase().includes(search.toLowerCase()));
-  
-  return (
-    <div className="relative" ref={dropdownRef}>
-      <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-2">{label}</label>
-      <div 
-        className="w-full border border-zinc-200 px-3 py-2 text-sm bg-white cursor-pointer flex justify-between items-center"
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        <span className="truncate text-zinc-600">
-          {selected.length > 0 
-            ? selected.map((s: any) => options.find((o: any) => o.value === s)?.label).join(', ') 
-            : placeholder}
-        </span>
-        <ChevronDown size={14} className="text-zinc-400" />
-      </div>
-      {isOpen && (
-        <div className="absolute z-10 w-full mt-1 bg-white border border-zinc-200 shadow-lg max-h-60 flex flex-col">
-          <div className="p-2 border-b border-zinc-100 flex items-center gap-2 bg-zinc-50">
-            <Search size={14} className="text-zinc-400" />
-            <input 
-              type="text" 
-              placeholder="搜索..." 
-              className="w-full bg-transparent text-xs outline-none"
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-            />
-          </div>
-          <div className="overflow-y-auto p-1 flex flex-col">
-            {filteredOptions.length > 0 ? filteredOptions.map((opt: any) => (
-              <label key={opt.value} className="flex items-center gap-2 text-xs cursor-pointer hover:bg-zinc-50 p-2">
-                <input 
-                  type="checkbox" 
-                  checked={selected.includes(opt.value)}
-                  onChange={() => {
-                    if (selected.includes(opt.value)) onChange(selected.filter((v: any) => v !== opt.value));
-                    else onChange([...selected, opt.value]);
-                  }}
-                  className="accent-black"
-                />
-                {opt.label}
-              </label>
-            )) : (
-              <div className="p-2 text-xs text-zinc-400 text-center">无匹配项</div>
-            )}
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
+import { useState, useMemo } from "react";
+import { MultiSelectDropdown } from "./MultiSelectDropdown";
+import { CategoryMultiSelectDropdown } from "./CategoryMultiSelectDropdown";
+import { CATEGORY_HIERARCHY, ALL_BRANDS } from "../lib/constants";
 
 export function MarketplaceSelection() {
   const [selectedSpu, setSelectedSpu] = useState<string | null>(null);
@@ -78,32 +14,15 @@ export function MarketplaceSelection() {
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
+  const [filterBrands, setFilterBrands] = useState<string[]>([]);
+  const [filterCategories, setFilterCategories] = useState<string[]>([]);
+
   const toggleBrand = (brand: string) => {
     setSelectedBrands(prev => 
       prev.includes(brand) ? prev.filter(b => b !== brand) : [...prev, brand]
     );
   };
 
-  const toggleCategory = (category: string) => {
-    setSelectedCategories(prev => 
-      prev.includes(category) ? prev.filter(c => c !== category) : [...prev, category]
-    );
-  };
-
-  const brands = [
-    { id: 'chanel', name: 'CHANEL' },
-    { id: 'rolex', name: 'Rolex' },
-    { id: 'represent', name: 'Represent' },
-    { id: 'nike', name: 'Nike' }
-  ];
-
-  const categories = [
-    { id: 'clothing', name: '服饰' },
-    { id: 'watches', name: '腕表' },
-    { id: 'shoes', name: '鞋履' },
-    { id: 'bags', name: '包袋' }
-  ];
-  
   // Markup Strategy State
   const [strategyName, setStrategyName] = useState('');
   const [markupRate, setMarkupRate] = useState('');
@@ -117,18 +36,6 @@ export function MarketplaceSelection() {
   const sellingPrice = markupValue ? (supplyPrice * (1 + markupValue / 100)).toFixed(2) : '0.00';
   const profit = markupValue ? (Number(sellingPrice) - supplyPrice).toFixed(2) : '0.00';
   const calculatedGrossMargin = markupValue ? ((markupValue / (100 + markupValue)) * 100).toFixed(2) : '0.00';
-
-  const strategyBrands = [
-    { value: 'chanel', label: 'CHANEL' },
-    { value: 'rolex', label: 'Rolex' },
-    { value: 'represent', label: 'Represent' },
-  ];
-
-  const strategyCategories = [
-    { value: 'clothing', label: '服饰' },
-    { value: 'watches', label: '腕表' },
-    { value: 'bags', label: '包袋' },
-  ];
 
   return (
     <div className="max-w-7xl mx-auto">
@@ -155,16 +62,22 @@ export function MarketplaceSelection() {
             className="w-full border border-zinc-200 pl-10 pr-4 py-2 text-sm focus:border-black focus:ring-0 outline-none bg-white" 
           />
         </div>
-        <select className="border border-zinc-200 px-4 py-2 text-sm focus:border-black focus:ring-0 outline-none bg-white">
-          <option value="">全部品牌</option>
-          <option value="represent">Represent</option>
-          <option value="chanel">CHANEL</option>
-        </select>
-        <select className="border border-zinc-200 px-4 py-2 text-sm focus:border-black focus:ring-0 outline-none bg-white">
-          <option value="">全部分类</option>
-          <option value="clothing">服饰</option>
-          <option value="shoes">鞋履</option>
-        </select>
+        <div className="w-40">
+          <MultiSelectDropdown 
+            options={ALL_BRANDS} 
+            selected={filterBrands} 
+            onChange={setFilterBrands} 
+            placeholder="全部品牌" 
+          />
+        </div>
+        <div className="w-48">
+          <CategoryMultiSelectDropdown 
+            options={CATEGORY_HIERARCHY} 
+            selected={filterCategories} 
+            onChange={setFilterCategories} 
+            placeholder="全部分类" 
+          />
+        </div>
         <select className="border border-zinc-200 px-4 py-2 text-sm focus:border-black focus:ring-0 outline-none bg-white">
           <option value="">是否配置</option>
           <option value="yes">已配置策略</option>
@@ -183,7 +96,11 @@ export function MarketplaceSelection() {
           当前筛选条件下共有 <span className="font-black text-lg">1,248</span> 个 SPU
         </div>
         <button 
-          onClick={() => setIsMarkupModalOpen(true)}
+          onClick={() => {
+            setSelectedStrategyBrands([...filterBrands]);
+            setSelectedStrategyCategories([...filterCategories]);
+            setIsMarkupModalOpen(true);
+          }}
           className="bg-black text-white px-6 py-2 text-sm font-bold hover:bg-zinc-800 transition-colors flex items-center gap-2"
         >
           <Plus size={16} />
@@ -373,40 +290,30 @@ export function MarketplaceSelection() {
                 <div>
                   <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-2">适用品牌</label>
                   <div className="flex flex-wrap gap-2">
-                    {brands.map(brand => (
+                    {ALL_BRANDS.map(brand => (
                       <button
-                        key={brand.id}
-                        onClick={() => toggleBrand(brand.id)}
+                        key={brand.value}
+                        onClick={() => toggleBrand(brand.value)}
                         className={`px-3 py-1.5 text-xs font-bold border transition-colors flex items-center gap-1.5 ${
-                          selectedBrands.includes(brand.id)
+                          selectedBrands.includes(brand.value)
                             ? 'bg-black text-white border-black'
                             : 'bg-white text-zinc-600 border-zinc-200 hover:border-zinc-400'
                         }`}
                       >
-                        {brand.name}
-                        {selectedBrands.includes(brand.id) && <X size={12} className="opacity-70" />}
+                        {brand.label}
+                        {selectedBrands.includes(brand.value) && <X size={12} className="opacity-70" />}
                       </button>
                     ))}
                   </div>
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-2">适用分类</label>
-                  <div className="flex flex-wrap gap-2">
-                    {categories.map(category => (
-                      <button
-                        key={category.id}
-                        onClick={() => toggleCategory(category.id)}
-                        className={`px-3 py-1.5 text-xs font-bold border transition-colors flex items-center gap-1.5 ${
-                          selectedCategories.includes(category.id)
-                            ? 'bg-black text-white border-black'
-                            : 'bg-white text-zinc-600 border-zinc-200 hover:border-zinc-400'
-                        }`}
-                      >
-                        {category.name}
-                        {selectedCategories.includes(category.id) && <X size={12} className="opacity-70" />}
-                      </button>
-                    ))}
-                  </div>
+                  <CategoryMultiSelectDropdown 
+                    label="适用分类" 
+                    options={CATEGORY_HIERARCHY} 
+                    selected={selectedCategories} 
+                    onChange={setSelectedCategories} 
+                    placeholder="选择分类" 
+                  />
                 </div>
               </div>
 
@@ -449,20 +356,39 @@ export function MarketplaceSelection() {
                 />
               </div>
 
+              <div className="bg-zinc-50 p-4 border border-zinc-200 text-sm">
+                <div className="font-bold mb-2">当前筛选条件带入：</div>
+                <div className="text-zinc-600">
+                  已选品牌：<span className="font-bold text-black">{selectedStrategyBrands.length > 0 ? selectedStrategyBrands.map(b => ALL_BRANDS.find(sb => sb.value === b)?.label || b).join(', ') : '全部品牌'}</span>
+                </div>
+                <div className="text-zinc-600 mt-1">
+                  已选分类：<span className="font-bold text-black">{selectedStrategyCategories.length > 0 ? selectedStrategyCategories.map(c => {
+                    const mainCat = CATEGORY_HIERARCHY.find(sc => sc.value === c);
+                    if (mainCat) return mainCat.label;
+                    for (const cat of CATEGORY_HIERARCHY) {
+                      const subCat = cat.subCategories.find(sub => sub.value === c);
+                      if (subCat) return subCat.label;
+                    }
+                    return c;
+                  }).join(', ') : '全部分类'}</span>
+                </div>
+                <div className="text-[10px] text-zinc-400 mt-2">您可以在下方手动修改适用的品牌和分类</div>
+              </div>
+
               <div className="grid grid-cols-2 gap-4">
                 <MultiSelectDropdown 
                   label="适用品牌 (可选)" 
-                  options={strategyBrands} 
+                  options={ALL_BRANDS} 
                   selected={selectedStrategyBrands} 
                   onChange={setSelectedStrategyBrands} 
                   placeholder="全部品牌" 
                 />
-                <MultiSelectDropdown 
+                <CategoryMultiSelectDropdown 
                   label="适用分类 (可选)" 
-                  options={strategyCategories} 
+                  options={CATEGORY_HIERARCHY} 
                   selected={selectedStrategyCategories} 
                   onChange={setSelectedStrategyCategories} 
-                  placeholder="全部分类" 
+                  placeholder="选择分类" 
                 />
               </div>
 

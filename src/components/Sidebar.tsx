@@ -7,7 +7,7 @@ interface SidebarProps {
 
 export function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
   const supplierItems = [
-    { id: 'product', label: '自营商品管理', icon: Package },
+    { id: 'product', label: '商品管理', icon: Package },
     { id: 'offer_to_marketplace', label: '出价到集市', icon: ArrowUpRight },
     { id: 'marketplace_on_sale', label: '集市在售', icon: Store },
   ];

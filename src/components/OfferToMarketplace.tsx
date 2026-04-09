@@ -33,7 +33,7 @@ export function OfferToMarketplace() {
 
         <div className="grid grid-cols-2 gap-8">
           <div className="border-l-4 border-black pl-4">
-            <div className="text-sm font-bold text-zinc-800 mb-1">已映射公共库 (高置信)</div>
+            <div className="text-sm font-bold text-zinc-800 mb-1">已映射公共库</div>
             <div className="text-xs text-zinc-500 mb-4">匹配度&gt;90%已自动匹配</div>
             <div className="flex items-end justify-between">
               <button className="text-xs text-blue-600 hover:underline">查看列表&gt;</button>
@@ -53,7 +53,7 @@ export function OfferToMarketplace() {
 
       <div className="bg-white border border-zinc-200 shadow-sm">
         <div className="p-4 border-b border-zinc-200 flex items-center justify-between bg-zinc-50">
-          <h3 className="font-black text-lg">待处理匹配列表</h3>
+          <h3 className="font-black text-lg">待人工确认映射</h3>
           <div className="flex">
             <select className="border border-zinc-200 border-r-0 px-4 py-2 text-sm focus:outline-none bg-white">
               <option>商品标题</option>

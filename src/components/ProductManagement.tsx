@@ -1,6 +1,9 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { ChevronLeft, ChevronRight, Plus, X, Search, Image as ImageIcon, Upload, History } from 'lucide-react';
 import { AddProductModal } from './AddProductModal';
+import { MultiSelectDropdown } from './MultiSelectDropdown';
+import { CategoryMultiSelectDropdown } from './CategoryMultiSelectDropdown';
+import { CATEGORY_HIERARCHY, ALL_BRANDS } from '../lib/constants';
 
 export function ProductManagement() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -8,12 +11,23 @@ export function ProductManagement() {
   const [activeWarehouseTab, setActiveWarehouseTab] = useState<'domestic' | 'overseas'>('domestic');
   const [activeListTab, setActiveListTab] = useState<'on_sale' | 'in_warehouse' | 'delisted'>('on_sale');
 
+  const [filterBrands, setFilterBrands] = useState<string[]>([]);
+  const [filterCategories, setFilterCategories] = useState<string[]>([]);
+  const [filterWarehouses, setFilterWarehouses] = useState<string[]>([]);
+
+  const allWarehouses = [
+    { value: 'hk', label: '香港直邮仓' },
+    { value: 'sz', label: '深圳保税仓' },
+    { value: 'london', label: '伦敦海外仓' },
+    { value: 'hz', label: '杭州国内仓' }
+  ];
+
   return (
     <div className="max-w-7xl mx-auto">
       <div className="flex justify-between items-end mb-8">
         <div>
           <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-[0.2em] mb-2">Supplier Dashboard</div>
-          <h1 className="text-3xl font-black tracking-tighter uppercase mb-2">自营商品管理</h1>
+          <h1 className="text-3xl font-black tracking-tighter uppercase mb-2">商品管理</h1>
           <p className="text-sm text-zinc-500">管理全球精品库存、规格及定价模式</p>
         </div>
         <div className="flex gap-3 items-center">
@@ -63,26 +77,31 @@ export function ProductManagement() {
             <Search size={16} className="text-zinc-400" />
             <input type="text" placeholder="搜索商品名称、货号..." className="w-full text-xs font-bold outline-none" />
           </div>
-          <select className="bg-white border border-zinc-200 text-xs font-bold py-2 px-4 outline-none cursor-pointer">
-            <option>全部品牌</option>
-            <option>Burberry</option>
-            <option>Rolex</option>
-            <option>Patek Philippe</option>
-          </select>
-          <select className="bg-white border border-zinc-200 text-xs font-bold py-2 px-4 outline-none cursor-pointer">
-            <option>全部分类</option>
-            <option>服饰</option>
-            <option>腕表</option>
-            <option>包袋</option>
-          </select>
-          <select className="bg-white border border-zinc-200 text-xs font-bold py-2 px-4 outline-none cursor-pointer">
-            <option>全部仓库</option>
-            <option>香港直邮仓</option>
-            <option>深圳保税仓</option>
-            <option>伦敦海外仓</option>
-            <option>杭州国内仓</option>
-          </select>
-          <button className="bg-black text-white px-6 py-2 text-xs font-bold hover:bg-zinc-800 transition-colors h-[34px]">
+          <div className="w-32">
+            <MultiSelectDropdown 
+              options={ALL_BRANDS} 
+              selected={filterBrands} 
+              onChange={setFilterBrands} 
+              placeholder="全部品牌" 
+            />
+          </div>
+          <div className="w-48">
+            <CategoryMultiSelectDropdown 
+              options={CATEGORY_HIERARCHY} 
+              selected={filterCategories} 
+              onChange={setFilterCategories} 
+              placeholder="全部分类" 
+            />
+          </div>
+          <div className="w-32">
+            <MultiSelectDropdown 
+              options={allWarehouses} 
+              selected={filterWarehouses} 
+              onChange={setFilterWarehouses} 
+              placeholder="全部仓库" 
+            />
+          </div>
+          <button className="bg-black text-white px-6 py-2 text-xs font-bold hover:bg-zinc-800 transition-colors h-[36px]">
             查询
           </button>
         </div>

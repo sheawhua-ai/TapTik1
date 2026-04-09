@@ -1,9 +1,15 @@
 import { Search, ChevronDown, TrendingUp, TrendingDown, X, Copy } from "lucide-react";
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import { MultiSelectDropdown } from "./MultiSelectDropdown";
+import { CategoryMultiSelectDropdown } from "./CategoryMultiSelectDropdown";
+import { CATEGORY_HIERARCHY, ALL_BRANDS } from "../lib/constants";
 
 export function MySelections() {
   const [selectedSpu, setSelectedSpu] = useState<string | null>(null);
   const [activeWarehouseTab, setActiveWarehouseTab] = useState<'domestic' | 'overseas'>('domestic');
+
+  const [filterBrands, setFilterBrands] = useState<string[]>([]);
+  const [filterCategories, setFilterCategories] = useState<string[]>([]);
 
   return (
     <div className="max-w-7xl mx-auto">
@@ -24,18 +30,22 @@ export function MySelections() {
             className="w-full border border-zinc-200 pl-10 pr-4 py-2 text-sm focus:border-black focus:ring-0 outline-none bg-white" 
           />
         </div>
-        <select className="border border-zinc-200 px-4 py-2 text-sm focus:border-black focus:ring-0 outline-none bg-white">
-          <option value="">全部品牌</option>
-          <option value="chanel">CHANEL</option>
-          <option value="hermes">Hermès</option>
-          <option value="lv">Louis Vuitton</option>
-        </select>
-        <select className="border border-zinc-200 px-4 py-2 text-sm focus:border-black focus:ring-0 outline-none bg-white">
-          <option value="">全部分类</option>
-          <option value="accessories">配饰</option>
-          <option value="clothing">服饰</option>
-          <option value="bags">包袋</option>
-        </select>
+        <div className="w-40">
+          <MultiSelectDropdown 
+            options={ALL_BRANDS} 
+            selected={filterBrands} 
+            onChange={setFilterBrands} 
+            placeholder="全部品牌" 
+          />
+        </div>
+        <div className="w-48">
+          <CategoryMultiSelectDropdown 
+            options={CATEGORY_HIERARCHY} 
+            selected={filterCategories} 
+            onChange={setFilterCategories} 
+            placeholder="全部分类" 
+          />
+        </div>
         <button className="border border-zinc-200 px-6 py-2 text-sm font-bold hover:bg-zinc-50 transition-colors bg-white">
           重置
         </button>
