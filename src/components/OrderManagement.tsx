@@ -767,78 +767,86 @@ export function OrderManagement() {
             <div className="flex gap-3">
               {(() => {
                 const selectedItemsData = selectedOrderData.items.filter((i: any) => selectedItems.includes(i.id));
+                
+                const showPaymentReminder = selectedOrderData.status === 'pending_payment';
+                
+                const showConfirmBtn = activeTab === 'pending_confirmation' || (activeTab === 'all' && selectedOrderData.items.some((i: any) => i.status === 'pending_confirmation'));
+                const canConfirm = selectedItems.length > 0 && selectedItemsData.every((i: any) => i.status === 'pending_confirmation');
+
+                const showShipBtn = activeTab === 'pending_shipment' || (activeTab === 'all' && selectedOrderData.items.some((i: any) => i.status === 'pending_shipment'));
+                const canShip = selectedItems.length > 0 && selectedItemsData.every((i: any) => i.status === 'pending_shipment');
+
+                const showProcessRefundBtn = activeTab === 'pending_refund' || (activeTab === 'all' && selectedOrderData.items.some((i: any) => i.status === 'pending_refund'));
+                const canProcessRefund = selectedItems.length > 0 && selectedItemsData.every((i: any) => i.status === 'pending_refund');
+
+                const showRefundBtn = ['pending_confirmation', 'pending_shipment', 'shipped', 'completed'].includes(activeTab) || 
+                                      (activeTab === 'all' && selectedOrderData.items.some((i: any) => ['pending_confirmation', 'pending_shipment', 'shipped', 'completed'].includes(i.status)));
+                const canRefund = selectedItems.length > 0 && selectedItemsData.every((i: any) => ['pending_confirmation', 'pending_shipment', 'shipped', 'completed'].includes(i.status));
+                
+                let refundLabel = '提交退款';
+                if (selectedItemsData.length > 0) {
+                  if (selectedItemsData.every((i: any) => i.status === 'pending_confirmation')) refundLabel = '提交退款 (缺货)';
+                  else if (selectedItemsData.every((i: any) => i.status === 'shipped' || i.status === 'completed')) refundLabel = selectedOrderData.type === 'distribution' ? '申请退款' : '同意退款';
+                } else {
+                  if (activeTab === 'pending_confirmation') refundLabel = '提交退款 (缺货)';
+                  else if (activeTab === 'shipped' || activeTab === 'completed') refundLabel = selectedOrderData.type === 'distribution' ? '申请退款' : '同意退款';
+                }
+
+                const showLogisticsBtn = activeTab === 'shipped' || (activeTab === 'all' && selectedOrderData.items.some((i: any) => i.status === 'shipped'));
+                const showAfterSalesBtn = activeTab === 'completed' || (activeTab === 'all' && selectedOrderData.items.some((i: any) => i.status === 'completed'));
+
                 return (
                   <>
-                    {selectedOrderData.status === 'pending_payment' && (
+                    {showPaymentReminder && (
                       <button className="bg-black text-white px-6 py-3 text-xs font-bold hover:bg-zinc-800 transition-colors">提醒付款</button>
                     )}
                     
-                    {(activeTab === 'pending_confirmation' || (activeTab === 'all' && selectedOrderData.items.some((i: any) => i.status === 'pending_confirmation'))) && (
-                      <>
-                        <button 
-                          onClick={handleRefundItems} 
-                          disabled={selectedItems.length === 0 || !selectedItemsData.every((i: any) => i.status === 'pending_confirmation')} 
-                          className="bg-white border border-zinc-200 px-6 py-3 text-xs font-bold hover:border-black transition-colors text-red-600 disabled:opacity-50"
-                        >
-                          提交退款 (缺货)
-                        </button>
-                        <button 
-                          onClick={handleConfirmItems} 
-                          disabled={selectedItems.length === 0 || !selectedItemsData.every((i: any) => i.status === 'pending_confirmation')} 
-                          className="bg-black text-white px-6 py-3 text-xs font-bold hover:bg-zinc-800 transition-colors disabled:opacity-50"
-                        >
-                          {selectedOrderData.type === 'distribution' ? '确认有货 (供货商)' : '确认有货'}
-                        </button>
-                      </>
+                    {showRefundBtn && (
+                      <button 
+                        onClick={handleRefundItems} 
+                        disabled={!canRefund} 
+                        className="bg-white border border-zinc-200 px-6 py-3 text-xs font-bold hover:border-black transition-colors text-red-600 disabled:opacity-50"
+                      >
+                        {refundLabel}
+                      </button>
                     )}
 
-                    {(activeTab === 'pending_shipment' || (activeTab === 'all' && selectedOrderData.items.some((i: any) => i.status === 'pending_shipment'))) && (
-                      <>
-                        <button 
-                          onClick={handleRefundItems} 
-                          disabled={selectedItems.length === 0 || !selectedItemsData.every((i: any) => i.status === 'pending_shipment')} 
-                          className="bg-white border border-zinc-200 px-6 py-3 text-xs font-bold hover:border-black transition-colors text-red-600 disabled:opacity-50"
-                        >
-                          提交退款
-                        </button>
-                        <button 
-                          onClick={handleShipItems} 
-                          disabled={selectedItems.length === 0 || !selectedItemsData.every((i: any) => i.status === 'pending_shipment')} 
-                          className="bg-black text-white px-6 py-3 text-xs font-bold hover:bg-zinc-800 transition-colors disabled:opacity-50"
-                        >
-                          发货
-                        </button>
-                      </>
+                    {showConfirmBtn && (
+                      <button 
+                        onClick={handleConfirmItems} 
+                        disabled={!canConfirm} 
+                        className="bg-black text-white px-6 py-3 text-xs font-bold hover:bg-zinc-800 transition-colors disabled:opacity-50"
+                      >
+                        {selectedOrderData.type === 'distribution' ? '确认有货 (供货商)' : '确认有货'}
+                      </button>
                     )}
 
-                    {(activeTab === 'pending_refund' || (activeTab === 'all' && selectedOrderData.items.some((i: any) => i.status === 'pending_refund'))) && (
-                      <>
-                        <button 
-                          onClick={handleProcessRefund} 
-                          disabled={selectedItems.length === 0 || !selectedItemsData.every((i: any) => i.status === 'pending_refund')} 
-                          className="bg-black text-white px-6 py-3 text-xs font-bold hover:bg-zinc-800 transition-colors disabled:opacity-50"
-                        >
-                          退款
-                        </button>
-                      </>
+                    {showShipBtn && (
+                      <button 
+                        onClick={handleShipItems} 
+                        disabled={!canShip} 
+                        className="bg-black text-white px-6 py-3 text-xs font-bold hover:bg-zinc-800 transition-colors disabled:opacity-50"
+                      >
+                        发货
+                      </button>
                     )}
 
-                    {(activeTab === 'shipped' || activeTab === 'completed' || (activeTab === 'all' && selectedOrderData.items.some((i: any) => i.status === 'shipped' || i.status === 'completed'))) && (
-                      <>
-                        <button 
-                          onClick={handleRefundItems} 
-                          disabled={selectedItems.length === 0 || !selectedItemsData.every((i: any) => i.status === 'shipped' || i.status === 'completed')} 
-                          className="bg-white border border-zinc-200 px-6 py-3 text-xs font-bold hover:border-black transition-colors text-red-600 disabled:opacity-50"
-                        >
-                          {selectedOrderData.type === 'distribution' ? '申请退款' : '同意退款'}
-                        </button>
-                        {(activeTab === 'shipped' || (activeTab === 'all' && selectedOrderData.items.some((i: any) => i.status === 'shipped'))) && (
-                          <button className="bg-white border border-zinc-200 px-6 py-3 text-xs font-bold hover:border-black transition-colors">查看物流</button>
-                        )}
-                        {(activeTab === 'completed' || (activeTab === 'all' && selectedOrderData.items.some((i: any) => i.status === 'completed'))) && (
-                          <button className="bg-white border border-zinc-200 px-6 py-3 text-xs font-bold hover:border-black transition-colors">查看售后</button>
-                        )}
-                      </>
+                    {showProcessRefundBtn && (
+                      <button 
+                        onClick={handleProcessRefund} 
+                        disabled={!canProcessRefund} 
+                        className="bg-black text-white px-6 py-3 text-xs font-bold hover:bg-zinc-800 transition-colors disabled:opacity-50"
+                      >
+                        退款
+                      </button>
+                    )}
+
+                    {showLogisticsBtn && (
+                      <button className="bg-white border border-zinc-200 px-6 py-3 text-xs font-bold hover:border-black transition-colors">查看物流</button>
+                    )}
+
+                    {showAfterSalesBtn && (
+                      <button className="bg-white border border-zinc-200 px-6 py-3 text-xs font-bold hover:border-black transition-colors">查看售后</button>
                     )}
                   </>
                 );
