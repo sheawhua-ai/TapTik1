@@ -63,6 +63,38 @@ export function ManifestCampaignManagement() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedCampaignId, setSelectedCampaignId] = useState<string | null>(null);
   const [expandedProducts, setExpandedProducts] = useState<string[]>(['p1']);
+  const [campaignDetails, setCampaignDetails] = useState(CAMPAIGN_DETAILS);
+
+  const handleSkuStockChange = (productId: string, skuId: string, newStock: number) => {
+    setCampaignDetails(prev => {
+      const newProducts = prev.products.map(p => {
+        if (p.id === productId) {
+          const newSkus = p.skus.map(s => s.id === skuId ? { ...s, remainingStock: newStock } : s);
+          const totalRemaining = newSkus.reduce((sum, s) => sum + s.remainingStock, 0);
+          return { ...p, skus: newSkus, remainingStock: totalRemaining };
+        }
+        return p;
+      });
+      return { ...prev, products: newProducts };
+    });
+  };
+
+  const handleProductStockChange = (productId: string, newStock: number) => {
+    setCampaignDetails(prev => {
+      const newProducts = prev.products.map(p => {
+        if (p.id === productId) {
+          return { ...p, remainingStock: newStock };
+        }
+        return p;
+      });
+      return { ...prev, products: newProducts };
+    });
+  };
+
+  const handleSaveAndReturn = () => {
+    // In a real app, you would save the campaignDetails to the backend here
+    setSelectedCampaignId(null);
+  };
 
   const [campaignName, setCampaignName] = useState('2024 秋季高奢皮具专场: LVMH 联名系列全球分发计划');
   const [selectionMode, setSelectionMode] = useState<'upload' | 'manual'>('upload');
@@ -79,33 +111,41 @@ export function ManifestCampaignManagement() {
   if (selectedCampaignId) {
     return (
       <div className="max-w-7xl mx-auto">
-        <div className="mb-6 flex items-center gap-2 text-sm text-zinc-500">
-          <button onClick={() => setSelectedCampaignId(null)} className="hover:text-black transition-colors">货单管理</button>
-          <ChevronRight size={14} />
-          <span className="text-black font-bold">货单详情</span>
+        <div className="flex justify-between items-center mb-6">
+          <div className="flex items-center gap-2 text-sm text-zinc-500">
+            <button onClick={() => setSelectedCampaignId(null)} className="hover:text-black transition-colors">货单管理</button>
+            <ChevronRight size={14} />
+            <span className="text-black font-bold">货单详情</span>
+          </div>
+          <button 
+            onClick={handleSaveAndReturn}
+            className="bg-black text-white px-6 py-2 text-sm font-bold hover:bg-zinc-800 transition-colors"
+          >
+            保存并返回
+          </button>
         </div>
 
         <div className="bg-white border border-zinc-200 shadow-sm p-8 mb-8">
           <div className="flex items-center gap-3 mb-2">
-            <h1 className="text-3xl font-black tracking-tighter">{CAMPAIGN_DETAILS.name}</h1>
+            <h1 className="text-3xl font-black tracking-tighter">{campaignDetails.name}</h1>
             <span className="bg-black text-white text-[10px] font-bold px-2 py-1 uppercase tracking-wider">
-              {CAMPAIGN_DETAILS.status}
+              {campaignDetails.status}
             </span>
           </div>
-          <div className="text-sm text-zinc-500 mb-8 font-mono">货单编号: {CAMPAIGN_DETAILS.id}</div>
+          <div className="text-sm text-zinc-500 mb-8 font-mono">货单编号: {campaignDetails.id}</div>
 
           <div className="grid grid-cols-3 gap-12">
             <div>
               <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-2">已下单货值</div>
-              <div className="text-3xl font-black">¥{CAMPAIGN_DETAILS.orderedValue.toLocaleString()}</div>
+              <div className="text-3xl font-black">¥{campaignDetails.orderedValue.toLocaleString()}</div>
             </div>
             <div>
               <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-2">剩余时间</div>
-              <div className="text-3xl font-black text-red-600">{CAMPAIGN_DETAILS.remainingTime}</div>
+              <div className="text-3xl font-black text-red-600">{campaignDetails.remainingTime}</div>
             </div>
             <div>
               <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-2">截止日期</div>
-              <div className="text-3xl font-black">{CAMPAIGN_DETAILS.deadline}</div>
+              <div className="text-3xl font-black">{campaignDetails.deadline}</div>
             </div>
           </div>
         </div>
@@ -118,7 +158,7 @@ export function ManifestCampaignManagement() {
             <div className="col-span-2 text-center">剩余库存</div>
           </div>
 
-          {CAMPAIGN_DETAILS.products.map(product => (
+          {campaignDetails.products.map(product => (
             <div key={product.id} className="border-b border-zinc-200 last:border-0">
               <div 
                 className="grid grid-cols-12 gap-4 px-6 py-6 items-center hover:bg-zinc-50 transition-colors cursor-pointer"
@@ -140,7 +180,18 @@ export function ManifestCampaignManagement() {
                 </div>
                 <div className="col-span-2 text-right font-bold">¥{product.price.toLocaleString()}</div>
                 <div className="col-span-2 text-center font-black text-lg">{product.orderedStock}</div>
-                <div className="col-span-2 text-center font-black text-lg text-zinc-400">{product.remainingStock}</div>
+                <div className="col-span-2 flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
+                  {product.skus.length > 0 ? (
+                    <span className="font-black text-lg text-zinc-400">{product.remainingStock}</span>
+                  ) : (
+                    <input 
+                      type="number" 
+                      value={product.remainingStock} 
+                      onChange={(e) => handleProductStockChange(product.id, parseInt(e.target.value) || 0)}
+                      className="w-20 border border-zinc-200 px-2 py-1 text-center font-black text-lg text-black focus:border-black outline-none" 
+                    />
+                  )}
+                </div>
               </div>
 
               {expandedProducts.includes(product.id) && product.skus.length > 0 && (
@@ -153,10 +204,13 @@ export function ManifestCampaignManagement() {
                       </div>
                       <div className="col-span-2 text-right text-zinc-400">-</div>
                       <div className="col-span-2 text-center font-bold">{sku.orderedStock}</div>
-                      <div className="col-span-2 text-center">
-                        <div className="inline-block border border-zinc-200 bg-white px-4 py-1 text-xs font-bold">
-                          {sku.remainingStock}
-                        </div>
+                      <div className="col-span-2 flex items-center justify-center">
+                        <input 
+                          type="number" 
+                          value={sku.remainingStock} 
+                          onChange={(e) => handleSkuStockChange(product.id, sku.id, parseInt(e.target.value) || 0)}
+                          className="w-20 border border-zinc-200 bg-white px-2 py-1 text-center text-xs font-bold focus:border-black outline-none" 
+                        />
                       </div>
                     </div>
                   ))}
@@ -202,7 +256,7 @@ export function ManifestCampaignManagement() {
             <button onClick={() => setActiveTab('pending')} className={`px-6 py-2 text-sm font-bold border transition-colors ${activeTab === 'pending' ? 'bg-black text-white border-black' : 'bg-white text-zinc-600 border-zinc-200 hover:border-black'}`}>待开始</button>
             <button onClick={() => setActiveTab('ended')} className={`px-6 py-2 text-sm font-bold border transition-colors ${activeTab === 'ended' ? 'bg-black text-white border-black' : 'bg-white text-zinc-600 border-zinc-200 hover:border-black'}`}>已结束</button>
             <div className="ml-auto">
-              <button className="bg-zinc-100 text-zinc-400 px-6 py-2 text-sm font-bold flex items-center gap-2 cursor-not-allowed">
+              <button className="bg-black text-white px-6 py-2 text-sm font-bold flex items-center gap-2 hover:bg-zinc-800 transition-colors">
                 <FileText size={16} />
                 合并生成采购单
               </button>
@@ -247,8 +301,8 @@ export function ManifestCampaignManagement() {
               </div>
             </div>
             <div className="col-span-2 flex justify-end gap-2">
-              <button className="bg-zinc-100 text-zinc-600 px-4 py-2 text-xs font-bold hover:bg-zinc-200 transition-colors">生成采购单</button>
-              <button className="bg-zinc-100 text-zinc-600 px-4 py-2 text-xs font-bold hover:bg-zinc-200 transition-colors">提前结束</button>
+              <button className="bg-black text-white px-4 py-2 text-xs font-bold hover:bg-zinc-800 transition-colors">生成采购单</button>
+              <button className="bg-white border border-zinc-200 text-black px-4 py-2 text-xs font-bold hover:border-black transition-colors">提前结束</button>
               <button 
                 onClick={() => setSelectedCampaignId(campaign.id)}
                 className="w-8 h-8 border border-zinc-200 flex items-center justify-center hover:border-black transition-colors"
