@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Copy, ChevronRight, Warehouse, Plus, FileText } from 'lucide-react';
 import { CampaignModal } from './CampaignModal';
 import { CampaignDetails } from './CampaignDetails';

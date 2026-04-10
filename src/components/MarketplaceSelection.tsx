@@ -133,7 +133,7 @@ export function MarketplaceSelection() {
             <div className="col-span-1 text-center text-xs font-bold">15</div>
             <div className="col-span-2 text-right text-xs font-bold">
               <div>HK$1,290.00</div>
-              <div className="text-[10px] text-zinc-400 font-normal">约 ¥1,180 (含税)</div>
+              <div className="text-[10px] text-zinc-400 font-normal">约 ¥1,180</div>
             </div>
             <div className="col-span-1 text-center text-xs">2</div>
             <div className="col-span-2 text-center">

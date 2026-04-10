@@ -2,25 +2,23 @@ import { useState } from 'react';
 import { Sidebar } from './components/Sidebar';
 import { Header } from './components/Header';
 import { ProductManagement } from './components/ProductManagement';
-import { CampaignManagement } from './components/CampaignManagement';
 import { OrderManagement } from './components/OrderManagement';
 import { FinanceAudit } from './components/FinanceAudit';
-import { CampaignModal } from './components/CampaignModal';
 import { OfferToMarketplace } from './components/OfferToMarketplace';
 import { MarketplaceOnSale } from './components/MarketplaceOnSale';
 import { MarketplaceSelection } from './components/MarketplaceSelection';
 import { MarkupStrategy } from './components/MarkupStrategy';
 import { MySelections } from './components/MySelections';
 import { WarehouseManagement } from './components/WarehouseManagement';
+import { DistributorOrderManagement } from './components/DistributorOrderManagement';
+import { ManifestCampaignManagement } from './components/ManifestCampaignManagement';
+import { ManifestOrderManagement } from './components/ManifestOrderManagement';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('product');
-  const [isCampaignModalOpen, setIsCampaignModalOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState('self_product');
 
   const handleActionClick = () => {
-    if (activeTab === 'campaign') {
-      setIsCampaignModalOpen(true);
-    }
+    // Action click handler
   };
 
   return (
@@ -31,23 +29,27 @@ export default function App() {
         <Header activeTab={activeTab} onActionClick={handleActionClick} />
         
         <main className="ml-64 mt-16 p-8 flex-1 bg-zinc-50/50">
-          {activeTab === 'product' && <ProductManagement />}
+          {/* 自营业务管理 */}
+          {activeTab === 'self_product' && <ProductManagement />}
           {activeTab === 'offer_to_marketplace' && <OfferToMarketplace />}
           {activeTab === 'marketplace_on_sale' && <MarketplaceOnSale />}
-          {activeTab === 'marketplace_selection' && <MarketplaceSelection />}
+          {activeTab === 'self_order' && <OrderManagement />}
+          
+          {/* 分销业务管理 */}
+          {activeTab === 'dist_market' && <MarketplaceSelection />}
           {activeTab === 'markup_strategy' && <MarkupStrategy />}
-          {activeTab === 'my_selections' && <MySelections />}
-          {activeTab === 'campaign' && <CampaignManagement />}
-          {activeTab === 'order' && <OrderManagement />}
-          {activeTab === 'finance' && <FinanceAudit />}
+          {activeTab === 'dist_mine' && <MySelections />}
+          {activeTab === 'dist_order' && <DistributorOrderManagement />}
+          
+          {/* 货单业务管理 */}
+          {activeTab === 'manifest_campaign' && <ManifestCampaignManagement />}
+          {activeTab === 'manifest_order' && <ManifestOrderManagement />}
+          
+          {/* 基础设施 */}
           {activeTab === 'warehouse' && <WarehouseManagement />}
+          {activeTab === 'finance' && <FinanceAudit />}
         </main>
       </div>
-
-      <CampaignModal 
-        isOpen={isCampaignModalOpen} 
-        onClose={() => setIsCampaignModalOpen(false)} 
-      />
     </div>
   );
 }

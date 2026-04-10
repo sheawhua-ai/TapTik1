@@ -1,4 +1,5 @@
-import { Package, Layers, ReceiptText, Wallet, Store, ShoppingBag, Settings, ListPlus, ArrowUpRight, CheckSquare, ListOrdered, Building2 } from 'lucide-react';
+import { Package, Store, Share2, Settings, FileText, ChevronDown, ChevronRight, ShoppingBag, ReceiptText, Building2, Wallet } from 'lucide-react';
+import { useState } from 'react';
 
 interface SidebarProps {
   activeTab: string;
@@ -6,115 +7,107 @@ interface SidebarProps {
 }
 
 export function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
-  const supplierItems = [
-    { id: 'product', label: '商品管理', icon: Package },
-    { id: 'offer_to_marketplace', label: '出价到集市', icon: ArrowUpRight },
-    { id: 'marketplace_on_sale', label: '集市在售', icon: Store },
-  ];
+  const [expandedGroups, setExpandedGroups] = useState<string[]>(['self_operated', 'distribution', 'manifest', 'infrastructure']);
 
-  const distributorItems = [
-    { id: 'marketplace_selection', label: '从集市选品', icon: ShoppingBag },
-    { id: 'markup_strategy', label: '配置加价策略', icon: Settings },
-    { id: 'my_selections', label: '我的选品', icon: CheckSquare },
-  ];
+  const toggleGroup = (groupId: string) => {
+    setExpandedGroups(prev => 
+      prev.includes(groupId) ? prev.filter(id => id !== groupId) : [...prev, groupId]
+    );
+  };
 
-  const otherItems = [
-    { id: 'campaign', label: '货单管理', icon: Layers },
-    { id: 'order', label: '订单管理', icon: ReceiptText },
-    { id: 'finance', label: '财务审计', icon: Wallet },
-    { id: 'warehouse', label: '仓库管理', icon: Building2 },
+  const menuGroups = [
+    {
+      id: 'self_operated',
+      label: '自营业务管理',
+      icon: Package,
+      items: [
+        { id: 'self_product', label: '商品管理' },
+        { id: 'offer_to_marketplace', label: '出价到集市' },
+        { id: 'marketplace_on_sale', label: '集市在售' },
+        { id: 'self_order', label: '订单管理' },
+      ]
+    },
+    {
+      id: 'distribution',
+      label: '分销业务管理',
+      icon: Share2,
+      items: [
+        { id: 'dist_market', label: '从集市选品' },
+        { id: 'markup_strategy', label: '配置加价策略' },
+        { id: 'dist_mine', label: '我的选品' },
+        { id: 'dist_order', label: '分销订单' },
+      ]
+    },
+    {
+      id: 'manifest',
+      label: '货单业务管理',
+      icon: FileText,
+      items: [
+        { id: 'manifest_campaign', label: '货单管理' },
+        { id: 'manifest_order', label: '货单订单' },
+      ]
+    },
+    {
+      id: 'infrastructure',
+      label: '基础设施',
+      icon: Settings,
+      items: [
+        { id: 'warehouse', label: '仓库管理' },
+        { id: 'finance', label: '财务管理' },
+      ]
+    }
   ];
 
   return (
-    <aside className="fixed left-0 top-0 h-screen w-64 bg-zinc-50 border-r border-zinc-200 flex flex-col z-40 overflow-y-auto">
-      <div className="h-16 flex items-center px-6 border-b border-zinc-200 flex-shrink-0">
-        <span className="text-lg font-black tracking-tighter uppercase">Monolithic Curator</span>
+    <aside className="fixed left-0 top-0 h-screen w-64 bg-white border-r border-zinc-200 text-zinc-600 flex flex-col z-40 overflow-y-auto">
+      <div className="h-16 flex items-center px-6 border-b border-zinc-100 flex-shrink-0">
+        <span className="text-lg font-black tracking-tighter uppercase text-black">商家管理后台</span>
       </div>
       
-      <div className="p-6 border-b border-zinc-200 flex-shrink-0">
+      <div className="p-6 border-b border-zinc-100 flex-shrink-0">
         <div className="flex items-center gap-3">
-          <img src="https://i.pravatar.cc/150?img=11" alt="User" className="w-10 h-10 rounded-none bg-zinc-200 object-cover grayscale" />
+          <img src="https://i.pravatar.cc/150?img=11" alt="User" className="w-10 h-10 rounded-none bg-zinc-100 object-cover grayscale" />
           <div>
-            <div className="text-sm font-bold">系统管理员</div>
+            <div className="text-sm font-bold text-black">系统管理员</div>
             <div className="text-[10px] text-zinc-500 uppercase tracking-widest mt-0.5">采购主管</div>
           </div>
         </div>
       </div>
 
-      <nav className="flex-1 py-4 flex flex-col gap-6 px-3">
-        <div>
-          <div className="px-3 mb-2 text-[10px] font-bold text-zinc-400 uppercase tracking-widest">我是供货商</div>
-          <div className="flex flex-col gap-1">
-            {supplierItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = activeTab === item.id;
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => setActiveTab(item.id)}
-                  className={`flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-sm transition-colors ${
-                    isActive 
-                      ? 'bg-black text-white' 
-                      : 'text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900'
-                  }`}
-                >
-                  <Icon size={18} strokeWidth={isActive ? 2.5 : 2} />
-                  {item.label}
-                </button>
-              );
-            })}
+      <nav className="flex-1 py-4 flex flex-col gap-2 px-3">
+        {menuGroups.map(group => (
+          <div key={group.id} className="mb-2">
+            <button 
+              onClick={() => toggleGroup(group.id)}
+              className="w-full flex items-center justify-between px-3 py-2 text-zinc-600 hover:text-black transition-colors group"
+            >
+              <div className="flex items-center gap-3">
+                <group.icon size={18} className="group-hover:text-black transition-colors" />
+                <span className="text-sm font-bold">{group.label}</span>
+              </div>
+              {expandedGroups.includes(group.id) ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+            </button>
+            
+            {expandedGroups.includes(group.id) && (
+              <div className="flex flex-col gap-1 mt-1 ml-7">
+                {group.items.map(item => (
+                  <button
+                    key={item.id}
+                    onClick={() => setActiveTab(item.id)}
+                    className={`flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-sm transition-colors ${
+                      activeTab === item.id 
+                        ? 'bg-zinc-100 text-black' 
+                        : 'text-zinc-500 hover:bg-zinc-50 hover:text-zinc-800'
+                    }`}
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
-        </div>
-
-        <div>
-          <div className="px-3 mb-2 text-[10px] font-bold text-zinc-400 uppercase tracking-widest">我是分销商</div>
-          <div className="flex flex-col gap-1">
-            {distributorItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = activeTab === item.id;
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => setActiveTab(item.id)}
-                  className={`flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-sm transition-colors ${
-                    isActive 
-                      ? 'bg-black text-white' 
-                      : 'text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900'
-                  }`}
-                >
-                  <Icon size={18} strokeWidth={isActive ? 2.5 : 2} />
-                  {item.label}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        <div>
-          <div className="px-3 mb-2 text-[10px] font-bold text-zinc-400 uppercase tracking-widest">其他业务</div>
-          <div className="flex flex-col gap-1">
-            {otherItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = activeTab === item.id;
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => setActiveTab(item.id)}
-                  className={`flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-sm transition-colors ${
-                    isActive 
-                      ? 'bg-black text-white' 
-                      : 'text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900'
-                  }`}
-                >
-                  <Icon size={18} strokeWidth={isActive ? 2.5 : 2} />
-                  {item.label}
-                </button>
-              );
-            })}
-          </div>
-        </div>
+        ))}
       </nav>
-
     </aside>
   );
 }

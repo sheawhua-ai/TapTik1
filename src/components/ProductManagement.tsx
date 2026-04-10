@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { ChevronLeft, ChevronRight, Plus, X, Search, Image as ImageIcon, Upload, History } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, X, Search, Image as ImageIcon, Upload, History, FileText, Trash2 } from 'lucide-react';
 import { AddProductModal } from './AddProductModal';
 import { MultiSelectDropdown } from './MultiSelectDropdown';
 import { CategoryMultiSelectDropdown } from './CategoryMultiSelectDropdown';
@@ -7,6 +7,8 @@ import { CATEGORY_HIERARCHY, ALL_BRANDS } from '../lib/constants';
 
 export function ProductManagement() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isBatchUploadOpen, setIsBatchUploadOpen] = useState(false);
+  const [isLogOpen, setIsLogOpen] = useState(false);
   const [editingSpu, setEditingSpu] = useState<string | null>(null);
   const [activeWarehouseTab, setActiveWarehouseTab] = useState<'domestic' | 'overseas'>('domestic');
   const [activeListTab, setActiveListTab] = useState<'on_sale' | 'in_warehouse' | 'delisted'>('on_sale');
@@ -31,11 +33,17 @@ export function ProductManagement() {
           <p className="text-sm text-zinc-500">管理全球精品库存、规格及定价模式</p>
         </div>
         <div className="flex gap-3 items-center">
-          <button className="bg-white border border-zinc-200 text-black px-6 py-3 flex items-center gap-2 font-bold hover:bg-zinc-50 transition-colors">
+          <button 
+            onClick={() => setIsLogOpen(true)}
+            className="bg-white border border-zinc-200 text-black px-6 py-3 flex items-center gap-2 font-bold hover:bg-zinc-50 transition-colors"
+          >
             <History size={18} />
             操作记录
           </button>
-          <button className="bg-white border border-zinc-200 text-black px-6 py-3 flex items-center gap-2 font-bold hover:bg-zinc-50 transition-colors">
+          <button 
+            onClick={() => setIsBatchUploadOpen(true)}
+            className="bg-white border border-zinc-200 text-black px-6 py-3 flex items-center gap-2 font-bold hover:bg-zinc-50 transition-colors"
+          >
             <Upload size={18} />
             批量新增
           </button>
@@ -271,6 +279,78 @@ export function ProductManagement() {
         isOpen={isAddModalOpen} 
         onClose={() => setIsAddModalOpen(false)} 
       />
+
+      {/* Batch Upload Modal */}
+      {isBatchUploadOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setIsBatchUploadOpen(false)}></div>
+          <div className="relative bg-white w-[600px] shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between px-8 py-6 border-b border-zinc-100">
+              <h2 className="text-xl font-black uppercase tracking-tight">批量新增商品</h2>
+              <button onClick={() => setIsBatchUploadOpen(false)} className="text-zinc-400 hover:text-black transition-colors"><X size={24} /></button>
+            </div>
+            
+            <div className="p-8">
+              <div className="mb-6">
+                <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-3">目标仓库 (必选)</label>
+                <select className="w-full border border-zinc-200 px-4 py-3 text-sm focus:border-black focus:ring-0 outline-none bg-zinc-50">
+                  <option value="">请选择仓库...</option>
+                  <option value="hk">香港直邮仓</option>
+                  <option value="sz">深圳保税仓</option>
+                  <option value="london">伦敦海外仓</option>
+                  <option value="hz">杭州国内仓</option>
+                </select>
+              </div>
+
+              <div className="border-2 border-dashed border-zinc-200 bg-zinc-50 p-8 flex flex-col items-center justify-center text-center mb-4 hover:border-black transition-colors cursor-pointer">
+                <Upload size={32} className="text-zinc-400 mb-4" />
+                <div className="text-sm font-bold mb-1">点击或拖拽 CSV / Excel</div>
+                <div className="text-[10px] text-zinc-500">请先下载模板，按格式填写后上传</div>
+              </div>
+
+              <div className="flex justify-between items-center mt-6">
+                <button className="text-xs font-bold text-black border-b border-black pb-0.5 hover:text-zinc-600 hover:border-zinc-600 transition-colors">下载导入模板</button>
+                <button onClick={() => setIsBatchUploadOpen(false)} className="bg-black text-white px-8 py-3 text-xs font-bold hover:bg-zinc-800 transition-colors">确认上传</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Operation Log Modal */}
+      {isLogOpen && (
+        <div className="fixed inset-0 z-50 flex justify-end">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setIsLogOpen(false)}></div>
+          <div className="relative w-[600px] bg-white h-full shadow-2xl flex flex-col animate-in slide-in-from-right duration-300">
+            <div className="flex items-center justify-between px-8 py-6 border-b border-zinc-100">
+              <h2 className="text-xl font-black uppercase tracking-tight">操作记录</h2>
+              <button onClick={() => setIsLogOpen(false)} className="text-zinc-400 hover:text-black transition-colors"><X size={24} /></button>
+            </div>
+            
+            <div className="flex-1 overflow-y-auto p-8">
+              <div className="space-y-6">
+                <div className="border-l-2 border-black pl-4 pb-6 relative">
+                  <div className="absolute w-2.5 h-2.5 bg-black rounded-full -left-[6px] top-1"></div>
+                  <div className="text-xs text-zinc-400 font-mono mb-1">2024-10-24 14:30:22</div>
+                  <div className="text-sm font-bold mb-1">批量新增商品</div>
+                  <div className="text-xs text-zinc-600">操作人: Admin</div>
+                  <div className="text-xs text-zinc-600 mt-1">目标仓库: <span className="font-bold">香港直邮仓</span></div>
+                  <div className="text-xs text-zinc-600 mt-1">结果: 成功导入 128 条记录</div>
+                </div>
+                
+                <div className="border-l-2 border-zinc-200 pl-4 pb-6 relative">
+                  <div className="absolute w-2.5 h-2.5 bg-zinc-200 rounded-full -left-[6px] top-1"></div>
+                  <div className="text-xs text-zinc-400 font-mono mb-1">2024-10-23 09:15:00</div>
+                  <div className="text-sm font-bold mb-1">修改商品库存</div>
+                  <div className="text-xs text-zinc-600">操作人: System</div>
+                  <div className="text-xs text-zinc-600 mt-1">目标仓库: <span className="font-bold">深圳保税仓</span></div>
+                  <div className="text-xs text-zinc-600 mt-1">详情: SPU [BB-SHIRT-CHK] 扣减库存 5 件</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Edit SPU Drawer */}
       {editingSpu && (
