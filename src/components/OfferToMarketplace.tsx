@@ -1,13 +1,29 @@
 import { useState } from "react";
 import { Search, X } from "lucide-react";
 
-export function OfferToMarketplace() {
+interface OfferToMarketplaceProps {
+  setActiveTab?: (tab: string) => void;
+}
+
+export function OfferToMarketplace({ setActiveTab }: OfferToMarketplaceProps) {
   const [isManualMatchOpen, setIsManualMatchOpen] = useState(false);
   const [selectedPublicSpu, setSelectedPublicSpu] = useState<string | null>(null);
+  const [matchPercentage, setMatchPercentage] = useState<number | null>(null);
 
   const handleCloseManualMatch = () => {
     setIsManualMatchOpen(false);
     setSelectedPublicSpu(null);
+    setMatchPercentage(null);
+  };
+
+  const openManualMatch = (percentage: number | null) => {
+    setIsManualMatchOpen(true);
+    setMatchPercentage(percentage);
+    if (percentage && percentage >= 85) {
+      setSelectedPublicSpu('spu1'); // Auto pre-fill if there's a high match
+    } else {
+      setSelectedPublicSpu(null);
+    }
   };
 
   return (
@@ -36,7 +52,7 @@ export function OfferToMarketplace() {
             <div className="text-sm font-bold text-zinc-800 mb-1">已映射公共库</div>
             <div className="text-xs text-zinc-500 mb-4">匹配度&gt;90%已自动匹配</div>
             <div className="flex items-end justify-between">
-              <button className="text-xs text-blue-600 hover:underline">查看列表&gt;</button>
+              <button onClick={() => setActiveTab && setActiveTab('marketplace_on_sale')} className="text-xs text-blue-600 hover:underline">查看列表&gt;</button>
               <span className="text-3xl font-black text-black">7423</span>
             </div>
           </div>
@@ -44,7 +60,7 @@ export function OfferToMarketplace() {
             <div className="text-sm font-bold text-zinc-800 mb-1">待人工确认映射</div>
             <div className="text-xs text-zinc-500 mb-4">匹配度&lt;90% 或未找到匹配项</div>
             <div className="flex items-end justify-between">
-              <button className="text-xs text-blue-600 hover:underline">查看列表&gt;</button>
+              <span className="text-xs text-transparent">查看列表&gt;</span>
               <span className="text-3xl font-black text-zinc-500">17736</span>
             </div>
           </div>
@@ -71,16 +87,15 @@ export function OfferToMarketplace() {
         </div>
 
         <div className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-zinc-200 bg-zinc-50 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
-          <div className="col-span-4">商家商品信息</div>
-          <div className="col-span-4">公共库商品信息</div>
+          <div className="col-span-5">商家商品信息</div>
+          <div className="col-span-5">公共库商品信息</div>
           <div className="col-span-1 text-center">匹配度</div>
-          <div className="col-span-2 text-center">状态</div>
           <div className="col-span-1 text-center">操作</div>
         </div>
 
         {/* Row 1 */}
         <div className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-zinc-200 items-center hover:bg-zinc-50 transition-colors">
-          <div className="col-span-4 flex gap-4 items-center">
+          <div className="col-span-5 flex gap-4 items-center">
             <div className="w-16 h-16 bg-zinc-100 p-1">
               <img src="https://images.unsplash.com/photo-1584916201218-f4242ceb4809?auto=format&fit=crop&w=200&q=80" className="w-full h-full object-contain mix-blend-multiply" />
             </div>
@@ -89,7 +104,7 @@ export function OfferToMarketplace() {
               <div className="text-[10px] text-zinc-400">货号: P78433-K11320-NZZ03</div>
             </div>
           </div>
-          <div className="col-span-4 flex gap-4 items-center">
+          <div className="col-span-5 flex gap-4 items-center">
             <div className="w-16 h-16 bg-zinc-100 p-1 flex items-center justify-center text-zinc-400">
               <Search size={24} />
             </div>
@@ -99,17 +114,14 @@ export function OfferToMarketplace() {
             </div>
           </div>
           <div className="col-span-1 text-center font-bold text-zinc-400">-</div>
-          <div className="col-span-2 flex justify-center">
-            <span className="bg-zinc-100 text-zinc-600 px-4 py-1 text-xs rounded-full">待处理</span>
-          </div>
           <div className="col-span-1 text-center">
-            <button onClick={() => { setIsManualMatchOpen(true); setSelectedPublicSpu(null); }} className="text-xs font-bold text-black hover:underline">手动匹配</button>
+            <button onClick={() => openManualMatch(null)} className="text-xs font-bold text-black hover:underline">手动匹配</button>
           </div>
         </div>
 
         {/* Row 2 */}
         <div className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-zinc-200 items-center hover:bg-zinc-50 transition-colors">
-          <div className="col-span-4 flex gap-4 items-center">
+          <div className="col-span-5 flex gap-4 items-center">
             <div className="w-16 h-16 bg-zinc-100 p-1">
               <img src="https://images.unsplash.com/photo-1603252109303-2751441dd157?auto=format&fit=crop&w=200&q=80" className="w-full h-full object-contain mix-blend-multiply" />
             </div>
@@ -118,7 +130,7 @@ export function OfferToMarketplace() {
               <div className="text-[10px] text-zinc-400">货号: 81083411</div>
             </div>
           </div>
-          <div className="col-span-4 flex gap-4 items-center">
+          <div className="col-span-5 flex gap-4 items-center">
             <div className="w-16 h-16 bg-zinc-100 p-1">
               <img src="https://images.unsplash.com/photo-1603252109303-2751441dd157?auto=format&fit=crop&w=200&q=80" className="w-full h-full object-contain mix-blend-multiply" />
             </div>
@@ -128,12 +140,8 @@ export function OfferToMarketplace() {
             </div>
           </div>
           <div className="col-span-1 text-center font-bold text-orange-500">85%</div>
-          <div className="col-span-2 flex justify-center">
-            <span className="bg-orange-50 text-orange-600 px-4 py-1 text-xs rounded-full">待确认</span>
-          </div>
-          <div className="col-span-1 text-center flex flex-col gap-2">
-            <button className="text-xs font-bold text-black hover:underline">确认匹配</button>
-            <button onClick={() => { setIsManualMatchOpen(true); setSelectedPublicSpu(null); }} className="text-xs text-zinc-500 hover:underline">重新匹配</button>
+          <div className="col-span-1 text-center">
+            <button onClick={() => openManualMatch(85)} className="text-xs font-bold text-black hover:underline">手动匹配</button>
           </div>
         </div>
 

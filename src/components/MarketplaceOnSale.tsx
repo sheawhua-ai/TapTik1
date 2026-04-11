@@ -155,7 +155,7 @@ export function MarketplaceOnSale() {
           <div className="col-span-1 text-center">操作</div>
         </div>
 
-        {/* Row 1 */}
+        {/* Row 1: RMB Lowest */}
         <div className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-zinc-200 items-center hover:bg-zinc-50 transition-colors">
           <div className="col-span-1 flex justify-center">
             <input type="checkbox" className="w-4 h-4 accent-black" />
@@ -184,34 +184,34 @@ export function MarketplaceOnSale() {
           </div>
         </div>
 
-        {/* Row 2 */}
+        {/* Row 2: HKD Lowest */}
         <div className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-zinc-200 items-center hover:bg-zinc-50 transition-colors">
           <div className="col-span-1 flex justify-center">
             <input type="checkbox" className="w-4 h-4 accent-black" />
           </div>
           <div className="col-span-4 flex gap-4 items-center">
             <div className="w-12 h-12 bg-zinc-100 p-1">
-              <img src="https://images.unsplash.com/photo-1599643478514-4a820c56a8f9?auto=format&fit=crop&w=100&q=80" className="w-full h-full object-contain mix-blend-multiply" />
+              <img src="https://images.unsplash.com/photo-1584916201218-f4242ceb4809?auto=format&fit=crop&w=100&q=80" className="w-full h-full object-contain mix-blend-multiply" />
             </div>
             <div>
-              <div className="text-xs font-bold mb-1">Alexander McQueen男款骷髅头珠饰项链</div>
-              <div className="text-[10px] text-zinc-400">货号: 561034I94VT5081</div>
+              <div className="text-xs font-bold mb-1">CHANEL香奈儿 24年秋冬系列单排扣V长袖针织衫 女款 黑色</div>
+              <div className="text-[10px] text-zinc-400">货号: P78433-K11320-NZZ03</div>
             </div>
           </div>
           <div className="col-span-2">
-            <div className="text-xs font-bold">Alexander McQueen</div>
-            <div className="text-[10px] text-zinc-500">配饰</div>
+            <div className="text-xs font-bold">CHANEL</div>
+            <div className="text-[10px] text-zinc-500">服饰</div>
           </div>
           <div className="col-span-2 text-right">
-            <div className="text-xs font-bold">¥1,320.00</div>
-            <div className="text-[10px] text-zinc-400 mt-1">HK$1,440.00</div>
+            <div className="text-xs font-bold">约 ¥2,800.00</div>
+            <div className="text-[10px] text-zinc-400 mt-1">HK$3,000.00</div>
           </div>
           <div className="col-span-2 text-right">
-            <div className="text-xs font-bold text-zinc-400">¥1,320.00</div>
-            <div className="text-[10px] text-zinc-400 mt-1">HK$1,440.00</div>
+            <div className="text-xs font-bold text-zinc-400">约 ¥2,750.00</div>
+            <div className="text-[10px] text-zinc-400 mt-1">HK$2,950.00</div>
           </div>
           <div className="col-span-1 flex flex-col items-center gap-2">
-            <button onClick={() => setSelectedSpu('mcqueen2')} className="text-[10px] font-bold text-black hover:underline">查看详情</button>
+            <button onClick={() => setSelectedSpu('chanel1')} className="text-[10px] font-bold text-black hover:underline">查看详情</button>
           </div>
         </div>
 
@@ -273,8 +273,8 @@ export function MarketplaceOnSale() {
                         <th className="p-4 font-bold">规格</th>
                         <th className="p-4 font-bold">商品所在地</th>
                         <th className="p-4 font-bold">条码 (Barcode)</th>
-                        <th className="p-4 font-bold text-right">供货价 (¥)</th>
-                        <th className="p-4 font-bold text-right">集市最低价 (¥)</th>
+                        <th className="p-4 font-bold text-right">供货价</th>
+                        <th className="p-4 font-bold text-right">集市最低价</th>
                         <th className="p-4 font-bold text-right">库存</th>
                       </tr>
                     </thead>
@@ -282,8 +282,8 @@ export function MarketplaceOnSale() {
                       {activeWarehouseTab === 'domestic' ? (
                         <>
                           <tr className="border-b border-zinc-100 hover:bg-zinc-50 transition-colors">
-                            <td className="p-4 font-bold text-zinc-800">均码</td>
-                            <td className="p-4"><span className="bg-emerald-50 text-emerald-600 border border-emerald-100 px-2 py-1 text-[10px] font-bold uppercase tracking-wider">中国大陆</span></td>
+                            <td className="p-4 font-bold text-zinc-800 border-r border-zinc-100" rowSpan={2}>均码</td>
+                            <td className="p-4"><span className="bg-emerald-50 text-emerald-600 border border-emerald-100 px-2 py-1 text-[10px] font-bold uppercase tracking-wider">深圳保税仓</span></td>
                             <td className="p-4 font-mono text-xs text-zinc-500">554602J16KG1000-01</td>
                             <td className="p-4 text-right">
                               <div className="flex items-center justify-end">
@@ -296,16 +296,27 @@ export function MarketplaceOnSale() {
                             <td className="p-4 text-right font-bold text-zinc-400">¥780</td>
                             <td className="p-4 text-right font-bold">12</td>
                           </tr>
+                          <tr className="border-b border-zinc-100 hover:bg-zinc-50 transition-colors">
+                            <td className="p-4"><span className="bg-orange-50 text-orange-600 border border-orange-100 px-2 py-1 text-[10px] font-bold uppercase tracking-wider">杭州国内仓</span></td>
+                            <td className="p-4 font-mono text-xs text-zinc-500">554602J16KG1000-01</td>
+                            <td className="p-4 text-right">
+                              <div className="flex items-center justify-end">
+                                <div className="flex items-center border border-zinc-200 bg-white px-2 py-1 w-24">
+                                  <span className="text-xs text-zinc-400 mr-1">¥</span>
+                                  <input type="number" defaultValue={810} className="w-full text-xs font-bold outline-none text-right" />
+                                </div>
+                              </div>
+                            </td>
+                            <td className="p-4 text-right font-bold text-zinc-400">¥780</td>
+                            <td className="p-4 text-right font-bold">5</td>
+                          </tr>
                         </>
                       ) : (
                         <>
                           <tr className="border-b border-zinc-100 hover:bg-zinc-50 transition-colors">
-                            <td className="p-4 font-bold text-zinc-800">均码</td>
+                            <td className="p-4 font-bold text-zinc-800 border-r border-zinc-100" rowSpan={2}>均码</td>
                             <td className="p-4">
-                              <div className="flex flex-wrap gap-1">
-                                <span className="bg-blue-50 text-blue-600 border border-blue-100 px-2 py-1 text-[10px] font-bold uppercase tracking-wider">港澳</span>
-                                <span className="bg-purple-50 text-purple-600 border border-purple-100 px-2 py-1 text-[10px] font-bold uppercase tracking-wider">保税仓</span>
-                              </div>
+                              <span className="bg-blue-50 text-blue-600 border border-blue-100 px-2 py-1 text-[10px] font-bold uppercase tracking-wider">香港直邮仓</span>
                             </td>
                             <td className="p-4 font-mono text-xs text-zinc-500">554602J16KG1000-01</td>
                             <td className="p-4 text-right">
@@ -314,7 +325,7 @@ export function MarketplaceOnSale() {
                                   <span className="text-xs text-zinc-400 mr-1">HK$</span>
                                   <input type="number" defaultValue={820} className="w-full text-xs font-bold outline-none text-right" />
                                 </div>
-                                <div className="text-[10px] text-zinc-400">约 ¥750 (含税)</div>
+                                <div className="text-[10px] text-zinc-400">约 ¥750</div>
                               </div>
                             </td>
                             <td className="p-4 text-right">
@@ -322,6 +333,26 @@ export function MarketplaceOnSale() {
                               <div className="text-[10px] text-zinc-400 mt-1">约 ¥780</div>
                             </td>
                             <td className="p-4 text-right font-bold">45</td>
+                          </tr>
+                          <tr className="border-b border-zinc-100 hover:bg-zinc-50 transition-colors">
+                            <td className="p-4">
+                              <span className="bg-purple-50 text-purple-600 border border-purple-100 px-2 py-1 text-[10px] font-bold uppercase tracking-wider">伦敦海外仓</span>
+                            </td>
+                            <td className="p-4 font-mono text-xs text-zinc-500">554602J16KG1000-01</td>
+                            <td className="p-4 text-right">
+                              <div className="flex flex-col items-end gap-1">
+                                <div className="flex items-center border border-zinc-200 bg-white px-2 py-1 w-24">
+                                  <span className="text-xs text-zinc-400 mr-1">HK$</span>
+                                  <input type="number" defaultValue={800} className="w-full text-xs font-bold outline-none text-right" />
+                                </div>
+                                <div className="text-[10px] text-zinc-400">约 ¥730</div>
+                              </div>
+                            </td>
+                            <td className="p-4 text-right">
+                              <div className="font-bold text-zinc-400">HK$850</div>
+                              <div className="text-[10px] text-zinc-400 mt-1">约 ¥780</div>
+                            </td>
+                            <td className="p-4 text-right font-bold">10</td>
                           </tr>
                         </>
                       )}

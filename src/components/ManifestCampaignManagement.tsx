@@ -62,6 +62,7 @@ export function ManifestCampaignManagement() {
   const [activeTab, setActiveTab] = useState('all');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedCampaignId, setSelectedCampaignId] = useState<string | null>(null);
+  const [selectedCampaigns, setSelectedCampaigns] = useState<string[]>([]);
   const [expandedProducts, setExpandedProducts] = useState<string[]>(['p1']);
   const [campaignDetails, setCampaignDetails] = useState(CAMPAIGN_DETAILS);
 
@@ -256,7 +257,10 @@ export function ManifestCampaignManagement() {
             <button onClick={() => setActiveTab('pending')} className={`px-6 py-2 text-sm font-bold border transition-colors ${activeTab === 'pending' ? 'bg-black text-white border-black' : 'bg-white text-zinc-600 border-zinc-200 hover:border-black'}`}>待开始</button>
             <button onClick={() => setActiveTab('ended')} className={`px-6 py-2 text-sm font-bold border transition-colors ${activeTab === 'ended' ? 'bg-black text-white border-black' : 'bg-white text-zinc-600 border-zinc-200 hover:border-black'}`}>已结束</button>
             <div className="ml-auto">
-              <button className="bg-black text-white px-6 py-2 text-sm font-bold flex items-center gap-2 hover:bg-zinc-800 transition-colors">
+              <button 
+                disabled={selectedCampaigns.length === 0}
+                className={`px-6 py-2 text-sm font-bold flex items-center gap-2 transition-colors ${selectedCampaigns.length > 0 ? 'bg-black text-white hover:bg-zinc-800' : 'bg-zinc-100 text-zinc-400 cursor-not-allowed'}`}
+              >
                 <FileText size={16} />
                 合并生成采购单
               </button>
@@ -268,7 +272,18 @@ export function ManifestCampaignManagement() {
       <div className="bg-white border border-zinc-200 shadow-sm">
         <div className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-zinc-200 bg-zinc-50 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
           <div className="col-span-6 flex items-center gap-4">
-            <input type="checkbox" className="accent-black" />
+            <input 
+              type="checkbox" 
+              className="accent-black" 
+              onChange={(e) => {
+                if (e.target.checked) {
+                  setSelectedCampaigns(INITIAL_CAMPAIGNS.map(c => c.id));
+                } else {
+                  setSelectedCampaigns([]);
+                }
+              }}
+              checked={selectedCampaigns.length === INITIAL_CAMPAIGNS.length && INITIAL_CAMPAIGNS.length > 0}
+            />
             <span>货单详情 (ID / 名称 / 仓库)</span>
           </div>
           <div className="col-span-4">进展情况</div>
@@ -278,7 +293,18 @@ export function ManifestCampaignManagement() {
         {INITIAL_CAMPAIGNS.map(campaign => (
           <div key={campaign.id} className="grid grid-cols-12 gap-4 px-6 py-6 border-b border-zinc-200 items-center hover:bg-zinc-50 transition-colors">
             <div className="col-span-6 flex items-start gap-4">
-              <input type="checkbox" className="accent-black mt-1" />
+              <input 
+                type="checkbox" 
+                className="accent-black mt-1" 
+                checked={selectedCampaigns.includes(campaign.id)}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setSelectedCampaigns([...selectedCampaigns, campaign.id]);
+                  } else {
+                    setSelectedCampaigns(selectedCampaigns.filter(id => id !== campaign.id));
+                  }
+                }}
+              />
               <div>
                 <div className="flex items-center gap-2 mb-1">
                   <span className="text-[10px] font-bold text-zinc-400 font-mono">{campaign.id}</span>
@@ -326,15 +352,24 @@ export function ManifestCampaignManagement() {
             
             <div className="flex-1 overflow-y-auto p-8">
               <div className="space-y-8">
-                {/* 1. Campaign Name */}
-                <div>
-                  <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-3">货单活动名称</label>
-                  <input 
-                    type="text" 
-                    value={campaignName}
-                    onChange={(e) => setCampaignName(e.target.value)}
-                    className="w-full border border-zinc-200 px-4 py-3 text-lg font-bold focus:border-black focus:ring-0 outline-none bg-white"
-                  />
+                {/* 1. Campaign Name & Cover Image */}
+                <div className="flex gap-8">
+                  <div className="w-48 flex-shrink-0">
+                    <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-3">封面图 (5:4)</label>
+                    <div className="w-full aspect-[5/4] border-2 border-dashed border-zinc-200 bg-zinc-50 flex flex-col items-center justify-center text-zinc-400 hover:border-black hover:text-black transition-colors cursor-pointer">
+                      <Upload size={20} className="mb-2" />
+                      <span className="text-[10px] font-bold">上传封面</span>
+                    </div>
+                  </div>
+                  <div className="flex-1">
+                    <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-3">货单活动名称</label>
+                    <input 
+                      type="text" 
+                      value={campaignName}
+                      onChange={(e) => setCampaignName(e.target.value)}
+                      className="w-full border border-zinc-200 px-4 py-3 text-lg font-bold focus:border-black focus:ring-0 outline-none bg-white"
+                    />
+                  </div>
                 </div>
 
                 {/* 2. Global Rules & Limits */}

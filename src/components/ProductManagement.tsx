@@ -463,8 +463,8 @@ export function ProductManagement() {
                         <th className="p-4 font-bold">规格 (尺码)</th>
                         <th className="p-4 font-bold">所在仓库</th>
                         <th className="p-4 font-bold">条码 (Barcode)</th>
-                        <th className="p-4 font-bold text-right">批发供货价 (¥)</th>
-                        <th className="p-4 font-bold text-right">零售价 (¥)</th>
+                        <th className="p-4 font-bold text-right">批发供货价</th>
+                        <th className="p-4 font-bold text-right">零售价</th>
                         <th className="p-4 font-bold text-right">库存</th>
                       </tr>
                     </thead>
@@ -494,8 +494,18 @@ export function ProductManagement() {
                             <td className="p-4 font-bold text-zinc-800">L码</td>
                             <td className="p-4"><span className="bg-orange-50 text-orange-600 border border-orange-100 px-2 py-1 text-[10px] font-bold uppercase tracking-wider">杭州国内仓</span></td>
                             <td className="p-4"><input type="text" defaultValue="5045621098736" className="w-full border border-zinc-200 px-2 py-1.5 text-xs font-mono focus:border-black focus:ring-0 outline-none" /></td>
-                            <td className="p-4"><input type="number" defaultValue={3200} className="w-24 ml-auto border border-zinc-200 px-2 py-1.5 text-xs font-bold text-right focus:border-black focus:ring-0 outline-none" /></td>
-                            <td className="p-4"><input type="number" defaultValue={3600} className="w-24 ml-auto border border-zinc-200 px-2 py-1.5 text-xs font-bold text-right focus:border-black focus:ring-0 outline-none" /></td>
+                            <td className="p-4">
+                              <div className="flex items-center border border-zinc-200 bg-white px-2 py-1.5 w-28 ml-auto">
+                                <span className="text-xs text-zinc-400 mr-1">¥</span>
+                                <input type="number" defaultValue={3200} className="w-full text-xs font-bold outline-none text-right" />
+                              </div>
+                            </td>
+                            <td className="p-4">
+                              <div className="flex items-center border border-zinc-200 bg-white px-2 py-1.5 w-28 ml-auto">
+                                <span className="text-xs text-zinc-400 mr-1">¥</span>
+                                <input type="number" defaultValue={3600} className="w-full text-xs font-bold outline-none text-right" />
+                              </div>
+                            </td>
                             <td className="p-4"><input type="number" defaultValue={0} className="w-20 ml-auto border border-zinc-200 px-2 py-1.5 text-xs font-bold text-right focus:border-black focus:ring-0 outline-none text-red-500" /></td>
                           </tr>
                         </>
@@ -512,7 +522,7 @@ export function ProductManagement() {
                                   <span className="text-xs text-zinc-400 mr-1">HK$</span>
                                   <input type="number" defaultValue={3000} className="w-full text-xs font-bold outline-none text-right" />
                                 </div>
-                                <div className="text-[10px] text-zinc-400 mt-1">约 ¥2,800 (含税)</div>
+                                <div className="text-[10px] text-zinc-400 mt-1">约 ¥2,800</div>
                               </div>
                             </td>
                             <td className="p-4">
@@ -521,7 +531,7 @@ export function ProductManagement() {
                                   <span className="text-xs text-zinc-400 mr-1">HK$</span>
                                   <input type="number" defaultValue={3450} className="w-full text-xs font-bold outline-none text-right" />
                                 </div>
-                                <div className="text-[10px] text-zinc-400 mt-1">约 ¥3,200 (含税)</div>
+                                <div className="text-[10px] text-zinc-400 mt-1">约 ¥3,200</div>
                               </div>
                             </td>
                             <td className="p-4"><input type="number" defaultValue={25} className="w-20 ml-auto border border-zinc-200 px-2 py-1.5 text-xs font-bold text-right focus:border-black focus:ring-0 outline-none" /></td>
@@ -537,7 +547,7 @@ export function ProductManagement() {
                                   <span className="text-xs text-zinc-400 mr-1">HK$</span>
                                   <input type="number" defaultValue={3000} className="w-full text-xs font-bold outline-none text-right" />
                                 </div>
-                                <div className="text-[10px] text-zinc-400 mt-1">约 ¥2,800 (含税)</div>
+                                <div className="text-[10px] text-zinc-400 mt-1">约 ¥2,800</div>
                               </div>
                             </td>
                             <td className="p-4">
@@ -546,7 +556,7 @@ export function ProductManagement() {
                                   <span className="text-xs text-zinc-400 mr-1">HK$</span>
                                   <input type="number" defaultValue={3450} className="w-full text-xs font-bold outline-none text-right" />
                                 </div>
-                                <div className="text-[10px] text-zinc-400 mt-1">约 ¥3,200 (含税)</div>
+                                <div className="text-[10px] text-zinc-400 mt-1">约 ¥3,200</div>
                               </div>
                             </td>
                             <td className="p-4"><input type="number" defaultValue={45} className="w-20 ml-auto border border-zinc-200 px-2 py-1.5 text-xs font-bold text-right focus:border-black focus:ring-0 outline-none" /></td>
@@ -562,7 +572,7 @@ export function ProductManagement() {
                                   <span className="text-xs text-zinc-400 mr-1">HK$</span>
                                   <input type="number" defaultValue={2700} className="w-full text-xs font-bold outline-none text-right" />
                                 </div>
-                                <div className="text-[10px] text-zinc-400 mt-1">约 ¥2,500 (含税)</div>
+                                <div className="text-[10px] text-zinc-400 mt-1">约 ¥2,500</div>
                               </div>
                             </td>
                             <td className="p-4">
@@ -571,7 +581,7 @@ export function ProductManagement() {
                                   <span className="text-xs text-zinc-400 mr-1">HK$</span>
                                   <input type="number" defaultValue={3100} className="w-full text-xs font-bold outline-none text-right" />
                                 </div>
-                                <div className="text-[10px] text-zinc-400 mt-1">约 ¥2,900 (含税)</div>
+                                <div className="text-[10px] text-zinc-400 mt-1">约 ¥2,900</div>
                               </div>
                             </td>
                             <td className="p-4"><input type="number" defaultValue={80} className="w-20 ml-auto border border-zinc-200 px-2 py-1.5 text-xs font-bold text-right focus:border-black focus:ring-0 outline-none" /></td>

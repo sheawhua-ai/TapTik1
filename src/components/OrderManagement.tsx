@@ -4,36 +4,45 @@ import { useState } from "react";
 const INITIAL_ORDERS = [
   // --- 待发货 (pending_shipment) ---
   {
-    id: 'ORD-2024-0814-B1', type: 'retail', date: '2024-08-14 14:20', brand: 'Louis Vuitton', productName: 'LV Neverfull', spuCount: 1, itemCount: 1,
-    buyerName: '陈七', buyerPhone: '136****3456', buyerType: '个人买家', deliveryMethod: '快递发货', warehouse: '香港直邮仓', shippingAddress: '上海市徐汇区...',
-    totalPrice: 14500, depositPaid: null, status: 'pending_shipment', statusLabel: '待发货',
-    image: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=100&q=80',
-    items: [{ id: 'item-4', name: 'LV Neverfull', sku: 'LV-NF-MM', supplier: '自营库存', count: 1, price: 14500, status: 'pending_shipment', statusLabel: '待发货' }],
+    id: 'ORD-2024-0814-B1', type: 'retail', date: '2024-08-14 14:20', brand: 'Christian Louboutin', productName: 'Oversized Sneaker', spuCount: 1, itemCount: 2,
+    manager: '张三 (M001)', distributor: null,
+    buyerName: '陈七', buyerPhone: '136****3456', buyerType: '个人买家', deliveryMethod: '跨境快递', warehouse: '香港直邮仓', shippingAddress: '上海市徐汇区...',
+    totalPrice: 9000, depositPaid: null, status: 'pending_shipment', statusLabel: '待发货',
+    image: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=100&q=80',
+    items: [
+      { id: 'item-4', name: 'Oversized Sneaker (35码)', sku: 'CL-OS-35', productNumber: '553680WHGP5', supplier: '自营库存', count: 1, price: 4500, status: 'pending_shipment', statusLabel: '待发货' },
+      { id: 'item-5', name: 'Oversized Sneaker (36码)', sku: 'CL-OS-36', productNumber: '553680WHGP5', supplier: '自营库存', count: 1, price: 4500, status: 'pending_shipment', statusLabel: '待发货' }
+    ],
     progress: [
-      { id: 'p1', time: '2024-08-14 14:25', description: '买家付款成功', items: '全部 (1件)', amountChange: '+¥14,500' }
+      { id: 'p1', time: '2024-08-14 14:25', description: '买家付款成功', items: '全部 (2件)', amountChange: '+¥9,000' }
     ]
   },
 
   // --- 已发货 (shipped) ---
   {
-    id: 'ORD-2024-0813-C1', type: 'retail', date: '2024-08-13 09:15', brand: 'Patek Philippe', productName: 'Nautilus 5711', spuCount: 1, itemCount: 1,
-    buyerName: '吴十', buyerPhone: '133****5678', buyerType: 'VIP买家', deliveryMethod: '专人配送', warehouse: '香港直邮仓', shippingAddress: '深圳市南山区...',
-    totalPrice: 850000, depositPaid: null, status: 'shipped', statusLabel: '已发货',
+    id: 'ORD-2024-0813-C1', type: 'retail', date: '2024-08-13 09:15', brand: 'Patek Philippe', productName: 'Nautilus 5711', spuCount: 2, itemCount: 2,
+    manager: null, distributor: '李四代购',
+    buyerName: '吴十', buyerPhone: '133****5678', buyerType: 'VIP买家', deliveryMethod: '门店自提', warehouse: '深圳保税仓', shippingAddress: '深圳市南山区...',
+    totalPrice: 950000, depositPaid: null, status: 'shipped', statusLabel: '已发货',
     image: 'https://images.unsplash.com/photo-1523170335258-f5ed11844a49?auto=format&fit=crop&w=100&q=80',
-    items: [{ id: 'item-7', name: 'Nautilus 5711', sku: 'PP-5711-1A', supplier: '自营库存', count: 1, price: 850000, status: 'shipped', statusLabel: '已发货' }],
+    items: [
+      { id: 'item-7', name: 'Nautilus 5711', sku: 'PP-5711-1A', productNumber: '5711/1A-010', supplier: '自营库存', count: 1, price: 850000, status: 'shipped', statusLabel: '已发货' },
+      { id: 'item-8', name: 'Aquanaut 5167', sku: 'PP-5167-1A', productNumber: '5167A-001', supplier: '自营库存', count: 1, price: 100000, status: 'shipped', statusLabel: '已发货' }
+    ],
     progress: [
-      { id: 'p1', time: '2024-08-13 09:20', description: '买家付款成功', items: '全部 (1件)', amountChange: '+¥850,000' },
-      { id: 'p2', time: '2024-08-13 14:00', description: '商品发货', items: 'Nautilus 5711', amountChange: '-' }
+      { id: 'p1', time: '2024-08-13 09:20', description: '买家付款成功', items: '全部 (2件)', amountChange: '+¥950,000' },
+      { id: 'p2', time: '2024-08-13 14:00', description: '商品发货', items: '全部 (2件)', amountChange: '-' }
     ]
   },
 
   // --- 已完成 (completed) ---
   {
     id: 'ORD-2024-0810-D1', type: 'retail', date: '2024-08-10 16:45', brand: 'Bottega Veneta', productName: 'BV Jodie', spuCount: 1, itemCount: 1,
-    buyerName: '冯三', buyerPhone: '130****7890', buyerType: '个人买家', deliveryMethod: '快递发货', warehouse: '香港直邮仓', shippingAddress: '南京市建邺区...',
+    manager: '赵六 (M003)', distributor: null,
+    buyerName: '冯三', buyerPhone: '130****7890', buyerType: '个人买家', deliveryMethod: '非跨境快递', warehouse: '上海寄售仓', shippingAddress: '南京市建邺区...',
     totalPrice: 19500, depositPaid: null, status: 'completed', statusLabel: '已完成',
     image: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=100&q=80',
-    items: [{ id: 'item-10', name: 'BV Jodie', sku: 'BV-JD-MINI', supplier: '自营库存', count: 1, price: 19500, status: 'completed', statusLabel: '已完成' }],
+    items: [{ id: 'item-10', name: 'BV Jodie', sku: 'BV-JD-MINI', productNumber: '651876VCPP5', supplier: '自营库存', count: 1, price: 19500, status: 'completed', statusLabel: '已完成' }],
     progress: [
       { id: 'p1', time: '2024-08-10 16:50', description: '买家付款成功', items: '全部 (1件)', amountChange: '+¥19,500' },
       { id: 'p2', time: '2024-08-11 09:00', description: '商品发货', items: 'BV Jodie', amountChange: '-' },
@@ -44,10 +53,11 @@ const INITIAL_ORDERS = [
   // --- 已取消 (closed) ---
   {
     id: 'ORD-2024-0805-E1', type: 'retail', date: '2024-08-05 11:10', brand: 'Fendi', productName: 'Fendi Peekaboo', spuCount: 1, itemCount: 1,
-    buyerName: '沈六', buyerPhone: '187****9012', buyerType: '个人买家', deliveryMethod: '快递发货', warehouse: '香港直邮仓', shippingAddress: '苏州市工业园区...',
+    manager: null, distributor: '王小二名品',
+    buyerName: '沈六', buyerPhone: '187****9012', buyerType: '个人买家', deliveryMethod: '跨境快递', warehouse: '香港直邮仓', shippingAddress: '苏州市工业园区...',
     totalPrice: 35000, depositPaid: null, status: 'closed', statusLabel: '已取消',
     image: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=100&q=80',
-    items: [{ id: 'item-13', name: 'Fendi Peekaboo', sku: 'F-PK-MED', supplier: '自营库存', count: 1, price: 35000, status: 'closed', statusLabel: '已取消' }],
+    items: [{ id: 'item-13', name: 'Fendi Peekaboo', sku: 'F-PK-MED', productNumber: '8BN290', supplier: '自营库存', count: 1, price: 35000, status: 'closed', statusLabel: '已取消' }],
     progress: [
       { id: 'p1', time: '2024-08-05 11:40', description: '订单超时未支付自动取消', items: '-', amountChange: '-' }
     ]
@@ -60,10 +70,14 @@ export function OrderManagement() {
   const [activeTab, setActiveTab] = useState('all');
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   
-  const [subStatusFilter, setSubStatusFilter] = useState('');
-  const [warehouseFilter, setWarehouseFilter] = useState('');
-  const [partialStatusFilter, setPartialStatusFilter] = useState('');
+  const [filterManager, setFilterManager] = useState<string | null>(null);
+  const [filterDistributor, setFilterDistributor] = useState<string | null>(null);
+  const [filterDelivery, setFilterDelivery] = useState<string | null>(null);
+  const [filterWarehouse, setFilterWarehouse] = useState<string | null>(null);
+  
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [isShipModalOpen, setIsShipModalOpen] = useState(false);
+  const [trackingNumber, setTrackingNumber] = useState('');
   const [downloads, setDownloads] = useState<{id: string, name: string, date: string, status: string}[]>([]);
   const [newProgressDesc, setNewProgressDesc] = useState('');
   const [newProgressAmount, setNewProgressAmount] = useState('');
@@ -155,42 +169,127 @@ export function OrderManagement() {
     setSelectedItems([]);
   };
 
-  const handleShipItems = () => {
+  const confirmShipment = () => {
     if (!selectedOrder) return;
     const now = new Date().toISOString().replace('T', ' ').slice(0, 16);
-    setOrders(orders.map(order => {
-      if (order.id === selectedOrder) {
+    
+    setOrders(prevOrders => {
+      const orderIndex = prevOrders.findIndex(o => o.id === selectedOrder);
+      if (orderIndex === -1) return prevOrders;
+      
+      const order = prevOrders[orderIndex];
+      const isPartial = selectedItems.length < order.items.length;
+      
+      if (isPartial) {
+        const shippedItems = order.items.filter(i => selectedItems.includes(i.id)).map(i => ({ ...i, status: 'shipped', statusLabel: '已发货' }));
+        const remainingItems = order.items.filter(i => !selectedItems.includes(i.id));
+        
+        const shippedTotal = shippedItems.reduce((sum, i) => sum + i.price * i.count, 0);
+        const remainingTotal = remainingItems.reduce((sum, i) => sum + i.price * i.count, 0);
+        
+        const subOrderId = `${order.id}-S${Math.floor(Math.random() * 1000)}`;
+        
+        const newSubOrder = {
+          ...order,
+          id: subOrderId,
+          items: shippedItems,
+          totalPrice: shippedTotal,
+          status: 'shipped',
+          statusLabel: '已发货',
+          progress: [
+            { id: `p-${Date.now()}-1`, time: now, description: '子订单生成并已发货', items: `共 ${shippedItems.length} 件`, amountChange: '-' }
+          ]
+        };
+        
+        const updatedOriginalOrder = {
+          ...order,
+          items: remainingItems,
+          totalPrice: remainingTotal,
+          progress: [
+            ...(order.progress || []),
+            { id: `p-${Date.now()}-2`, time: now, description: `部分发货，生成子订单 ${subOrderId}`, items: `发货 ${shippedItems.length} 件`, amountChange: '-' }
+          ]
+        };
+        
+        const newOrders = [...prevOrders];
+        newOrders[orderIndex] = updatedOriginalOrder;
+        newOrders.splice(orderIndex + 1, 0, newSubOrder);
+        return newOrders;
+      } else {
         const updatedItems = order.items.map(item => 
           selectedItems.includes(item.id) ? { ...item, status: 'shipped', statusLabel: '已发货' } : item
         );
-        
         const newProgress = {
-          id: `p-${Date.now()}`,
-          time: now,
-          description: '商品发货',
-          items: `已选 (${selectedItems.length}件)`,
-          amountChange: '-'
+          id: `p-${Date.now()}`, time: now, description: '商品发货', items: `已选 (${selectedItems.length}件)`, amountChange: '-'
         };
-
-        return { 
+        const newOrders = [...prevOrders];
+        newOrders[orderIndex] = { 
           ...order, 
+          status: 'shipped',
+          statusLabel: '已发货',
           items: updatedItems,
           progress: [...(order.progress || []), newProgress]
         };
+        return newOrders;
       }
-      return order;
-    }));
+    });
+    
+    setIsShipModalOpen(false);
+    setTrackingNumber('');
     setSelectedItems([]);
+    setSelectedOrder(null);
   };
 
   const handleProcessRefund = () => {
     if (!selectedOrder) return;
     const now = new Date().toISOString().replace('T', ' ').slice(0, 16);
-    setOrders(orders.map(order => {
-      if (order.id === selectedOrder) {
+    
+    setOrders(prevOrders => {
+      const orderIndex = prevOrders.findIndex(o => o.id === selectedOrder);
+      if (orderIndex === -1) return prevOrders;
+      
+      const order = prevOrders[orderIndex];
+      const isPartial = selectedItems.length < order.items.length;
+      
+      if (isPartial) {
+        const refundedItems = order.items.filter(i => selectedItems.includes(i.id)).map(i => ({ ...i, status: 'refunded', statusLabel: '已退款' }));
+        const remainingItems = order.items.filter(i => !selectedItems.includes(i.id));
+        
+        const refundedTotal = refundedItems.reduce((sum, i) => sum + i.price * i.count, 0);
+        const remainingTotal = remainingItems.reduce((sum, i) => sum + i.price * i.count, 0);
+        
+        const subOrderId = `${order.id}-R${Math.floor(Math.random() * 1000)}`;
+        
+        const newSubOrder = {
+          ...order,
+          id: subOrderId,
+          items: refundedItems,
+          totalPrice: refundedTotal,
+          status: 'closed',
+          statusLabel: '已退款',
+          progress: [
+            { id: `p-${Date.now()}-1`, time: now, description: '子订单生成并已退款', items: `共 ${refundedItems.length} 件`, amountChange: `-¥${refundedTotal.toLocaleString()}` }
+          ]
+        };
+        
+        const updatedOriginalOrder = {
+          ...order,
+          items: remainingItems,
+          totalPrice: remainingTotal,
+          progress: [
+            ...(order.progress || []),
+            { id: `p-${Date.now()}-2`, time: now, description: `部分退款，生成子订单 ${subOrderId}`, items: `退款 ${refundedItems.length} 件`, amountChange: '-' }
+          ]
+        };
+        
+        const newOrders = [...prevOrders];
+        newOrders[orderIndex] = updatedOriginalOrder;
+        newOrders.splice(orderIndex + 1, 0, newSubOrder);
+        return newOrders;
+      } else {
         let refundAmount = 0;
         const updatedItems = order.items.map(item => {
-          if (selectedItems.includes(item.id) && item.status === 'pending_refund') {
+          if (selectedItems.includes(item.id)) {
             refundAmount += item.price * item.count;
             return { ...item, status: 'refunded', statusLabel: '已退款' };
           }
@@ -199,23 +298,24 @@ export function OrderManagement() {
         const newTotalPrice = order.totalPrice - refundAmount;
         
         const newProgress = {
-          id: `p-${Date.now()}`,
-          time: now,
-          description: '确认退款',
-          items: `已选 (${selectedItems.length}件)`,
-          amountChange: `-¥${refundAmount.toLocaleString()}`
+          id: `p-${Date.now()}`, time: now, description: '确认退款', items: `已选 (${selectedItems.length}件)`, amountChange: `-¥${refundAmount.toLocaleString()}`
         };
-
-        return { 
+        
+        const newOrders = [...prevOrders];
+        newOrders[orderIndex] = { 
           ...order, 
           items: updatedItems, 
           totalPrice: newTotalPrice,
+          status: 'closed',
+          statusLabel: '已退款',
           progress: [...(order.progress || []), newProgress]
         };
+        return newOrders;
       }
-      return order;
-    }));
+    });
+    
     setSelectedItems([]);
+    setSelectedOrder(null);
   };
 
   const filteredOrders = orders.filter(order => {
@@ -232,15 +332,10 @@ export function OrderManagement() {
 
     if (!matchesTab) return false;
     
-    if (warehouseFilter && order.warehouse !== warehouseFilter) return false;
-
-    if (partialStatusFilter) {
-      const hasActiveStatus = order.items.some((i: any) => i.status === activeTab);
-      const hasOtherStatus = order.items.some((i: any) => i.status !== activeTab);
-      
-      if (partialStatusFilter === 'full' && hasOtherStatus) return false;
-      if (partialStatusFilter === 'partial' && !hasOtherStatus) return false;
-    }
+    if (filterManager && order.manager !== filterManager) return false;
+    if (filterDistributor && order.distributor !== filterDistributor) return false;
+    if (filterDelivery && order.deliveryMethod !== filterDelivery) return false;
+    if (filterWarehouse && order.warehouse !== filterWarehouse) return false;
     
     return true;
   });
@@ -276,42 +371,42 @@ export function OrderManagement() {
         </div>
 
         {activeTab !== 'downloads' && (
-          <div className="flex gap-4 mb-6 flex-wrap">
-            <div className="flex-1 min-w-[200px] relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" size={16} />
-              <input 
-                type="text" 
-                placeholder="搜索订单号、买家、商品名称..." 
-                className="w-full border border-zinc-200 pl-10 pr-4 py-2 text-sm focus:border-black focus:ring-0 outline-none" 
-              />
+          <div className="flex flex-col gap-4 mb-6">
+            <div className="flex gap-4 flex-wrap">
+              <div className="flex-1 min-w-[200px] relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" size={16} />
+                <input 
+                  type="text" 
+                  placeholder="搜索订单号、买家、商品名称..." 
+                  className="w-full border border-zinc-200 pl-10 pr-4 py-2 text-sm focus:border-black focus:ring-0 outline-none" 
+                />
+              </div>
             </div>
-            <select className="border border-zinc-200 px-4 py-2 text-sm focus:border-black focus:ring-0 outline-none bg-white">
-              <option value="">所有配送方式</option>
-              <option value="express">快递发货</option>
-              <option value="pickup">门店自提</option>
-            </select>
-            <select 
-              value={warehouseFilter}
-              onChange={(e) => setWarehouseFilter(e.target.value)}
-              className="border border-zinc-200 px-4 py-2 text-sm focus:border-black focus:ring-0 outline-none bg-white"
-            >
-              <option value="">所有仓库</option>
-              <option value="香港直邮仓">香港直邮仓</option>
-              <option value="深圳保税仓">深圳保税仓</option>
-              <option value="北京寄售仓">北京寄售仓</option>
-              <option value="上海寄售仓">上海寄售仓</option>
-            </select>
-            
-            {['pending_shipment', 'shipped', 'pending_refund'].includes(activeTab) && (
-              <select 
-                value={partialStatusFilter}
-                onChange={(e) => setPartialStatusFilter(e.target.value)}
-                className="border border-zinc-200 px-4 py-2 text-sm focus:border-black focus:ring-0 outline-none bg-white"
-              >
-                <option value="">全部状态 (含部分)</option>
-                <option value="full">全部{activeTab === 'pending_shipment' ? '待发货' : activeTab === 'shipped' ? '已发货' : '待退款'}</option>
-                <option value="partial">部分{activeTab === 'pending_shipment' ? '待发货' : activeTab === 'shipped' ? '已发货' : '待退款'}</option>
-              </select>
+            {(filterManager || filterDistributor || filterDelivery || filterWarehouse) && (
+              <div className="flex items-center gap-2 text-xs">
+                <span className="text-zinc-500 font-bold">当前筛选:</span>
+                {filterManager && (
+                  <span className="bg-zinc-200 text-zinc-800 px-2 py-1 flex items-center gap-1">
+                    主理人: {filterManager} <X size={12} className="cursor-pointer hover:text-black" onClick={() => setFilterManager(null)} />
+                  </span>
+                )}
+                {filterDistributor && (
+                  <span className="bg-zinc-200 text-zinc-800 px-2 py-1 flex items-center gap-1">
+                    分销商: {filterDistributor} <X size={12} className="cursor-pointer hover:text-black" onClick={() => setFilterDistributor(null)} />
+                  </span>
+                )}
+                {filterDelivery && (
+                  <span className="bg-zinc-200 text-zinc-800 px-2 py-1 flex items-center gap-1">
+                    配送: {filterDelivery} <X size={12} className="cursor-pointer hover:text-black" onClick={() => setFilterDelivery(null)} />
+                  </span>
+                )}
+                {filterWarehouse && (
+                  <span className="bg-zinc-200 text-zinc-800 px-2 py-1 flex items-center gap-1">
+                    仓库: {filterWarehouse} <X size={12} className="cursor-pointer hover:text-black" onClick={() => setFilterWarehouse(null)} />
+                  </span>
+                )}
+                <button onClick={() => { setFilterManager(null); setFilterDistributor(null); setFilterDelivery(null); setFilterWarehouse(null); }} className="text-zinc-500 hover:text-black hover:underline ml-2">清除全部</button>
+              </div>
             )}
           </div>
         )}
@@ -378,6 +473,21 @@ export function OrderManagement() {
               <div className="bg-zinc-50 px-6 py-3 border-b border-zinc-200 flex items-center gap-4">
                 <span className="font-bold text-xs">{order.id}</span>
                 <span className="text-[10px] text-zinc-500">{order.date}</span>
+                {order.manager ? (
+                  <span 
+                    className="text-[10px] text-blue-600 ml-4 cursor-pointer hover:underline"
+                    onClick={() => setFilterManager(order.manager)}
+                  >
+                    主理人: {order.manager}
+                  </span>
+                ) : order.distributor ? (
+                  <span 
+                    className="text-[10px] text-blue-600 ml-4 cursor-pointer hover:underline"
+                    onClick={() => setFilterDistributor(order.distributor)}
+                  >
+                    分销商: {order.distributor}
+                  </span>
+                ) : null}
               </div>
               {/* Order Body */}
               <div className="grid grid-cols-12 gap-4 px-6 py-6 items-center">
@@ -400,8 +510,16 @@ export function OrderManagement() {
                   <div className="text-[10px] text-zinc-500">{order.buyerType}</div>
                 </div>
                 <div className="col-span-2 pr-4">
-                  <div className="text-xs font-bold mb-1">{order.deliveryMethod}</div>
-                  <div className="text-[10px] text-zinc-500">
+                  <div 
+                    className="text-xs font-bold mb-1 text-blue-600 cursor-pointer hover:underline"
+                    onClick={() => setFilterDelivery(order.deliveryMethod)}
+                  >
+                    {order.deliveryMethod}
+                  </div>
+                  <div 
+                    className="text-[10px] text-blue-600 cursor-pointer hover:underline"
+                    onClick={() => setFilterWarehouse(order.warehouse)}
+                  >
                     {order.warehouse}
                   </div>
                 </div>
@@ -410,7 +528,7 @@ export function OrderManagement() {
                   {order.depositPaid ? (
                     <div className="text-[9px] text-orange-600 font-bold">已付定金: ¥{order.depositPaid.toLocaleString()}</div>
                   ) : (
-                    <div className="text-[9px] text-zinc-400">{order.status === 'pending_payment' ? '未付款' : '全额已付'}</div>
+                    <div className="text-[9px] text-zinc-400">{order.status === 'pending_payment' ? '未付款' : ''}</div>
                   )}
                 </div>
                 <div className="col-span-2 pl-4">
@@ -618,7 +736,8 @@ export function OrderManagement() {
                         </td>
                         <td className="p-4">
                           <div className="font-bold text-xs">{item.name}</div>
-                          <div className="text-[10px] text-zinc-400">SKU: {item.sku}</div>
+                          <div className="text-[10px] text-zinc-400">货号: {item.productNumber}</div>
+                          <div className="text-[10px] text-zinc-400">SKU条码: {item.sku}</div>
                         </td>
                         <td className="p-4 text-right font-mono">{item.count}</td>
                         <td className="p-4 text-right font-mono">¥ {item.price.toLocaleString()}</td>
@@ -738,12 +857,12 @@ export function OrderManagement() {
 
                     {showShipBtn && (
                       <button 
-                        onClick={handleShipItems} 
+                        onClick={() => setIsShipModalOpen(true)} 
                         disabled={!canShip} 
                         className="bg-black text-white px-6 py-3 text-xs font-bold hover:bg-zinc-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                       >
                         <Package size={14} />
-                        确认发货
+                        发货
                       </button>
                     )}
 
@@ -771,6 +890,60 @@ export function OrderManagement() {
             </div>
           </div>
         </div>
+        </div>
+      )}
+      {/* Ship Modal */}
+      {isShipModalOpen && selectedOrderData && (
+        <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setIsShipModalOpen(false)}></div>
+          <div className="relative w-[400px] bg-white shadow-2xl flex flex-col rounded-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-100 bg-zinc-50">
+              <h2 className="text-lg font-black uppercase tracking-tight">发货确认</h2>
+              <button onClick={() => setIsShipModalOpen(false)} className="text-zinc-400 hover:text-black transition-colors"><X size={20} /></button>
+            </div>
+            <div className="p-6">
+              <div className="mb-6">
+                {selectedOrderData.deliveryMethod === '跨境快递' && (
+                  <div>
+                    <label className="block text-xs font-bold text-zinc-500 mb-2">物流单号 (系统自动回传)</label>
+                    <div className="bg-zinc-50 border border-zinc-200 px-4 py-3 text-sm font-mono font-bold text-zinc-800">
+                      顺丰速运: SF8848123456789
+                    </div>
+                  </div>
+                )}
+                {selectedOrderData.deliveryMethod === '非跨境快递' && (
+                  <div>
+                    <label className="block text-xs font-bold text-zinc-500 mb-2">请输入物流单号</label>
+                    <input 
+                      type="text" 
+                      value={trackingNumber}
+                      onChange={(e) => setTrackingNumber(e.target.value)}
+                      placeholder="请输入快递单号..."
+                      className="w-full border border-zinc-200 px-4 py-2 text-sm focus:border-black focus:ring-0 outline-none bg-white"
+                    />
+                  </div>
+                )}
+                {selectedOrderData.deliveryMethod === '门店自提' && (
+                  <div>
+                    <label className="block text-xs font-bold text-zinc-500 mb-2">提货码 (系统自动生成)</label>
+                    <div className="bg-zinc-50 border border-zinc-200 px-4 py-3 text-lg font-mono font-black text-center tracking-[0.2em] text-zinc-800">
+                      PICKUP-{Math.floor(1000 + Math.random() * 9000)}
+                    </div>
+                  </div>
+                )}
+              </div>
+              <div className="flex justify-end gap-3">
+                <button onClick={() => setIsShipModalOpen(false)} className="px-4 py-2 text-sm font-bold text-zinc-500 hover:text-black transition-colors">取消</button>
+                <button 
+                  onClick={confirmShipment} 
+                  disabled={selectedOrderData.deliveryMethod === '非跨境快递' && !trackingNumber}
+                  className="bg-black text-white px-6 py-2 text-sm font-bold hover:bg-zinc-800 transition-colors disabled:opacity-50"
+                >
+                  确认发货
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>

@@ -31,7 +31,7 @@ export default function App() {
         <main className="ml-64 mt-16 p-8 flex-1 bg-zinc-50/50">
           {/* 自营业务管理 */}
           {activeTab === 'self_product' && <ProductManagement />}
-          {activeTab === 'offer_to_marketplace' && <OfferToMarketplace />}
+          {activeTab === 'offer_to_marketplace' && <OfferToMarketplace setActiveTab={setActiveTab} />}
           {activeTab === 'marketplace_on_sale' && <MarketplaceOnSale />}
           {activeTab === 'self_order' && <OrderManagement />}
           
