@@ -107,6 +107,7 @@ export function ManifestOrderManagement() {
   const [selectedOrder, setSelectedOrder] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('all');
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [selectedOrders, setSelectedOrders] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedWarehouse, setSelectedWarehouse] = useState('');
   
@@ -378,6 +379,13 @@ export function ManifestOrderManagement() {
     setNewProgressAmount('');
   };
 
+  const handleDownloadConfirmation = () => {
+    if (selectedOrders.length === 0) return;
+    // Simulate downloading an excel file
+    alert(`已成功导出 ${selectedOrders.length} 个订单的客户确认单 (Excel)`);
+    setSelectedOrders([]);
+  };
+
   const filteredOrders = orders.filter(order => {
     const matchesTab = activeTab === 'all' || order.status === activeTab;
     const matchesSearch = order.id.toLowerCase().includes(searchQuery.toLowerCase()) || 
@@ -449,9 +457,41 @@ export function ManifestOrderManagement() {
           </div>
         )}
 
+        {activeTab === 'pending_final_payment' && (
+          <div className="bg-white border border-zinc-200 p-4 mb-6 flex justify-between items-center shadow-sm">
+            <div className="text-sm font-bold">批量处理</div>
+            <div className="flex gap-3">
+              <button 
+                onClick={handleDownloadConfirmation}
+                disabled={selectedOrders.length === 0}
+                className="bg-black text-white px-6 py-2 text-xs font-bold hover:bg-zinc-800 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <FileText size={14} />
+                下载客户确认单
+              </button>
+            </div>
+          </div>
+        )}
+
         <div className="bg-white border border-zinc-200 shadow-sm">
-          <div className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-zinc-200 bg-zinc-50 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
-            <div className="col-span-3">商品详情</div>
+          <div className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-zinc-200 bg-zinc-50 text-[10px] font-bold text-zinc-500 uppercase tracking-widest items-center">
+            <div className="col-span-3 flex items-center gap-3">
+              {activeTab === 'pending_final_payment' && (
+                <input 
+                  type="checkbox" 
+                  className="accent-black w-3.5 h-3.5"
+                  checked={filteredOrders.length > 0 && selectedOrders.length === filteredOrders.length}
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      setSelectedOrders(filteredOrders.map(o => o.id));
+                    } else {
+                      setSelectedOrders([]);
+                    }
+                  }}
+                />
+              )}
+              商品详情
+            </div>
             <div className="col-span-2">买家</div>
             <div className="col-span-2">配送方式 / 仓库</div>
             <div className="col-span-2 text-right">总价</div>
@@ -462,6 +502,20 @@ export function ManifestOrderManagement() {
           {filteredOrders.map(order => (
             <div key={order.id} className="border-b border-zinc-200 hover:border-black transition-colors bg-white mb-4 shadow-sm">
               <div className="bg-zinc-50 px-6 py-3 border-b border-zinc-200 flex items-center gap-4">
+                {activeTab === 'pending_final_payment' && (
+                  <input 
+                    type="checkbox" 
+                    className="accent-black w-3.5 h-3.5"
+                    checked={selectedOrders.includes(order.id)}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setSelectedOrders([...selectedOrders, order.id]);
+                      } else {
+                        setSelectedOrders(selectedOrders.filter(id => id !== order.id));
+                      }
+                    }}
+                  />
+                )}
                 <span className="font-bold text-xs">{order.id}</span>
                 <span className="text-[10px] text-zinc-500">{order.date}</span>
               </div>
