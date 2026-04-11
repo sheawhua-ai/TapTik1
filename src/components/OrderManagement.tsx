@@ -2,6 +2,22 @@ import { Search, ChevronRight, X, Package, Truck, CheckCircle, AlertCircle, Down
 import { useState } from "react";
 
 const INITIAL_ORDERS = [
+  // --- 待确认 (pending_confirmation) ---
+  {
+    id: 'ORD-2024-0815-A1', type: 'retail', date: '2024-08-15 10:20', brand: 'Hermès', productName: 'Hermès Birkin 25', spuCount: 1, itemCount: 1,
+    manager: '张三 (M001)', distributor: null,
+    buyerName: '李四', buyerPhone: '139****5678', buyerType: '个人买家', deliveryMethod: '跨境快递', warehouse: '香港直邮仓', shippingAddress: '香港特别行政区中环...',
+    totalPrice: 156000, depositPaid: null, status: 'pending_confirmation', statusLabel: '待确认',
+    image: 'https://images.unsplash.com/photo-1584916201218-f4242ceb4809?auto=format&fit=crop&w=100&q=80',
+    items: [
+      { id: 'item-1', name: 'Hermès Birkin 25', sku: 'H-B25-GOLD', productNumber: 'H-B25', supplier: '自营库存', count: 1, price: 156000, status: 'pending_confirmation', statusLabel: '待确认' }
+    ],
+    progress: [
+      { id: 'p1', time: '2024-08-15 10:25', description: '买家付款成功', items: '全部 (1件)', amountChange: '+¥156,000' },
+      { id: 'p2', time: '2024-08-15 10:25', description: '下游订单生成，等待确认库存', items: '全部 (1件)', amountChange: '-' }
+    ]
+  },
+
   // --- 待发货 (pending_shipment) ---
   {
     id: 'ORD-2024-0814-B1', type: 'retail', date: '2024-08-14 14:20', brand: 'Christian Louboutin', productName: 'Oversized Sneaker', spuCount: 1, itemCount: 2,
@@ -125,10 +141,12 @@ export function OrderManagement() {
 
     if (hasCurrentStatus) {
       if (hasOtherStatus) {
+        if (currentTab === 'pending_confirmation') return '部分待确认';
         if (currentTab === 'pending_shipment') return '部分待发货';
         if (currentTab === 'shipped') return '部分已发货';
         if (currentTab === 'pending_refund') return '部分待退款';
       } else {
+        if (currentTab === 'pending_confirmation') return '待确认';
         if (currentTab === 'pending_shipment') return '待发货';
         if (currentTab === 'shipped') return '已发货';
         if (currentTab === 'pending_refund') return '待退款';
@@ -166,6 +184,39 @@ export function OrderManagement() {
       }
       return order;
     }));
+    setSelectedItems([]);
+  };
+
+  const confirmStock = () => {
+    if (!selectedOrder) return;
+    const now = new Date().toISOString().replace('T', ' ').slice(0, 16);
+    
+    setOrders(prevOrders => {
+      const orderIndex = prevOrders.findIndex(o => o.id === selectedOrder);
+      if (orderIndex === -1) return prevOrders;
+      
+      const order = prevOrders[orderIndex];
+      const updatedItems = order.items.map(item => 
+        selectedItems.includes(item.id) ? { ...item, status: 'pending_shipment', statusLabel: '待发货' } : item
+      );
+      
+      const allConfirmed = updatedItems.every(i => i.status !== 'pending_confirmation');
+      
+      const newProgress = {
+        id: `p-${Date.now()}`, time: now, description: '确认有货', items: `已选 (${selectedItems.length}件)`, amountChange: '-'
+      };
+      
+      const newOrders = [...prevOrders];
+      newOrders[orderIndex] = { 
+        ...order, 
+        status: allConfirmed ? 'pending_shipment' : 'pending_confirmation',
+        statusLabel: allConfirmed ? '待发货' : '部分待确认',
+        items: updatedItems,
+        progress: [...(order.progress || []), newProgress]
+      };
+      return newOrders;
+    });
+    
     setSelectedItems([]);
   };
 
@@ -324,7 +375,7 @@ export function OrderManagement() {
     let matchesTab = false;
     if (activeTab === 'all') {
       matchesTab = true;
-    } else if (['pending_shipment', 'shipped', 'pending_refund'].includes(activeTab)) {
+    } else if (['pending_confirmation', 'pending_shipment', 'shipped', 'pending_refund'].includes(activeTab)) {
       matchesTab = order.items.some((item: any) => item.status === activeTab);
     } else {
       matchesTab = order.status === activeTab;
@@ -362,6 +413,7 @@ export function OrderManagement() {
         <div className="flex gap-8 border-b border-zinc-200 mb-6">
           <button onClick={() => setActiveTab('all')} className={`pb-3 text-xs font-bold transition-colors ${activeTab === 'all' ? 'text-black border-b-2 border-black' : 'text-zinc-500 hover:text-black'}`}>全部订单</button>
           <button onClick={() => setActiveTab('pending_payment')} className={`pb-3 text-xs font-bold transition-colors ${activeTab === 'pending_payment' ? 'text-black border-b-2 border-black' : 'text-zinc-500 hover:text-black'}`}>待付款</button>
+          <button onClick={() => setActiveTab('pending_confirmation')} className={`pb-3 text-xs font-bold transition-colors ${activeTab === 'pending_confirmation' ? 'text-black border-b-2 border-black' : 'text-zinc-500 hover:text-black'}`}>待确认</button>
           <button onClick={() => setActiveTab('pending_shipment')} className={`pb-3 text-xs font-bold transition-colors ${activeTab === 'pending_shipment' ? 'text-black border-b-2 border-black' : 'text-zinc-500 hover:text-black'}`}>待发货</button>
           <button onClick={() => setActiveTab('shipped')} className={`pb-3 text-xs font-bold transition-colors ${activeTab === 'shipped' ? 'text-black border-b-2 border-black' : 'text-zinc-500 hover:text-black'}`}>已发货</button>
           <button onClick={() => setActiveTab('pending_refund')} className={`pb-3 text-xs font-bold transition-colors ${activeTab === 'pending_refund' ? 'text-black border-b-2 border-black' : 'text-zinc-500 hover:text-black'}`}>待退款</button>
@@ -534,6 +586,7 @@ export function OrderManagement() {
                 <div className="col-span-2 pl-4">
                   <div className={`text-[9px] font-bold px-2 py-1 uppercase tracking-wider inline-block mb-1 ${
                     getOrderOverallStatusLabel(order, activeTab).includes('部分') ? 'bg-yellow-100 text-yellow-800' :
+                    order.items.every((i: any) => i.status === 'pending_confirmation') ? 'bg-orange-100 text-orange-800' :
                     order.items.every((i: any) => i.status === 'pending_shipment') ? 'bg-black text-white' :
                     order.items.every((i: any) => i.status === 'pending_refund') ? 'bg-red-100 text-red-800' :
                     order.status === 'pending_payment' ? 'bg-red-100 text-red-800' :
@@ -630,6 +683,7 @@ export function OrderManagement() {
                 <div className="flex items-center gap-2 mb-2">
                   <span className={`text-[10px] font-bold px-2 py-1 uppercase tracking-wider ${
                     getOrderOverallStatusLabel(selectedOrderData, activeTab).includes('部分') ? 'bg-yellow-100 text-yellow-800' :
+                    selectedOrderData.items.every((i: any) => i.status === 'pending_confirmation') ? 'bg-orange-100 text-orange-800' :
                     selectedOrderData.items.every((i: any) => i.status === 'pending_shipment') ? 'bg-black text-white' :
                     selectedOrderData.items.every((i: any) => i.status === 'pending_refund') ? 'bg-red-100 text-red-800' :
                     selectedOrderData.status === 'pending_payment' ? 'bg-red-100 text-red-800' :
@@ -817,6 +871,9 @@ export function OrderManagement() {
                 const showShipBtn = activeTab === 'pending_shipment' || (activeTab === 'all' && selectedOrderData.items.some((i: any) => i.status === 'pending_shipment'));
                 const canShip = selectedItems.length > 0 && selectedItemsData.every((i: any) => i.status === 'pending_shipment');
 
+                const showConfirmStockBtn = activeTab === 'pending_confirmation' || (activeTab === 'all' && selectedOrderData.items.some((i: any) => i.status === 'pending_confirmation'));
+                const canConfirmStock = selectedItems.length > 0 && selectedItemsData.every((i: any) => i.status === 'pending_confirmation');
+
                 const showProcessRefundBtn = activeTab === 'pending_refund' || (activeTab === 'all' && selectedOrderData.items.some((i: any) => i.status === 'pending_refund'));
                 const canProcessRefund = selectedItems.length > 0 && selectedItemsData.every((i: any) => i.status === 'pending_refund');
 
@@ -835,6 +892,17 @@ export function OrderManagement() {
                       <button className="bg-black text-white px-6 py-3 text-xs font-bold hover:bg-zinc-800 transition-colors">提醒付款</button>
                     )}
                     
+                    {showConfirmStockBtn && (
+                      <button 
+                        onClick={confirmStock} 
+                        disabled={!canConfirmStock} 
+                        className="bg-black text-white px-6 py-3 text-xs font-bold hover:bg-zinc-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                      >
+                        <CheckCircle size={14} />
+                        确认有货
+                      </button>
+                    )}
+
                     {showRefundBtn && (
                       <button 
                         onClick={handleRefundItems} 

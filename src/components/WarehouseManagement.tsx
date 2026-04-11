@@ -2,8 +2,8 @@ import { Search, Edit, Trash2, X } from "lucide-react";
 import { useState } from "react";
 
 const INITIAL_WAREHOUSES = [
-  { id: '1', name: 'UNIBUY香港', code: '1567-001', currency: 'HKD', dropshipping: true, skuCount: 5128 },
-  { id: '2', name: 'UNIBUY大陆', code: '1567-002', currency: 'CNY', dropshipping: true, skuCount: 0 },
+  { id: '1', name: 'UNIBUY香港', code: '1567-001', location: 'hk', currency: 'HKD', dropshipping: true, autoConfirmStock: false, skuCount: 5128 },
+  { id: '2', name: 'UNIBUY大陆', code: '1567-002', location: 'cn', currency: 'CNY', dropshipping: true, autoConfirmStock: true, skuCount: 0 },
 ];
 
 export function WarehouseManagement() {
@@ -16,9 +16,11 @@ export function WarehouseManagement() {
   const [addName, setAddName] = useState('');
   const [addLocation, setAddLocation] = useState('');
   const [addDropshipping, setAddDropshipping] = useState(true);
+  const [addAutoConfirmStock, setAddAutoConfirmStock] = useState(false);
 
   // Edit Modal State
   const [editDropshipping, setEditDropshipping] = useState(false);
+  const [editAutoConfirmStock, setEditAutoConfirmStock] = useState(false);
   const [editName, setEditName] = useState('');
 
   const handleAddWarehouse = () => {
@@ -30,8 +32,10 @@ export function WarehouseManagement() {
       id: Date.now().toString(),
       name: addName,
       code: `1567-00${warehouses.length + 1}`,
+      location: addLocation,
       currency: addLocation === 'hk' ? 'HKD' : 'CNY',
-      dropshipping: addDropshipping,
+      dropshipping: addLocation === 'bonded' ? true : addDropshipping,
+      autoConfirmStock: addAutoConfirmStock,
       skuCount: 0
     };
     setWarehouses([...warehouses, newWarehouse]);
@@ -39,11 +43,13 @@ export function WarehouseManagement() {
     setAddName('');
     setAddLocation('');
     setAddDropshipping(true);
+    setAddAutoConfirmStock(false);
   };
 
   const openEditModal = (warehouse: any) => {
     setEditingWarehouse(warehouse);
-    setEditDropshipping(warehouse.dropshipping);
+    setEditDropshipping(warehouse.location === 'bonded' ? true : warehouse.dropshipping);
+    setEditAutoConfirmStock(warehouse.autoConfirmStock || false);
     setEditName(warehouse.name);
     setIsEditModalOpen(true);
   };
@@ -54,7 +60,7 @@ export function WarehouseManagement() {
       return;
     }
     setWarehouses(warehouses.map(w => 
-      w.id === editingWarehouse.id ? { ...w, dropshipping: editDropshipping, name: editName } : w
+      w.id === editingWarehouse.id ? { ...w, dropshipping: w.location === 'bonded' ? true : editDropshipping, autoConfirmStock: editAutoConfirmStock, name: editName } : w
     ));
     setIsEditModalOpen(false);
     setEditingWarehouse(null);
@@ -102,7 +108,8 @@ export function WarehouseManagement() {
                 <th className="p-4 font-medium text-center">仓库名称</th>
                 <th className="p-4 font-medium text-center">仓库编码</th>
                 <th className="p-4 font-medium text-center">币种</th>
-                <th className="p-4 font-medium text-center">订单代发</th>
+                <th className="p-4 font-medium text-center">支持订单代发</th>
+                <th className="p-4 font-medium text-center">自动确认有货</th>
                 <th className="p-4 font-medium text-center">SKU数量</th>
                 <th className="p-4 font-medium text-center">操作</th>
               </tr>
@@ -118,6 +125,13 @@ export function WarehouseManagement() {
                       <span className="text-black border border-black px-2 py-0.5 text-xs font-bold">支持</span>
                     ) : (
                       <span className="text-zinc-400 border border-zinc-200 px-2 py-0.5 text-xs font-bold">不支持</span>
+                    )}
+                  </td>
+                  <td className="p-4">
+                    {warehouse.autoConfirmStock ? (
+                      <span className="text-black border border-black px-2 py-0.5 text-xs font-bold">开启</span>
+                    ) : (
+                      <span className="text-zinc-400 border border-zinc-200 px-2 py-0.5 text-xs font-bold">关闭</span>
                     )}
                   </td>
                   <td className="p-4">{warehouse.skuCount}</td>
@@ -177,12 +191,19 @@ export function WarehouseManagement() {
                 <label className="w-24 text-right text-sm font-bold"><span className="text-red-500 mr-1">*</span>所在地</label>
                 <select 
                   value={addLocation}
-                  onChange={(e) => setAddLocation(e.target.value)}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setAddLocation(val);
+                    if (val === 'bonded') {
+                      setAddDropshipping(true);
+                    }
+                  }}
                   className="flex-1 border border-zinc-200 px-3 py-2 text-sm focus:border-black focus:ring-1 focus:ring-black outline-none bg-white text-zinc-500"
                 >
                   <option value="">请选择所在地</option>
                   <option value="hk">香港</option>
                   <option value="cn">中国大陆</option>
+                  <option value="bonded">保税区</option>
                 </select>
               </div>
               <div className="flex items-center gap-4">
@@ -190,28 +211,50 @@ export function WarehouseManagement() {
                 <input 
                   type="text" 
                   placeholder="选择所在地后自动填充" 
-                  value={addLocation === 'hk' ? 'HKD' : addLocation === 'cn' ? 'CNY' : ''}
+                  value={addLocation === 'hk' ? 'HKD' : (addLocation === 'cn' || addLocation === 'bonded') ? 'CNY' : ''}
                   disabled 
                   className="flex-1 border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm outline-none text-zinc-400" 
                 />
               </div>
-              <div className="flex items-center gap-4">
-                <label className="w-24 text-right text-sm font-bold">订单代发</label>
-                <div className="flex-1 flex items-center">
-                  <div className="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+              <div className="flex items-start gap-4">
+                <label className="w-24 text-right text-sm font-bold mt-0.5">支持订单代发</label>
+                <div className="flex-1">
+                  <div className={`relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in ${addLocation === 'bonded' ? 'opacity-50 cursor-not-allowed' : ''}`}>
                     <input 
                       type="checkbox" 
                       id="add-toggle" 
-                      checked={addDropshipping}
+                      checked={addLocation === 'bonded' ? true : addDropshipping}
+                      disabled={addLocation === 'bonded'}
                       onChange={(e) => setAddDropshipping(e.target.checked)}
-                      className={`toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer transition-transform duration-200 ease-in-out ${addDropshipping ? 'translate-x-5 border-black' : 'translate-x-0 border-zinc-300'}`} 
+                      className={`toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none transition-transform duration-200 ease-in-out ${(addLocation === 'bonded' || addDropshipping) ? 'translate-x-5 border-black' : 'translate-x-0 border-zinc-300'} ${addLocation === 'bonded' ? 'cursor-not-allowed' : 'cursor-pointer'}`} 
                       style={{ top: '2px', left: '2px' }}
                     />
                     <label 
                       htmlFor="add-toggle" 
-                      className={`toggle-label block overflow-hidden h-6 rounded-full cursor-pointer ${addDropshipping ? 'bg-black' : 'bg-zinc-300'}`}
+                      className={`toggle-label block overflow-hidden h-6 rounded-full ${(addLocation === 'bonded' || addDropshipping) ? 'bg-black' : 'bg-zinc-300'} ${addLocation === 'bonded' ? 'cursor-not-allowed' : 'cursor-pointer'}`}
                     ></label>
                   </div>
+                  <div className="text-[10px] text-zinc-400 mt-1">下游同步开启后，允许获取最终买家信息，并由我直发。</div>
+                </div>
+              </div>
+              <div className="flex items-start gap-4">
+                <label className="w-24 text-right text-sm font-bold mt-0.5">自动确认有货</label>
+                <div className="flex-1">
+                  <div className="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+                    <input 
+                      type="checkbox" 
+                      id="add-auto-confirm-toggle" 
+                      checked={addAutoConfirmStock}
+                      onChange={(e) => setAddAutoConfirmStock(e.target.checked)}
+                      className={`toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer transition-transform duration-200 ease-in-out ${addAutoConfirmStock ? 'translate-x-5 border-black' : 'translate-x-0 border-zinc-300'}`} 
+                      style={{ top: '2px', left: '2px' }}
+                    />
+                    <label 
+                      htmlFor="add-auto-confirm-toggle" 
+                      className={`toggle-label block overflow-hidden h-6 rounded-full cursor-pointer ${addAutoConfirmStock ? 'bg-black' : 'bg-zinc-300'}`}
+                    ></label>
+                  </div>
+                  <div className="text-[10px] text-zinc-400 mt-1">开启后，下游订单生成时将自动确认库存，无需人工二次确认。</div>
                 </div>
               </div>
             </div>
@@ -252,23 +295,45 @@ export function WarehouseManagement() {
                 <label className="w-24 text-right text-sm font-bold">币种</label>
                 <input type="text" value={editingWarehouse.currency} disabled className="flex-1 border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm outline-none text-zinc-400" />
               </div>
-              <div className="flex items-center gap-4">
-                <label className="w-24 text-right text-sm font-bold">订单代发</label>
-                <div className="flex-1 flex items-center">
-                  <div className="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+              <div className="flex items-start gap-4">
+                <label className="w-24 text-right text-sm font-bold mt-0.5">支持订单代发</label>
+                <div className="flex-1">
+                  <div className={`relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in ${editingWarehouse.location === 'bonded' ? 'opacity-50 cursor-not-allowed' : ''}`}>
                     <input 
                       type="checkbox" 
                       id="edit-toggle" 
-                      checked={editDropshipping}
+                      checked={editingWarehouse.location === 'bonded' ? true : editDropshipping}
+                      disabled={editingWarehouse.location === 'bonded'}
                       onChange={(e) => setEditDropshipping(e.target.checked)}
-                      className={`toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer transition-transform duration-200 ease-in-out ${editDropshipping ? 'translate-x-5 border-black' : 'translate-x-0 border-zinc-300'}`} 
+                      className={`toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none transition-transform duration-200 ease-in-out ${(editingWarehouse.location === 'bonded' || editDropshipping) ? 'translate-x-5 border-black' : 'translate-x-0 border-zinc-300'} ${editingWarehouse.location === 'bonded' ? 'cursor-not-allowed' : 'cursor-pointer'}`} 
                       style={{ top: '2px', left: '2px' }}
                     />
                     <label 
                       htmlFor="edit-toggle" 
-                      className={`toggle-label block overflow-hidden h-6 rounded-full cursor-pointer ${editDropshipping ? 'bg-black' : 'bg-zinc-300'}`}
+                      className={`toggle-label block overflow-hidden h-6 rounded-full ${(editingWarehouse.location === 'bonded' || editDropshipping) ? 'bg-black' : 'bg-zinc-300'} ${editingWarehouse.location === 'bonded' ? 'cursor-not-allowed' : 'cursor-pointer'}`}
                     ></label>
                   </div>
+                  <div className="text-[10px] text-zinc-400 mt-1">下游同步开启后，允许获取最终买家信息，并由我直发。</div>
+                </div>
+              </div>
+              <div className="flex items-start gap-4">
+                <label className="w-24 text-right text-sm font-bold mt-0.5">自动确认有货</label>
+                <div className="flex-1">
+                  <div className="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+                    <input 
+                      type="checkbox" 
+                      id="edit-auto-confirm-toggle" 
+                      checked={editAutoConfirmStock}
+                      onChange={(e) => setEditAutoConfirmStock(e.target.checked)}
+                      className={`toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer transition-transform duration-200 ease-in-out ${editAutoConfirmStock ? 'translate-x-5 border-black' : 'translate-x-0 border-zinc-300'}`} 
+                      style={{ top: '2px', left: '2px' }}
+                    />
+                    <label 
+                      htmlFor="edit-auto-confirm-toggle" 
+                      className={`toggle-label block overflow-hidden h-6 rounded-full cursor-pointer ${editAutoConfirmStock ? 'bg-black' : 'bg-zinc-300'}`}
+                    ></label>
+                  </div>
+                  <div className="text-[10px] text-zinc-400 mt-1">开启后，下游订单生成时将自动确认库存，无需人工二次确认。</div>
                 </div>
               </div>
             </div>
