@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { ChevronLeft, ChevronRight, Plus, X, Search, Image as ImageIcon, Upload, History, FileText, Trash2 } from 'lucide-react';
 import { AddProductModal } from './AddProductModal';
+import { BatchApplyCommonProductModal } from './BatchApplyCommonProductModal';
 import { MultiSelectDropdown } from './MultiSelectDropdown';
 import { CategoryMultiSelectDropdown } from './CategoryMultiSelectDropdown';
 import { CATEGORY_HIERARCHY, ALL_BRANDS } from '../lib/constants';
@@ -12,6 +13,7 @@ export function ProductManagement() {
   const [editingSpu, setEditingSpu] = useState<string | null>(null);
   const [activeWarehouseTab, setActiveWarehouseTab] = useState<'domestic' | 'overseas'>('domestic');
   const [activeListTab, setActiveListTab] = useState<'on_sale' | 'in_warehouse' | 'delisted'>('on_sale');
+  const [isBatchApplyModalOpen, setIsBatchApplyModalOpen] = useState(false);
 
   const [filterBrands, setFilterBrands] = useState<string[]>([]);
   const [filterCategories, setFilterCategories] = useState<string[]>([]);
@@ -44,7 +46,7 @@ export function ProductManagement() {
                     alert('请先勾选需要新建公共库商品的项');
                     return;
                   }
-                  alert(`已为 ${selectedProducts.length} 个商品申请新建公共库商品`);
+                  setIsBatchApplyModalOpen(true);
                }
             }}
             title={filterMarketplaceOffer === 'no' ? '' : '请先筛选"集市出价: 否"的项目'}
@@ -670,6 +672,17 @@ export function ProductManagement() {
             </div>
           </div>
         </div>
+      )}
+      {isBatchApplyModalOpen && (
+        <BatchApplyCommonProductModal 
+          isOpen={isBatchApplyModalOpen}
+          onClose={() => setIsBatchApplyModalOpen(false)}
+          selectedIds={selectedProducts}
+          onSuccess={() => {
+            setIsBatchApplyModalOpen(false);
+            setSelectedProducts([]);
+          }}
+        />
       )}
     </div>
   );
