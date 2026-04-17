@@ -1,36 +1,21 @@
 import { useState, useRef, useEffect } from 'react';
 import { 
-  ArrowLeft, Info, Calendar as CalendarIcon, User, Phone, Building2, CheckCircle2, ChevronRight, FileText, ChevronDown, ChevronUp, Image as ImageIcon, Check, Clock, X, MessageSquare, Filter, ChevronLeft
+  ArrowLeft, Info, Calendar as CalendarIcon, User, Phone, Building2, CheckCircle2, ChevronRight, FileText, ChevronDown, ChevronUp, Image as ImageIcon, Check, Clock, X, MessageSquare, Filter, ChevronLeft, Package, Settings, CreditCard, Banknote
 } from 'lucide-react';
 
-const MOCK_CUSTOMERS = [
+const MOCK_ORDERS = [
   {
-    customerId: "c1",
+    orderId: "O-DEP-88901",
     date: "2024-05-02",
     customerName: "ACME Corp (张三)",
     phone: "138-0013-8000",
-    orders: [
-      { 
-        orderId: "O-DEP-88901", 
-        manifestName: "2024夏季新品首单采购", 
-        depositDue: 4500, 
-        balanceDue: 10500,
-        notes: "销售代下单。客户：张三，电话：138-0013-8000。客户要求尽量发顺丰，包装需加固。",
-        products: [
-          { name: "MARGIELA GLAM SLAM MINI", sku: "T8013-BLK-MN", qty: 2, price: 9450 },
-          { name: "AESTHETIQUE CHRONO NOIR", sku: "AC-202-B", qty: 1, price: 34200 }
-        ]
-      },
-      { 
-        orderId: "O-DEP-88902", 
-        manifestName: "潮流配饰批量补货", 
-        depositDue: 2000, 
-        balanceDue: 8000,
-        notes: "客户自主下单。昵称：ACME_采购部。请随货附带发票。",
-        products: [
-          { name: "VANGUARD SILHOUETTE", sku: "VG-SL-01", qty: 5, price: 2180 }
-        ]
-      }
+    manifestName: "2024夏季新品首单采购",
+    depositDue: 4500,
+    balanceDue: 10500,
+    notes: "销售代下单。客户：张三，电话：138-0013-8000。客户要求尽量发顺丰，包装需加固。",
+    products: [
+      { name: "MARGIELA GLAM SLAM MINI", sku: "T8013-BLK-MN", qty: 2, price: 9450, confirmed: true },
+      { name: "AESTHETIQUE CHRONO NOIR", sku: "AC-202-B", qty: 1, price: 34200, confirmed: false }
     ],
     confirmedPaid: 0,
     reconciliationRecords: [],
@@ -39,98 +24,98 @@ const MOCK_CUSTOMERS = [
     ]
   },
   {
-    customerId: "c2",
+    orderId: "O-DEP-88902",
+    date: "2024-05-02",
+    customerName: "ACME Corp (张三)",
+    phone: "138-0013-8000",
+    manifestName: "潮流配饰批量补货",
+    depositDue: 2000,
+    balanceDue: 8000,
+    notes: "客户自主下单。昵称：ACME_采购部。请随货附带发票。",
+    products: [
+      { name: "VANGUARD SILHOUETTE", sku: "VG-SL-01", qty: 5, price: 2180, confirmed: true }
+    ],
+    confirmedPaid: 2000,
+    reconciliationRecords: [
+      { id: "rec-1", time: "2024-05-02 10:15", amount: 2000, slipId: "slip-2" }
+    ],
+    uploadedSlips: [
+      { id: "slip-2", uploadTime: "2024-05-02 09:00", imageUrl: "https://images.unsplash.com/photo-1620714223084-8fcacc6dfd8d?w=400&q=80", status: "confirmed" }
+    ]
+  },
+  {
+    orderId: "O-FUL-77234",
     date: "2024-05-02",
     customerName: "TechNova (李经理)",
     phone: "139-2222-3333",
-    orders: [
-      { 
-        orderId: "O-FUL-77234", 
-        manifestName: "潮流配饰批量补货", 
-        depositDue: 28900, 
-        balanceDue: 0,
-        notes: "销售代下单。客户：李经理。全款支付，优先发货。",
-        products: [
-          { name: "VANGUARD SILHOUETTE", sku: "VG-SL-02", qty: 10, price: 2180 },
-          { name: "AESTHETIQUE CHRONO NOIR", sku: "AC-202-W", qty: 2, price: 34200 }
-        ]
-      }
+    manifestName: "潮流配饰批量补货",
+    depositDue: 28900,
+    balanceDue: 0,
+    notes: "销售代下单。客户：李经理。全款支付，优先发货。",
+    products: [
+      { name: "VANGUARD SILHOUETTE", sku: "VG-SL-02", qty: 10, price: 2180, confirmed: true },
+      { name: "AESTHETIQUE CHRONO NOIR", sku: "AC-202-W", qty: 2, price: 34200, confirmed: true }
     ],
     confirmedPaid: 28900,
     reconciliationRecords: [
-      { id: "rec-1", time: "2024-05-02 10:15", amount: 28900, slipId: "slip-0" }
+      { id: "rec-2", time: "2024-05-02 10:15", amount: 28900, slipId: "slip-3" }
     ],
     uploadedSlips: [
-      { id: "slip-0", uploadTime: "2024-05-02 09:00", imageUrl: "https://images.unsplash.com/photo-1620714223084-8fcacc6dfd8d?w=400&q=80", status: "confirmed" }
+      { id: "slip-3", uploadTime: "2024-05-02 09:00", imageUrl: "https://images.unsplash.com/photo-1620714223084-8fcacc6dfd8d?w=400&q=80", status: "confirmed" }
     ]
   },
   {
-    customerId: "c4",
+    orderId: "O-DEP-99001",
     date: "2024-05-02",
     customerName: "Apex Retail (赵总)",
     phone: "137-8888-9999",
-    orders: [
-      { 
-        orderId: "O-DEP-99001", 
-        manifestName: "2024秋季高奢皮具专场", 
-        depositDue: 50000, 
-        balanceDue: 150000,
-        notes: "客户自主下单。昵称：Apex_赵。已付部分定金，剩余定金明天补齐。",
-        products: [
-          { name: "LVMH 联名款手袋", sku: "LV-001", qty: 10, price: 20000 }
-        ]
-      }
+    manifestName: "2024秋季高奢皮具专场",
+    depositDue: 50000,
+    balanceDue: 150000,
+    notes: "客户自主下单。昵称：Apex_赵。已付部分定金，剩余定金明天补齐。",
+    products: [
+      { name: "LVMH 联名款手袋", sku: "LV-001", qty: 10, price: 20000, confirmed: false }
     ],
     confirmedPaid: 20000,
     reconciliationRecords: [
-      { id: "rec-2", time: "2024-05-02 11:00", amount: 20000, slipId: "slip-2" }
+      { id: "rec-3", time: "2024-05-02 11:00", amount: 20000, slipId: "slip-4" }
     ],
     uploadedSlips: [
-      { id: "slip-2", uploadTime: "2024-05-02 10:30", imageUrl: "https://images.unsplash.com/photo-1620714223084-8fcacc6dfd8d?w=400&q=80", status: "confirmed" },
-      { id: "slip-3", uploadTime: "2024-05-02 15:45", imageUrl: "https://images.unsplash.com/photo-1620714223084-8fcacc6dfd8d?w=400&q=80", status: "pending" }
+      { id: "slip-4", uploadTime: "2024-05-02 10:30", imageUrl: "https://images.unsplash.com/photo-1620714223084-8fcacc6dfd8d?w=400&q=80", status: "confirmed" },
+      { id: "slip-5", uploadTime: "2024-05-02 15:45", imageUrl: "https://images.unsplash.com/photo-1620714223084-8fcacc6dfd8d?w=400&q=80", status: "pending" }
     ]
   },
   {
-    customerId: "c3",
+    orderId: "O-FUL-88902",
     date: "2024-05-01",
     customerName: "GlobalTrade (王总)",
     phone: "135-4444-5555",
-    orders: [
-      { 
-        orderId: "O-FUL-88902", 
-        manifestName: "2024夏季新品首单采购", 
-        depositDue: 26600, 
-        balanceDue: 0,
-        notes: "销售代下单。客户：王总。走对公账户打款。",
-        products: [
-          { name: "MARGIELA GLAM SLAM MINI", sku: "T8013-BLK-MN", qty: 5, price: 9450 }
-        ]
-      }
+    manifestName: "2024夏季新品首单采购",
+    depositDue: 26600,
+    balanceDue: 0,
+    notes: "销售代下单。客户：王总。走对公账户打款。",
+    products: [
+      { name: "MARGIELA GLAM SLAM MINI", sku: "T8013-BLK-MN", qty: 5, price: 9450, confirmed: true }
     ],
     confirmedPaid: 10000,
     reconciliationRecords: [
-      { id: "rec-3", time: "2024-05-01 16:00", amount: 10000, slipId: "slip-4" }
+      { id: "rec-4", time: "2024-05-01 16:00", amount: 10000, slipId: "slip-6" }
     ],
     uploadedSlips: [
-      { id: "slip-4", uploadTime: "2024-05-01 15:30", imageUrl: "https://images.unsplash.com/photo-1620714223084-8fcacc6dfd8d?w=400&q=80", status: "confirmed" }
+      { id: "slip-6", uploadTime: "2024-05-01 15:30", imageUrl: "https://images.unsplash.com/photo-1620714223084-8fcacc6dfd8d?w=400&q=80", status: "confirmed" }
     ]
   },
   {
-    customerId: "c5",
+    orderId: "O-DEP-99005",
     date: "2024-05-05",
     customerName: "Boutique 1990 (陈店长)",
     phone: "130-1111-2222",
-    orders: [
-      { 
-        orderId: "O-DEP-99005", 
-        manifestName: "潮流配饰批量补货", 
-        depositDue: 3000, 
-        balanceDue: 7000,
-        notes: "客户自主下单。昵称：陈店长。需要分批发货。",
-        products: [
-          { name: "VANGUARD SILHOUETTE", sku: "VG-SL-03", qty: 5, price: 2000 }
-        ]
-      }
+    manifestName: "潮流配饰批量补货",
+    depositDue: 3000,
+    balanceDue: 7000,
+    notes: "客户自主下单。昵称：陈店长。需要分批发货。",
+    products: [
+      { name: "VANGUARD SILHOUETTE", sku: "VG-SL-03", qty: 5, price: 2000, confirmed: false }
     ],
     confirmedPaid: 0,
     reconciliationRecords: [],
@@ -139,10 +124,11 @@ const MOCK_CUSTOMERS = [
 ];
 
 export function FinanceAudit() {
-  const [customersData, setCustomersData] = useState(MOCK_CUSTOMERS);
+  const [activeMainTab, setActiveMainTab] = useState<'reconciliation' | 'withdrawal'>('reconciliation');
+  
+  const [ordersData, setOrdersData] = useState(MOCK_ORDERS);
   const [inputAmounts, setInputAmounts] = useState<Record<string, string>>({});
-  const [expandedOrders, setExpandedOrders] = useState<string[]>([]);
-  const [viewingSlip, setViewingSlip] = useState<{url: string, slipId: string, customerId: string} | null>(null);
+  const [viewingSlip, setViewingSlip] = useState<{url: string, slipId: string, orderId: string} | null>(null);
   
   // Date Range State
   const [dateRange, setDateRange] = useState<{start: string | null, end: string | null}>({ start: "2024-05-01", end: "2024-05-05" });
@@ -152,6 +138,11 @@ export function FinanceAudit() {
 
   // Status Filter State
   const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'partial' | 'completed'>('all');
+
+  // Withdrawal Settings State
+  const [autoWithdrawRule, setAutoWithdrawRule] = useState<'t7_signoff_or_confirm' | 't1_track'>('t7_signoff_or_confirm');
+  const [withdrawRuleLocked, setWithdrawRuleLocked] = useState(false);
+  const [withdrawRuleLockedUntil, setWithdrawRuleLockedUntil] = useState("");
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -163,42 +154,36 @@ export function FinanceAudit() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const toggleOrder = (orderId: string) => {
-    setExpandedOrders(prev => 
-      prev.includes(orderId) ? prev.filter(id => id !== orderId) : [...prev, orderId]
-    );
-  };
-
   const handleAmountChange = (slipId: string, value: string) => {
     setInputAmounts(prev => ({ ...prev, [slipId]: value }));
   };
 
-  const handleConfirmPayment = (customerId: string, slipId: string) => {
+  const handleConfirmPayment = (orderId: string, slipId: string) => {
     const amount = parseFloat(inputAmounts[slipId] || "0");
     if (isNaN(amount) || amount <= 0) return;
 
-    setCustomersData(prev => prev.map(customer => {
-      if (customer.customerId === customerId) {
-        const updatedCustomer = { ...customer };
+    setOrdersData(prev => prev.map(order => {
+      if (order.orderId === orderId) {
+        const updatedOrder = { ...order };
         
         // Update slip status
-        updatedCustomer.uploadedSlips = updatedCustomer.uploadedSlips.map((slip: any) => 
+        updatedOrder.uploadedSlips = updatedOrder.uploadedSlips.map((slip: any) => 
           slip.id === slipId ? { ...slip, status: "confirmed" } : slip
         );
 
         // Add reconciliation record
         const now = new Date();
         const timeStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-        updatedCustomer.reconciliationRecords = [
-          ...updatedCustomer.reconciliationRecords,
+        updatedOrder.reconciliationRecords = [
+          ...updatedOrder.reconciliationRecords,
           { id: `rec-${Date.now()}`, time: timeStr, amount, slipId }
         ];
 
         // Update total paid
-        updatedCustomer.confirmedPaid += amount;
-        return updatedCustomer;
+        updatedOrder.confirmedPaid += amount;
+        return updatedOrder;
       }
-      return customer;
+      return order;
     }));
 
     setInputAmounts(prev => ({ ...prev, [slipId]: "" }));
@@ -236,20 +221,18 @@ export function FinanceAudit() {
     return dateStr === dateRange.start || dateStr === dateRange.end;
   };
 
-  // Filter Customers
-  const filteredCustomers = customersData.filter(customer => {
+  // Filter Orders
+  const filteredOrders = ordersData.filter(order => {
     // 1. Date Filter
-    if (dateRange.start && customer.date < dateRange.start) return false;
-    if (dateRange.end && customer.date > dateRange.end) return false;
+    if (dateRange.start && order.date < dateRange.start) return false;
+    if (dateRange.end && order.date > dateRange.end) return false;
 
     // 2. Status Filter
-    const totalDepositDue = customer.orders.reduce((sum: number, o: any) => sum + o.depositDue, 0);
-    const totalBalanceDue = customer.orders.reduce((sum: number, o: any) => sum + o.balanceDue, 0);
-    const totalDue = totalDepositDue + totalBalanceDue;
+    const totalDue = order.depositDue + order.balanceDue;
     
     let status = 'pending';
-    if (customer.confirmedPaid >= totalDue) status = 'completed';
-    else if (customer.confirmedPaid > 0) status = 'partial';
+    if (order.confirmedPaid >= totalDue) status = 'completed';
+    else if (order.confirmedPaid > 0) status = 'partial';
 
     if (statusFilter !== 'all' && status !== statusFilter) return false;
 
@@ -265,8 +248,8 @@ export function FinanceAudit() {
             <ArrowLeft size={20} />
           </button>
           <div>
-            <h1 className="text-3xl font-black tracking-tighter uppercase mb-1">财务对账</h1>
-            <p className="text-sm text-zinc-500">按客户维度核对银行转账汇款</p>
+            <h1 className="text-3xl font-black tracking-tighter uppercase mb-1">财务管理</h1>
+            <p className="text-sm text-zinc-500">按订单维度核对银行转账汇款及提现管理</p>
           </div>
         </div>
         <div className="bg-zinc-100 text-zinc-600 px-4 py-2 rounded-md flex items-center gap-2 text-sm">
@@ -275,8 +258,15 @@ export function FinanceAudit() {
         </div>
       </div>
 
-      {/* Filters Bar */}
-      <div className="flex items-center gap-4 mb-8">
+      <div className="flex gap-8 border-b border-zinc-200 mb-6">
+        <button onClick={() => setActiveMainTab('reconciliation')} className={`pb-3 text-sm font-bold transition-colors ${activeMainTab === 'reconciliation' ? 'text-black border-b-2 border-black' : 'text-zinc-500 hover:text-black'}`}>对账核销</button>
+        <button onClick={() => setActiveMainTab('withdrawal')} className={`pb-3 text-sm font-bold transition-colors ${activeMainTab === 'withdrawal' ? 'text-black border-b-2 border-black' : 'text-zinc-500 hover:text-black'}`}>资金提现</button>
+      </div>
+
+      {activeMainTab === 'reconciliation' ? (
+        <>
+          {/* Filters Bar */}
+          <div className="flex items-center gap-4 mb-8">
         {/* Date Range Picker */}
         <div className="relative" ref={calendarRef}>
           <button 
@@ -366,17 +356,15 @@ export function FinanceAudit() {
         </div>
 
         <div className="text-sm text-zinc-500 ml-auto">
-          共找到 {filteredCustomers.length} 个符合条件的客户记录
+          共找到 {filteredOrders.length} 个符合条件的订单记录
         </div>
       </div>
 
-      {/* Customers List */}
+      {/* Orders List */}
       <div className="space-y-6">
-        {filteredCustomers.map(customer => {
-          const totalDepositDue = customer.orders.reduce((sum: number, o: any) => sum + o.depositDue, 0);
-          const totalBalanceDue = customer.orders.reduce((sum: number, o: any) => sum + o.balanceDue, 0);
-          const totalDue = totalDepositDue + totalBalanceDue;
-          const pendingAmount = Math.max(0, totalDue - customer.confirmedPaid);
+        {filteredOrders.map(order => {
+          const totalDue = order.depositDue + order.balanceDue;
+          const pendingAmount = Math.max(0, totalDue - order.confirmedPaid);
           const isFullyPaid = pendingAmount === 0;
 
           // Determine Status
@@ -385,23 +373,27 @@ export function FinanceAudit() {
           if (isFullyPaid) {
             statusLabel = '已结清';
             statusClass = 'bg-green-50 text-green-700 border-green-200';
-          } else if (customer.confirmedPaid > 0) {
+          } else if (order.confirmedPaid > 0) {
             statusLabel = '部分核销';
             statusClass = 'bg-blue-50 text-blue-700 border-blue-200';
           }
 
           return (
-            <div key={customer.customerId} className="bg-white border border-zinc-200 shadow-sm">
-              {/* Customer Header */}
+            <div key={order.orderId} className="bg-white border border-zinc-200 shadow-sm">
+              {/* Order Header */}
               <div className="flex items-center justify-between px-6 py-4 bg-zinc-50 border-b border-zinc-200">
                 <div className="flex items-center gap-6">
                   <div className="flex items-center gap-2">
-                    <User size={16} className="text-zinc-400" />
-                    <span className="font-bold text-lg">{customer.customerName}</span>
+                    <Package size={16} className="text-zinc-400" />
+                    <span className="font-bold text-lg">{order.orderId}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-zinc-500">
+                    <User size={14} />
+                    {order.customerName}
                   </div>
                   <div className="flex items-center gap-2 text-sm text-zinc-500">
                     <Phone size={14} />
-                    {customer.phone}
+                    {order.phone}
                   </div>
                   <div className={`text-xs font-bold px-2 py-1 border rounded-sm ${statusClass}`}>
                     {statusLabel}
@@ -409,7 +401,7 @@ export function FinanceAudit() {
                 </div>
                 <div className="flex items-center gap-6">
                   <div className="text-sm text-zinc-500 font-mono">
-                    {customer.date}
+                    {order.date}
                   </div>
                   <div className="flex items-center gap-2 text-sm font-bold">
                     <Building2 size={16} className="text-zinc-400" />
@@ -419,69 +411,46 @@ export function FinanceAudit() {
               </div>
 
               <div className="grid grid-cols-12 divide-x divide-zinc-200">
-                {/* Orders List */}
+                {/* Order Details */}
                 <div className="col-span-7 p-6">
-                  <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-4">当日订单明细</div>
-                  <div className="space-y-4">
-                    {customer.orders.map((order: any, idx: number) => (
-                      <div key={idx} className="border border-zinc-200 bg-white">
-                        <div 
-                          className="flex items-center justify-between p-4 cursor-pointer hover:bg-zinc-50 transition-colors"
-                          onClick={() => toggleOrder(order.orderId)}
-                        >
-                          <div className="flex items-center gap-3">
-                            {expandedOrders.includes(order.orderId) ? <ChevronUp size={16} className="text-zinc-400" /> : <ChevronDown size={16} className="text-zinc-400" />}
-                            <div>
-                              <div className="font-bold text-sm mb-1">{order.orderId}</div>
-                              <div className="text-xs text-zinc-500 flex items-center gap-1">
-                                <FileText size={12} />
-                                {order.manifestName}
-                              </div>
-                            </div>
-                          </div>
-                          <div className="flex gap-8 text-right">
-                            <div>
-                              <div className="text-[10px] text-zinc-400 mb-1">应付定金</div>
-                              <div className="text-sm font-bold">¥ {order.depositDue.toLocaleString()}</div>
-                            </div>
-                            <div>
-                              <div className="text-[10px] text-zinc-400 mb-1">应付尾款</div>
-                              <div className="text-sm font-bold">¥ {order.balanceDue.toLocaleString()}</div>
-                            </div>
-                          </div>
-                        </div>
+                  <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-4">货单归属</div>
+                  
+                  <div className="mb-4">
+                    <div className="text-sm font-bold mb-1 flex items-center gap-2">
+                      <FileText size={16} className="text-zinc-400" />
+                      {order.manifestName}
+                    </div>
+                  </div>
 
-                        {/* Order Products & Notes Details */}
-                        {expandedOrders.includes(order.orderId) && (
-                          <div className="bg-zinc-50 border-t border-zinc-200 p-4">
-                            {/* Order Notes */}
-                            {order.notes && (
-                              <div className="bg-orange-50/50 border border-orange-100 p-3 mb-4 text-xs text-orange-900 flex gap-2 rounded-sm">
-                                <MessageSquare size={14} className="mt-0.5 flex-shrink-0 text-orange-500" />
-                                <div>
-                                  <span className="font-bold mr-1">订单备注:</span>
-                                  {order.notes}
-                                </div>
-                              </div>
+                  {order.notes && (
+                    <div className="bg-orange-50/50 border border-orange-100 p-3 mb-6 text-xs text-orange-900 flex gap-2 rounded-sm">
+                      <MessageSquare size={14} className="mt-0.5 flex-shrink-0 text-orange-500" />
+                      <div>
+                        <span className="font-bold mr-1">订单备注:</span>
+                        {order.notes}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-3">包含商品</div>
+                  <div className="space-y-2">
+                    {order.products.map((product: any, pIdx: number) => (
+                      <div key={pIdx} className="flex items-center justify-between text-xs bg-white p-3 border border-zinc-100">
+                        <div>
+                          <div className="flex items-center gap-2 mb-0.5">
+                            <span className="font-bold">{product.name}</span>
+                            {product.confirmed ? (
+                              <span className="text-[10px] text-green-600 bg-green-50 px-1.5 py-0.5 rounded-sm border border-green-200">已确认</span>
+                            ) : (
+                              <span className="text-[10px] text-orange-600 bg-orange-50 px-1.5 py-0.5 rounded-sm border border-orange-200">待确认</span>
                             )}
-
-                            <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-3">包含商品</div>
-                            <div className="space-y-2">
-                              {order.products.map((product: any, pIdx: number) => (
-                                <div key={pIdx} className="flex items-center justify-between text-xs bg-white p-3 border border-zinc-100">
-                                  <div>
-                                    <div className="font-bold mb-0.5">{product.name}</div>
-                                    <div className="text-zinc-500 font-mono text-[10px]">SKU: {product.sku}</div>
-                                  </div>
-                                  <div className="text-right">
-                                    <div className="font-bold">¥ {product.price.toLocaleString()}</div>
-                                    <div className="text-zinc-500">x {product.qty}</div>
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
                           </div>
-                        )}
+                          <div className="text-zinc-500 font-mono text-[10px]">SKU: {product.sku}</div>
+                        </div>
+                        <div className="text-right">
+                          <div className="font-bold">¥ {product.price.toLocaleString()}</div>
+                          <div className="text-zinc-500">x {product.qty}</div>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -494,10 +463,10 @@ export function FinanceAudit() {
                     
                     <div className="grid grid-cols-2 gap-4 mb-6">
                       <div className="bg-white border border-zinc-200 p-4">
-                        <div className="text-xs text-zinc-500 mb-1">业务总应付</div>
+                        <div className="text-xs text-zinc-500 mb-1">订单总应付</div>
                         <div className="text-xl font-black">¥ {totalDue.toLocaleString()}</div>
                         <div className="text-[10px] text-zinc-400 mt-2">
-                          定金: ¥{totalDepositDue.toLocaleString()} | 尾款: ¥{totalBalanceDue.toLocaleString()}
+                          定金: ¥{order.depositDue.toLocaleString()} | 尾款: ¥{order.balanceDue.toLocaleString()}
                         </div>
                       </div>
                       <div className="bg-white border border-zinc-200 p-4">
@@ -506,17 +475,17 @@ export function FinanceAudit() {
                           ¥ {pendingAmount.toLocaleString()}
                         </div>
                         <div className="text-[10px] text-zinc-400 mt-2">
-                          已确认收款: ¥{customer.confirmedPaid.toLocaleString()}
+                          已确认收款: ¥{order.confirmedPaid.toLocaleString()}
                         </div>
                       </div>
                     </div>
 
                     {/* Reconciliation Records */}
-                    {customer.reconciliationRecords.length > 0 && (
+                    {order.reconciliationRecords.length > 0 && (
                       <div className="mb-6">
                         <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-3">已核销记录</div>
                         <div className="space-y-2">
-                          {customer.reconciliationRecords.map((rec: any) => (
+                          {order.reconciliationRecords.map((rec: any) => (
                             <div key={rec.id} className="flex items-center justify-between text-xs bg-white border border-zinc-200 p-3">
                               <div className="flex items-center gap-2 text-zinc-600">
                                 <CheckCircle2 size={14} className="text-green-600" />
@@ -534,7 +503,7 @@ export function FinanceAudit() {
                     {isFullyPaid ? (
                       <div className="flex items-center justify-center gap-2 bg-green-50 text-green-700 py-3 border border-green-200 font-bold text-sm">
                         <CheckCircle2 size={18} />
-                        该客户当日业务已全部结清
+                        该订单已全部结清
                       </div>
                     ) : (
                       <div>
@@ -543,9 +512,9 @@ export function FinanceAudit() {
                           <span className="text-zinc-400 font-normal">点击查看并核销</span>
                         </div>
                         
-                        {customer.uploadedSlips.length > 0 ? (
+                        {order.uploadedSlips.length > 0 ? (
                           <div className="space-y-3">
-                            {customer.uploadedSlips.map((slip: any) => (
+                            {order.uploadedSlips.map((slip: any) => (
                               <div key={slip.id} className="flex items-center justify-between bg-white border border-zinc-200 p-3">
                                 <div className="flex items-center gap-3">
                                   <div className="w-10 h-10 bg-zinc-100 flex items-center justify-center text-zinc-400">
@@ -565,7 +534,7 @@ export function FinanceAudit() {
                                   </span>
                                 ) : (
                                   <button 
-                                    onClick={() => setViewingSlip({ url: slip.imageUrl, slipId: slip.id, customerId: customer.customerId })}
+                                    onClick={() => setViewingSlip({ url: slip.imageUrl, slipId: slip.id, orderId: order.orderId })}
                                     className="text-xs font-bold bg-black text-white px-4 py-2 hover:bg-zinc-800 transition-colors"
                                   >
                                     查看并核销
@@ -588,12 +557,97 @@ export function FinanceAudit() {
           );
         })}
         
-        {filteredCustomers.length === 0 && (
+        {filteredOrders.length === 0 && (
           <div className="text-center py-20 text-zinc-500 border border-zinc-200 bg-white">
-            所选区间内没有符合条件的客户订单记录
+            所选区间内没有符合条件的订单记录
           </div>
         )}
       </div>
+      </>
+      ) : (
+        <div className="space-y-8">
+          <div className="grid grid-cols-3 gap-6">
+            <div className="bg-white border border-zinc-200 p-6">
+              <div className="text-sm font-bold text-zinc-500 mb-2">账户可提现余额</div>
+              <div className="text-3xl font-black mb-2">¥ 284,500.00</div>
+              <div className="text-xs text-zinc-400">已开启自动提现，无手动提现选项</div>
+            </div>
+            <div className="bg-white border border-zinc-200 p-6">
+              <div className="text-sm font-bold text-zinc-500 mb-2">待结算金额 (流程中)</div>
+              <div className="text-3xl font-black text-zinc-400 mb-2">¥ 45,000.00</div>
+              <a href="#" className="text-sm text-blue-600 hover:underline">查看结算明细</a>
+            </div>
+            <div className="bg-white border border-zinc-200 p-6">
+              <div className="text-sm font-bold text-zinc-500 mb-2">累计已提现</div>
+              <div className="text-3xl font-black text-zinc-400 mb-2">¥ 1,250,000.00</div>
+            </div>
+          </div>
+
+          <div className="bg-white border border-zinc-200 p-6">
+            <h2 className="text-lg font-black uppercase tracking-tight mb-6 flex items-center gap-2">
+              <Settings size={20} />
+              自动提现设置
+            </h2>
+            
+            <div className="space-y-4 max-w-2xl">
+              <p className="text-sm text-zinc-500 mb-4">开启自动提现后，系统将根据您设置的结算规则，自动将款项打入您绑定的银行卡（默认打入建设银行尾号 4821）。</p>
+              
+              <label className={`flex items-start gap-3 p-4 border ${withdrawRuleLocked ? 'bg-zinc-50 border-zinc-200 opacity-80 cursor-not-allowed' : 'border-zinc-200 cursor-pointer hover:bg-zinc-50'}`}>
+                <input 
+                  type="radio" 
+                  name="withdraw_rule" 
+                  className="mt-1 accent-black disabled:opacity-50" 
+                  checked={autoWithdrawRule === 't7_signoff_or_confirm'} 
+                  onChange={() => !withdrawRuleLocked && setAutoWithdrawRule('t7_signoff_or_confirm')} 
+                  disabled={withdrawRuleLocked}
+                />
+                <div>
+                  <div className="font-bold text-sm">T+7 (物流签收或客户确认后)</div>
+                  <div className="text-xs text-zinc-500">订单商品物流显示签收，或客户在前台手动确认后，第7天自动结算并提现。此规则能够有效保障客户签收体验。</div>
+                </div>
+              </label>
+
+              <label className={`flex items-start gap-3 p-4 border ${withdrawRuleLocked ? 'bg-zinc-50 border-zinc-200 opacity-80 cursor-not-allowed' : 'border-zinc-200 cursor-pointer hover:bg-zinc-50'}`}>
+                <input 
+                  type="radio" 
+                  name="withdraw_rule" 
+                  className="mt-1 accent-black disabled:opacity-50" 
+                  checked={autoWithdrawRule === 't1_track'} 
+                  onChange={() => !withdrawRuleLocked && setAutoWithdrawRule('t1_track')} 
+                  disabled={withdrawRuleLocked}
+                />
+                <div>
+                  <div className="font-bold text-sm">T+1 (有物流轨迹后)</div>
+                  <div className="text-xs text-zinc-500">发货并产生第一条物流揽收轨迹后，次日（T+1）即自动结算并提现。适合需要快速回款的商家。</div>
+                </div>
+              </label>
+              
+              <div className="mt-6">
+                {withdrawRuleLocked ? (
+                  <div className="text-sm text-orange-600 bg-orange-50 px-4 py-3 border border-orange-200 flex items-center gap-2">
+                    <Info size={16} />
+                    提现规则已锁定。为保障资金流安全，设置保存后 6 个月内不可更改（解锁时间：{withdrawRuleLockedUntil}）。
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => {
+                      const lockDate = new Date();
+                      lockDate.setMonth(lockDate.getMonth() + 6);
+                      const formattedDate = lockDate.toISOString().split('T')[0];
+                      setWithdrawRuleLocked(true);
+                      setWithdrawRuleLockedUntil(formattedDate);
+                      alert(`已保存自动提现规则。该规则在接下来的 6 个月内不可修改。`);
+                    }}
+                    className="bg-black text-white px-6 py-3 text-sm font-bold hover:bg-zinc-800 transition-colors"
+                  >
+                    保存并锁定提现规则
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Slip Viewer Modal */}
       {viewingSlip && (
@@ -621,7 +675,7 @@ export function FinanceAudit() {
                 <div className="mb-6">
                   <div className="text-xs font-bold text-zinc-500 mb-2">核对说明</div>
                   <p className="text-xs text-zinc-600 leading-relaxed">
-                    请仔细核对左侧水单中的汇款金额。确认无误后，在下方录入实际收到的金额，系统将自动更新该客户的已付总额。
+                    请仔细核对左侧水单中的汇款金额。确认无误后，在下方录入实际收到的金额，系统将自动更新该订单的已付总额。
                   </p>
                 </div>
 
@@ -638,7 +692,7 @@ export function FinanceAudit() {
                     />
                   </div>
                   <button 
-                    onClick={() => handleConfirmPayment(viewingSlip.customerId, viewingSlip.slipId)}
+                    onClick={() => handleConfirmPayment(viewingSlip.orderId, viewingSlip.slipId)}
                     disabled={!inputAmounts[viewingSlip.slipId]}
                     className="w-full bg-black text-white px-6 py-3 text-sm font-bold hover:bg-zinc-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   >

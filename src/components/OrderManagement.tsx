@@ -2,6 +2,21 @@ import { Search, ChevronRight, X, Package, Truck, CheckCircle, AlertCircle, Down
 import { useState } from "react";
 
 const INITIAL_ORDERS = [
+  // --- 待付款 (pending_payment) ---
+  {
+    id: 'ORD-2024-0816-NEW', type: 'retail', date: '2024-08-16 09:30', brand: 'Chanel', productName: 'Chanel Classic Flap', spuCount: 1, itemCount: 1,
+    manager: '张三 (M001)', distributor: null,
+    buyerName: '周八', buyerPhone: '136****5555', buyerType: '个人买家', deliveryMethod: '跨境快递', warehouse: '香港直邮仓', shippingAddress: '上海市黄浦区...',
+    totalPrice: 65000, depositPaid: null, status: 'pending_payment', statusLabel: '待付款',
+    image: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=100&q=80',
+    items: [
+      { id: 'item-new', name: 'Chanel Classic Flap', sku: 'CH-CF-BLK', productNumber: 'CH-CF', supplier: '自营库存', count: 1, price: 65000, status: 'pending_payment', statusLabel: '待付款' }
+    ],
+    progress: [
+      { id: 'p1', time: '2024-08-16 09:30', description: '买家下单，等待付款', items: '全部 (1件)', amountChange: '-' }
+    ]
+  },
+
   // --- 待确认 (pending_confirmation) ---
   {
     id: 'ORD-2024-0815-A1', type: 'retail', date: '2024-08-15 10:20', brand: 'Hermès', productName: 'Hermès Birkin 25', spuCount: 1, itemCount: 1,
@@ -97,6 +112,26 @@ export function OrderManagement() {
   const [downloads, setDownloads] = useState<{id: string, name: string, date: string, status: string}[]>([]);
   const [newProgressDesc, setNewProgressDesc] = useState('');
   const [newProgressAmount, setNewProgressAmount] = useState('');
+
+  const [isEditingPrice, setIsEditingPrice] = useState(false);
+  const [tempPrice, setTempPrice] = useState('');
+
+  const handleUpdatePrice = () => {
+    if (!selectedOrder) return;
+    const newPrice = parseFloat(tempPrice);
+    if (isNaN(newPrice) || newPrice < 0) return;
+
+    setOrders(orders.map(order => {
+      if (order.id === selectedOrder) {
+        return {
+          ...order,
+          totalPrice: newPrice
+        };
+      }
+      return order;
+    }));
+    setIsEditingPrice(false);
+  };
 
   const handleAddManualProgress = () => {
     if (!selectedOrder || !newProgressDesc) return;
@@ -559,7 +594,7 @@ export function OrderManagement() {
                 </div>
                 <div className="col-span-2 pr-4">
                   <div className="text-xs font-bold mb-1">{order.buyerName} ({order.buyerPhone})</div>
-                  <div className="text-[10px] text-zinc-500">{order.buyerType}</div>
+                  <div className="text-[10px] text-zinc-500 truncate" title={order.shippingAddress}>{order.shippingAddress}</div>
                 </div>
                 <div className="col-span-2 pr-4">
                   <div 
@@ -666,7 +701,13 @@ export function OrderManagement() {
                 <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1">订单详情</div>
                 <h2 className="text-xl font-black uppercase tracking-tight">{selectedOrderData.id}</h2>
               </div>
-              <button onClick={() => setSelectedOrder(null)} className="text-zinc-400 hover:text-black transition-colors"><X size={24} /></button>
+              <button 
+                onClick={() => {
+                  setSelectedOrder(null);
+                  setIsEditingPrice(false);
+                }} 
+                className="text-zinc-400 hover:text-black transition-colors"><X size={24} />
+              </button>
             </div>
           
           <div className="flex-1 overflow-y-auto p-8">
@@ -675,7 +716,6 @@ export function OrderManagement() {
               <div>
                 <h3 className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-4">买家/收件信息</h3>
                 <div className="text-sm font-bold mb-1">{selectedOrderData.buyerName} ({selectedOrderData.buyerPhone})</div>
-                <div className="text-xs text-zinc-500 mb-1">{selectedOrderData.buyerType}</div>
                 <div className="text-xs text-zinc-500">收货地址: {selectedOrderData.shippingAddress}</div>
               </div>
               <div>
@@ -716,6 +756,54 @@ export function OrderManagement() {
                 <div className="flex justify-between items-center pt-2 border-t border-zinc-200 mt-2">
                   <span className="text-sm font-bold">已付金额</span>
                   <span className="text-lg font-black">¥ {selectedOrderData.status === 'pending_payment' ? '0.00' : `${selectedOrderData.totalPrice.toLocaleString()}.00`}</span>
+                </div>
+              )}
+
+              {selectedOrderData.status === 'pending_payment' && (
+                <div className="mt-4 pt-4 border-t border-zinc-200">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm font-bold">修改订单总额</span>
+                    {isEditingPrice ? (
+                      <div className="flex flex-col items-end gap-2">
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="number"
+                            value={tempPrice}
+                            onChange={(e) => setTempPrice(e.target.value)}
+                            className="border border-zinc-300 px-2 py-1 text-sm w-24"
+                            placeholder="新价格"
+                          />
+                          <button
+                            onClick={handleUpdatePrice}
+                            className="bg-black text-white px-3 py-1 text-xs font-bold"
+                          >
+                            保存
+                          </button>
+                          <button
+                            onClick={() => setIsEditingPrice(false)}
+                            className="text-zinc-500 hover:text-black text-xs font-bold"
+                          >
+                            取消
+                          </button>
+                        </div>
+                        {selectedOrderData.deliveryMethod === '跨境快递' && parseFloat(tempPrice) > 0 && (
+                          <div className="text-[10px] text-zinc-500 text-right mt-1">
+                            商品实付款: ¥{(parseFloat(tempPrice) / 1.091).toFixed(2)}，关税 (9.1%): ¥{(parseFloat(tempPrice) - parseFloat(tempPrice) / 1.091).toFixed(2)}
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => {
+                          setTempPrice(selectedOrderData.totalPrice.toString());
+                          setIsEditingPrice(true);
+                        }}
+                        className="text-blue-600 text-xs font-bold hover:underline"
+                      >
+                        改价
+                      </button>
+                    )}
+                  </div>
                 </div>
               )}
             </div>
@@ -889,7 +977,20 @@ export function OrderManagement() {
                 return (
                   <>
                     {showPaymentReminder && (
-                      <button className="bg-black text-white px-6 py-3 text-xs font-bold hover:bg-zinc-800 transition-colors">提醒付款</button>
+                      <>
+                        <button 
+                          onClick={() => {
+                            // scroll up to top logic is not needed, user can see it if it's there, 
+                            // but better yet, let's just trigger edit mode
+                            setTempPrice(selectedOrderData.totalPrice.toString());
+                            setIsEditingPrice(true);
+                          }}
+                          className="bg-white border border-zinc-200 text-black px-6 py-3 text-xs font-bold hover:border-black transition-colors"
+                        >
+                          修改订单金额
+                        </button>
+                        <button className="bg-black text-white px-6 py-3 text-xs font-bold hover:bg-zinc-800 transition-colors">提醒付款</button>
+                      </>
                     )}
                     
                     {showConfirmStockBtn && (

@@ -16,6 +16,8 @@ export function ProductManagement() {
   const [filterBrands, setFilterBrands] = useState<string[]>([]);
   const [filterCategories, setFilterCategories] = useState<string[]>([]);
   const [filterWarehouses, setFilterWarehouses] = useState<string[]>([]);
+  const [filterMarketplaceOffer, setFilterMarketplaceOffer] = useState<string>('all');
+  const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
 
   const allWarehouses = [
     { value: 'hk', label: '香港直邮仓' },
@@ -33,6 +35,22 @@ export function ProductManagement() {
           <p className="text-sm text-zinc-500">管理全球精品库存、规格及定价模式</p>
         </div>
         <div className="flex gap-3 items-center">
+          <button
+            className={`bg-white border border-zinc-200 text-black px-6 py-3 flex items-center gap-2 font-bold transition-colors ${filterMarketplaceOffer === 'no' ? 'hover:bg-zinc-50' : 'opacity-50 cursor-not-allowed'}`}
+            disabled={filterMarketplaceOffer !== 'no'}
+            onClick={() => {
+               if(filterMarketplaceOffer === 'no') {
+                  if (selectedProducts.length === 0) {
+                    alert('请先勾选需要新建公共库商品的项');
+                    return;
+                  }
+                  alert(`已为 ${selectedProducts.length} 个商品申请新建公共库商品`);
+               }
+            }}
+            title={filterMarketplaceOffer === 'no' ? '' : '请先筛选"集市出价: 否"的项目'}
+          >
+            申请新建公共库商品
+          </button>
           <button 
             onClick={() => setIsLogOpen(true)}
             className="bg-white border border-zinc-200 text-black px-6 py-3 flex items-center gap-2 font-bold hover:bg-zinc-50 transition-colors"
@@ -109,6 +127,17 @@ export function ProductManagement() {
               placeholder="全部仓库" 
             />
           </div>
+          <div className="w-32 border border-zinc-200 bg-white">
+            <select 
+              value={filterMarketplaceOffer} 
+              onChange={(e) => setFilterMarketplaceOffer(e.target.value)}
+              className="w-full text-xs font-bold bg-transparent outline-none py-2 px-3 h-[34px]"
+            >
+              <option value="all">全部出价状态</option>
+              <option value="yes">集市出价: 是</option>
+              <option value="no">集市出价: 否</option>
+            </select>
+          </div>
           <button className="bg-black text-white px-6 py-2 text-xs font-bold hover:bg-zinc-800 transition-colors h-[36px]">
             查询
           </button>
@@ -116,13 +145,29 @@ export function ProductManagement() {
       </div>
 
       <div className="bg-white border border-zinc-200 shadow-sm">
-        <div className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-zinc-200 bg-zinc-50 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
-          <div className="col-span-3">商品信息 / SPU 名称</div>
+        <div className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-zinc-200 bg-zinc-50 text-[10px] font-bold text-zinc-500 uppercase tracking-widest items-center">
+          <div className="col-span-3 flex items-center gap-2">
+            <input 
+              type="checkbox" 
+              className="accent-black w-4 h-4 mr-2" 
+              onChange={(e) => {
+                if (e.target.checked) {
+                  // In a real app we would select all visible editable product IDs
+                  setSelectedProducts(['rolex', 'burberry']); // mocked
+                } else {
+                  setSelectedProducts([]);
+                }
+              }}
+              checked={selectedProducts.length > 0}
+            />
+            商品信息 / SPU 名称
+          </div>
+          <div className="col-span-1 text-center">集市出价</div>
           <div className="col-span-1 text-right">品牌原价</div>
           <div className="col-span-2 text-center">规格与仓库</div>
           <div className="col-span-1 text-center">当前库存</div>
           <div className="col-span-1 text-right">零售价</div>
-          <div className="col-span-2 text-right">批发供货价</div>
+          <div className="col-span-1 text-right">批发供货价</div>
           <div className="col-span-2 text-center">操作</div>
         </div>
 
@@ -144,6 +189,9 @@ export function ProductManagement() {
                     </div>
                   </div>
                 </div>
+                <div className="col-span-1 flex items-center justify-center">
+                  <span className="bg-green-100 text-green-700 font-bold px-2 py-0.5 text-[10px]">是</span>
+                </div>
                 <div className="col-span-1 text-right text-sm font-bold text-zinc-400">¥85,000</div>
                 <div className="col-span-2 flex flex-col items-center justify-center gap-1">
                   <div className="text-xs font-bold">40mm, 41mm</div>
@@ -153,7 +201,7 @@ export function ProductManagement() {
                   15
                 </div>
                 <div className="col-span-1 text-right text-sm font-bold text-zinc-300">—</div>
-                <div className="col-span-2 text-right text-sm font-bold text-zinc-300">—</div>
+                <div className="col-span-1 text-right text-sm font-bold text-zinc-300">—</div>
                 <div className="col-span-2 flex justify-center items-center gap-4">
                   <button className="text-xs font-bold text-zinc-500 hover:text-black transition-colors" onClick={() => setEditingSpu('rolex')}>编辑</button>
                   <button className="text-xs font-bold text-zinc-500 hover:text-red-600 transition-colors">下架</button>
@@ -177,6 +225,9 @@ export function ProductManagement() {
                     </div>
                   </div>
                 </div>
+                <div className="col-span-1 flex items-center justify-center">
+                  <span className="bg-zinc-100 text-zinc-600 font-bold px-2 py-0.5 text-[10px]">否</span>
+                </div>
                 <div className="col-span-1 text-right text-sm font-bold text-zinc-400">¥5,900</div>
                 <div className="col-span-2 flex flex-col items-center justify-center gap-1">
                   <div className="text-xs font-bold">S码, M码, L码</div>
@@ -186,7 +237,7 @@ export function ProductManagement() {
                   137
                 </div>
                 <div className="col-span-1 text-right text-sm font-bold text-zinc-300">—</div>
-                <div className="col-span-2 text-right text-sm font-bold text-zinc-300">—</div>
+                <div className="col-span-1 text-right text-sm font-bold text-zinc-300">—</div>
                 <div className="col-span-2 flex justify-center items-center gap-4">
                   <button className="text-xs font-bold text-zinc-500 hover:text-black transition-colors" onClick={() => setEditingSpu('burberry')}>编辑</button>
                   <button className="text-xs font-bold text-zinc-500 hover:text-red-600 transition-colors">下架</button>
@@ -200,6 +251,15 @@ export function ProductManagement() {
           <div className="border-b border-zinc-200 group">
             <div className="grid grid-cols-12 gap-4 px-6 py-6 items-center hover:bg-zinc-50 transition-colors">
               <div className="col-span-3 flex items-center gap-4">
+                <input 
+                  type="checkbox" 
+                  className="accent-black w-4 h-4" 
+                  checked={selectedProducts.includes('gucci')}
+                  onChange={(e) => {
+                    if (e.target.checked) setSelectedProducts([...selectedProducts, 'gucci']);
+                    else setSelectedProducts(selectedProducts.filter(id => id !== 'gucci'));
+                  }}
+                />
                 <div className="w-16 h-16 bg-zinc-100 flex items-center justify-center p-2 text-zinc-300">
                   <ImageIcon size={24} />
                 </div>
@@ -212,6 +272,9 @@ export function ProductManagement() {
                   </div>
                 </div>
               </div>
+              <div className="col-span-1 flex items-center justify-center">
+                  <span className="bg-green-100 text-green-700 font-bold px-2 py-0.5 text-[10px]">是</span>
+              </div>
               <div className="col-span-1 text-right text-sm font-bold text-zinc-400">¥13,500</div>
               <div className="col-span-2 flex flex-col items-center justify-center gap-1">
                 <div className="text-xs font-bold">均码</div>
@@ -220,7 +283,8 @@ export function ProductManagement() {
               <div className="col-span-1 text-center font-black text-lg">
                 24
               </div>
-              <div className="col-span-2 text-right text-sm font-bold text-zinc-300">—</div>
+              <div className="col-span-1 text-right text-sm font-bold text-zinc-300">—</div>
+              <div className="col-span-1 text-right text-sm font-bold text-zinc-300">—</div>
               <div className="col-span-2 flex justify-center items-center gap-4">
                 <button className="text-xs font-bold text-blue-600 hover:underline transition-colors" onClick={() => setEditingSpu('gucci')}>上传主图</button>
                 <button className="text-xs font-bold text-zinc-500 hover:text-red-600 transition-colors">删除</button>
@@ -245,6 +309,9 @@ export function ProductManagement() {
                   </div>
                 </div>
               </div>
+              <div className="col-span-1 flex items-center justify-center">
+                  <span className="bg-zinc-100 text-zinc-600 font-bold px-2 py-0.5 text-[10px]">否</span>
+              </div>
               <div className="col-span-1 text-right text-sm font-bold text-zinc-400">¥280,000</div>
               <div className="col-span-2 flex flex-col items-center justify-center gap-1">
                 <div className="text-xs font-bold text-zinc-400 line-through">均码</div>
@@ -254,7 +321,7 @@ export function ProductManagement() {
                 0
               </div>
               <div className="col-span-1 text-right text-sm font-bold text-zinc-300 line-through">¥1,250,000</div>
-              <div className="col-span-2 text-right text-sm font-bold text-zinc-300 line-through">¥1,180,000</div>
+              <div className="col-span-1 text-right text-sm font-bold text-zinc-300 line-through">¥1,180,000</div>
               <div className="col-span-2 flex justify-center items-center gap-4">
                 <button className="text-xs font-bold text-zinc-500 hover:text-black transition-colors" onClick={() => setEditingSpu('patek')}>编辑</button>
                 <button className="text-xs font-bold text-zinc-500 hover:text-red-600 transition-colors">删除</button>

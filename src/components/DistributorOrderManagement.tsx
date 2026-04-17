@@ -2,11 +2,23 @@ import { Search, ChevronRight, X, FileText } from "lucide-react";
 import { useState } from "react";
 
 const INITIAL_ORDERS = [
+  // --- 待付款 (pending_payment) ---
+  {
+    id: 'DIST-2024-0816-NEW', type: 'distribution', date: '2024-08-16 09:30', brand: 'Chanel', productName: 'Chanel Classic Flap', spuCount: 1, itemCount: 1,
+    buyerName: '周八', buyerPhone: '136****5555', buyerType: 'C端买家', deliveryMethod: '快递发货', warehouse: '香港直邮仓', 
+    shippingMode: 'transit', supplierName: '欧洲表行', shippingAddress: '上海市黄浦区...',
+    totalPrice: 65000, totalCostPrice: 60000, status: 'pending_payment', statusLabel: '待付款',
+    image: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=100&q=80',
+    items: [{ id: 'item-new', name: 'Chanel Classic Flap', sku: 'CH-CF-BLK', supplier: '欧洲表行', count: 1, price: 65000, status: 'pending_payment', statusLabel: '待付款' }],
+    progress: [
+      { id: 'p1', time: '2024-08-16 09:30', description: '买家下单，等待付款', items: '全部 (1件)', amountChange: '-' }
+    ]
+  },
   {
     id: 'DIST-2024-0815-A2', type: 'distribution', date: '2024-08-15 10:25', brand: 'Rolex', productName: 'Rolex Daytona', spuCount: 1, itemCount: 1,
     buyerName: '王五', buyerPhone: '138****1234', buyerType: 'C端买家', deliveryMethod: '快递发货', warehouse: '深圳保税仓', 
     shippingMode: 'transit', supplierName: '欧洲表行', shippingAddress: '北京市朝阳区建国路...',
-    totalPrice: 285000, status: 'pending_confirmation', statusLabel: '待供货商确认',
+    totalPrice: 285000, totalCostPrice: 260000, status: 'pending_confirmation', statusLabel: '待供货商确认',
     image: 'https://images.unsplash.com/photo-1523170335258-f5ed11844a49?auto=format&fit=crop&w=100&q=80',
     items: [{ id: 'item-2', name: 'Rolex Daytona', sku: '116500LN', supplier: '欧洲表行', count: 1, price: 285000, status: 'pending_confirmation', statusLabel: '待供货商确认' }],
     progress: [
@@ -17,7 +29,7 @@ const INITIAL_ORDERS = [
     id: 'DIST-2024-0814-B2', type: 'distribution', date: '2024-08-14 14:25', brand: 'Gucci', productName: 'Gucci Marmont', spuCount: 1, itemCount: 1,
     buyerName: '林八', buyerPhone: '135****7890', buyerType: 'C端买家', deliveryMethod: '快递发货', warehouse: '深圳保税仓', 
     shippingMode: 'dropship', supplierName: '米兰精品', shippingAddress: '广州市天河区...',
-    totalPrice: 18500, status: 'pending_shipment', statusLabel: '待发货',
+    totalPrice: 18500, totalCostPrice: 16000, status: 'pending_shipment', statusLabel: '待发货',
     image: 'https://images.unsplash.com/photo-1584916201218-f4242ceb4809?auto=format&fit=crop&w=100&q=80',
     items: [{ id: 'item-5', name: 'Gucci Marmont', sku: 'G-MM-BLK', supplier: '米兰精品', count: 1, price: 18500, status: 'pending_shipment', statusLabel: '待发货' }],
     progress: [
@@ -29,7 +41,7 @@ const INITIAL_ORDERS = [
     id: 'DIST-2024-0813-C3', type: 'distribution', date: '2024-08-13 09:10', brand: 'Prada', productName: 'Prada Cleo', spuCount: 1, itemCount: 1,
     buyerName: '赵六', buyerPhone: '139****5678', buyerType: 'C端买家', deliveryMethod: '快递发货', warehouse: '香港直邮仓', 
     shippingMode: 'transit', supplierName: '欧洲表行', shippingAddress: '上海市浦东新区...',
-    totalPrice: 15200, status: 'pending_refund', statusLabel: '待退款',
+    totalPrice: 15200, totalCostPrice: 14000, status: 'pending_refund', statusLabel: '待退款',
     image: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=100&q=80',
     items: [{ id: 'item-6', name: 'Prada Cleo', sku: 'P-CLEO-WHT', supplier: '欧洲表行', count: 1, price: 15200, status: 'pending_refund', statusLabel: '待退款' }],
     progress: [
@@ -45,6 +57,34 @@ export function DistributorOrderManagement() {
   const [activeTab, setActiveTab] = useState('all');
   const [newProgressDesc, setNewProgressDesc] = useState('');
   const [newProgressAmount, setNewProgressAmount] = useState('');
+
+  const [isEditingPrice, setIsEditingPrice] = useState(false);
+  const [tempPrice, setTempPrice] = useState('');
+
+  const handleUpdatePrice = () => {
+    if (!selectedOrder) return;
+    const newPrice = parseFloat(tempPrice);
+    if (isNaN(newPrice) || newPrice < 0) return;
+    
+    const orderData = orders.find(o => o.id === selectedOrder);
+    if (!orderData) return;
+    
+    if (orderData.totalCostPrice && newPrice < orderData.totalCostPrice) {
+      alert(`修改后的订单总金额不能低于上游成本价 (¥${orderData.totalCostPrice.toLocaleString()})`);
+      return;
+    }
+
+    setOrders(orders.map(order => {
+      if (order.id === selectedOrder) {
+        return {
+          ...order,
+          totalPrice: newPrice
+        };
+      }
+      return order;
+    }));
+    setIsEditingPrice(false);
+  };
 
   const handleAddManualProgress = () => {
     if (!selectedOrder || !newProgressDesc) return;
@@ -89,6 +129,7 @@ export function DistributorOrderManagement() {
 
         <div className="flex gap-8 border-b border-zinc-200 mb-6">
           <button onClick={() => setActiveTab('all')} className={`pb-3 text-xs font-bold transition-colors ${activeTab === 'all' ? 'text-black border-b-2 border-black' : 'text-zinc-500 hover:text-black'}`}>全部订单</button>
+          <button onClick={() => setActiveTab('pending_payment')} className={`pb-3 text-xs font-bold transition-colors ${activeTab === 'pending_payment' ? 'text-black border-b-2 border-black' : 'text-zinc-500 hover:text-black'}`}>待付款</button>
           <button onClick={() => setActiveTab('pending_confirmation')} className={`pb-3 text-xs font-bold transition-colors ${activeTab === 'pending_confirmation' ? 'text-black border-b-2 border-black' : 'text-zinc-500 hover:text-black'}`}>待供货商确认</button>
           <button onClick={() => setActiveTab('pending_shipment')} className={`pb-3 text-xs font-bold transition-colors ${activeTab === 'pending_shipment' ? 'text-black border-b-2 border-black' : 'text-zinc-500 hover:text-black'}`}>待发货</button>
           <button onClick={() => setActiveTab('pending_refund')} className={`pb-3 text-xs font-bold transition-colors ${activeTab === 'pending_refund' ? 'text-black border-b-2 border-black' : 'text-zinc-500 hover:text-black'}`}>待退款</button>
@@ -125,7 +166,7 @@ export function DistributorOrderManagement() {
                 </div>
                 <div className="col-span-2 pr-4">
                   <div className="text-xs font-bold mb-1">{order.buyerName}</div>
-                  <div className="text-[10px] text-zinc-500">{order.buyerType}</div>
+                  <div className="text-[10px] text-zinc-500 truncate" title={order.shippingAddress}>{order.shippingAddress}</div>
                 </div>
                 <div className="col-span-2 pr-4">
                   <div className="text-xs font-bold mb-1">{order.supplierName}</div>
@@ -136,6 +177,7 @@ export function DistributorOrderManagement() {
                 </div>
                 <div className="col-span-2 pl-4">
                   <div className={`text-[9px] font-bold px-2 py-1 uppercase tracking-wider inline-block mb-1 ${
+                    order.status === 'pending_payment' ? 'bg-red-100 text-red-800' :
                     order.status === 'pending_confirmation' ? 'bg-orange-100 text-orange-800' :
                     order.status === 'pending_shipment' ? 'bg-black text-white' :
                     order.status === 'pending_refund' ? 'bg-red-100 text-red-800' :
@@ -167,7 +209,13 @@ export function DistributorOrderManagement() {
                 <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1">订单详情</div>
                 <h2 className="text-xl font-black uppercase tracking-tight">{selectedOrderData.id}</h2>
               </div>
-              <button onClick={() => setSelectedOrder(null)} className="text-zinc-400 hover:text-black transition-colors"><X size={24} /></button>
+              <button 
+                onClick={() => {
+                  setSelectedOrder(null);
+                  setIsEditingPrice(false);
+                }} 
+                className="text-zinc-400 hover:text-black transition-colors"><X size={24} />
+              </button>
             </div>
           
             <div className="flex-1 overflow-y-auto p-8">
@@ -175,7 +223,6 @@ export function DistributorOrderManagement() {
                 <div>
                   <h3 className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-4">买家/收件信息</h3>
                   <div className="text-sm font-bold mb-1">{selectedOrderData.buyerName} ({selectedOrderData.buyerPhone})</div>
-                  <div className="text-xs text-zinc-500 mb-1">C端买家 (我的客户)</div>
                   <div className="text-xs text-zinc-500 mb-2">收货地址: {selectedOrderData.shippingAddress}</div>
                   <div className="text-xs text-zinc-500 mt-2 p-2 bg-orange-50 border border-orange-100 rounded-sm">
                     <span className="font-bold text-orange-800">上游货主:</span> {selectedOrderData.supplierName}
@@ -187,6 +234,7 @@ export function DistributorOrderManagement() {
                   <h3 className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-4">订单状态</h3>
                   <div className="flex items-center gap-2 mb-2">
                     <span className={`text-[10px] font-bold px-2 py-1 uppercase tracking-wider ${
+                      selectedOrderData.status === 'pending_payment' ? 'bg-red-100 text-red-800' :
                       selectedOrderData.status === 'pending_confirmation' ? 'bg-orange-100 text-orange-800' :
                       selectedOrderData.status === 'pending_shipment' ? 'bg-black text-white' :
                       selectedOrderData.status === 'pending_refund' ? 'bg-red-100 text-red-800' :
@@ -207,8 +255,56 @@ export function DistributorOrderManagement() {
                 </div>
                 <div className="flex justify-between items-center pt-2 border-t border-zinc-200 mt-2">
                   <span className="text-sm font-bold">已付金额</span>
-                  <span className="text-lg font-black">¥ {selectedOrderData.totalPrice.toLocaleString()}.00</span>
+                  <span className="text-lg font-black">¥ {selectedOrderData.status === 'pending_payment' ? '0.00' : `${selectedOrderData.totalPrice.toLocaleString()}.00`}</span>
                 </div>
+
+                {selectedOrderData.status === 'pending_payment' && (
+                  <div className="mt-4 pt-4 border-t border-zinc-200">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm font-bold">修改订单总额</span>
+                      {isEditingPrice ? (
+                        <div className="flex flex-col items-end gap-2">
+                          <div className="flex items-center gap-2">
+                            <input
+                              type="number"
+                              value={tempPrice}
+                              onChange={(e) => setTempPrice(e.target.value)}
+                              className="border border-zinc-300 px-2 py-1 text-sm w-24"
+                              placeholder="新价格"
+                            />
+                            <button
+                              onClick={handleUpdatePrice}
+                              className="bg-black text-white px-3 py-1 text-xs font-bold"
+                            >
+                              保存
+                            </button>
+                            <button
+                              onClick={() => setIsEditingPrice(false)}
+                              className="text-zinc-500 hover:text-black text-xs font-bold"
+                            >
+                              取消
+                            </button>
+                          </div>
+                          {(selectedOrderData.warehouse === '香港直邮仓' || selectedOrderData.warehouse === '深圳保税仓') && parseFloat(tempPrice) > 0 && (
+                            <div className="text-[10px] text-zinc-500 text-right mt-1">
+                              商品实付款: ¥{(parseFloat(tempPrice) / 1.091).toFixed(2)}，关税 (9.1%): ¥{(parseFloat(tempPrice) - parseFloat(tempPrice) / 1.091).toFixed(2)}
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => {
+                            setTempPrice(selectedOrderData.totalPrice.toString());
+                            setIsEditingPrice(true);
+                          }}
+                          className="text-blue-600 text-xs font-bold hover:underline"
+                        >
+                          改价
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Product List */}
@@ -312,9 +408,21 @@ export function DistributorOrderManagement() {
             <div className="p-6 border-t border-zinc-200 bg-zinc-50 flex justify-between items-center">
               <div className="text-xs text-zinc-500">已选 0 件商品</div>
               <div className="flex gap-3">
-                <button className="bg-white border border-zinc-200 text-black px-6 py-2 text-xs font-bold uppercase tracking-widest hover:border-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-                  申请退款
-                </button>
+                {selectedOrderData.status === 'pending_payment' ? (
+                  <button 
+                    onClick={() => {
+                      setTempPrice(selectedOrderData.totalPrice.toString());
+                      setIsEditingPrice(true);
+                    }}
+                    className="bg-black text-white px-6 py-2 text-xs font-bold uppercase tracking-widest hover:bg-zinc-800 transition-colors"
+                  >
+                    修改订单金额
+                  </button>
+                ) : (
+                  <button className="bg-white border border-zinc-200 text-black px-6 py-2 text-xs font-bold uppercase tracking-widest hover:border-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                    申请退款
+                  </button>
+                )}
               </div>
             </div>
           </div>
