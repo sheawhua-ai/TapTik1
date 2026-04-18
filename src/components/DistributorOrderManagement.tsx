@@ -1,4 +1,4 @@
-import { Search, ChevronRight, X, FileText } from "lucide-react";
+import { Search, ChevronRight, X, FileText, Truck } from "lucide-react";
 import { useState } from "react";
 
 const INITIAL_ORDERS = [
@@ -6,7 +6,7 @@ const INITIAL_ORDERS = [
   {
     id: 'DIST-2024-0816-NEW', type: 'distribution', date: '2024-08-16 09:30', brand: 'Chanel', productName: 'Chanel Classic Flap', spuCount: 1, itemCount: 1,
     buyerName: '周八', buyerPhone: '136****5555', buyerType: 'C端买家', deliveryMethod: '快递发货', warehouse: '香港直邮仓', 
-    shippingMode: 'transit', supplierName: '欧洲表行', shippingAddress: '上海市黄浦区...',
+    shippingMode: 'transit', supplierName: '欧洲表行', distributorName: '潮流买手A', shippingAddress: '上海市黄浦区...',
     totalPrice: 65000, totalCostPrice: 60000, status: 'pending_payment', statusLabel: '待付款',
     image: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=100&q=80',
     items: [{ id: 'item-new', name: 'Chanel Classic Flap', sku: 'CH-CF-BLK', supplier: '欧洲表行', count: 1, price: 65000, status: 'pending_payment', statusLabel: '待付款' }],
@@ -17,7 +17,7 @@ const INITIAL_ORDERS = [
   {
     id: 'DIST-2024-0815-A2', type: 'distribution', date: '2024-08-15 10:25', brand: 'Rolex', productName: 'Rolex Daytona', spuCount: 1, itemCount: 1,
     buyerName: '王五', buyerPhone: '138****1234', buyerType: 'C端买家', deliveryMethod: '快递发货', warehouse: '深圳保税仓', 
-    shippingMode: 'transit', supplierName: '欧洲表行', shippingAddress: '北京市朝阳区建国路...',
+    shippingMode: 'transit', supplierName: '欧洲表行', distributorName: '轻奢尚品B', shippingAddress: '北京市朝阳区建国路...',
     totalPrice: 285000, totalCostPrice: 260000, status: 'pending_confirmation', statusLabel: '待供货商确认',
     image: 'https://images.unsplash.com/photo-1523170335258-f5ed11844a49?auto=format&fit=crop&w=100&q=80',
     items: [{ id: 'item-2', name: 'Rolex Daytona', sku: '116500LN', supplier: '欧洲表行', count: 1, price: 285000, status: 'pending_confirmation', statusLabel: '待供货商确认' }],
@@ -28,7 +28,7 @@ const INITIAL_ORDERS = [
   {
     id: 'DIST-2024-0814-B2', type: 'distribution', date: '2024-08-14 14:25', brand: 'Gucci', productName: 'Gucci Marmont', spuCount: 1, itemCount: 1,
     buyerName: '林八', buyerPhone: '135****7890', buyerType: 'C端买家', deliveryMethod: '快递发货', warehouse: '深圳保税仓', 
-    shippingMode: 'dropship', supplierName: '米兰精品', shippingAddress: '广州市天河区...',
+    shippingMode: 'dropship', supplierName: '米兰精品', distributorName: '潮流买手A', shippingAddress: '广州市天河区...',
     totalPrice: 18500, totalCostPrice: 16000, status: 'pending_shipment', statusLabel: '待发货',
     image: 'https://images.unsplash.com/photo-1584916201218-f4242ceb4809?auto=format&fit=crop&w=100&q=80',
     items: [{ id: 'item-5', name: 'Gucci Marmont', sku: 'G-MM-BLK', supplier: '米兰精品', count: 1, price: 18500, status: 'pending_shipment', statusLabel: '待发货' }],
@@ -38,15 +38,51 @@ const INITIAL_ORDERS = [
     ]
   },
   {
+    id: 'DIST-2024-0814-B3', type: 'distribution', date: '2024-08-14 16:20', brand: 'Dior', productName: 'Dior Saddle', spuCount: 1, itemCount: 1,
+    buyerName: '吴九', buyerPhone: '139****1234', buyerType: 'C端买家', deliveryMethod: '快递发货', warehouse: '香港直邮仓', 
+    shippingMode: 'transit', supplierName: '欧洲表行', distributorName: '潮流买手A', shippingAddress: '北京市海淀区...',
+    totalPrice: 24500, totalCostPrice: 22000, status: 'supplier_shipped', statusLabel: '上游已发货 (待入库)',
+    image: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=100&q=80',
+    items: [{ id: 'item-dior', name: 'Dior Saddle', sku: 'D-SDL-BLK', supplier: '欧洲表行', count: 1, price: 24500, status: 'supplier_shipped', statusLabel: '上游已发货 (待入库)' }],
+    shipments: [
+      { id: 'PKG-UP-001', type: 'upstream', company: 'FedEx国际', trackingNumber: 'FX9988776655', contents: 'Dior Saddle (1件)' }
+    ],
+    progress: [
+      { id: 'p1', time: '2024-08-14 16:25', description: '买家付款成功', items: '全部 (1件)', amountChange: '+¥24,500' },
+      { id: 'p2', time: '2024-08-15 09:00', description: '供货商已发货(段一)', items: '全部 (1件)', amountChange: '-' }
+    ]
+  },
+  {
     id: 'DIST-2024-0813-C3', type: 'distribution', date: '2024-08-13 09:10', brand: 'Prada', productName: 'Prada Cleo', spuCount: 1, itemCount: 1,
     buyerName: '赵六', buyerPhone: '139****5678', buyerType: 'C端买家', deliveryMethod: '快递发货', warehouse: '香港直邮仓', 
-    shippingMode: 'transit', supplierName: '欧洲表行', shippingAddress: '上海市浦东新区...',
+    shippingMode: 'transit', supplierName: '欧洲表行', distributorName: '时尚优选C', shippingAddress: '上海市浦东新区...',
     totalPrice: 15200, totalCostPrice: 14000, status: 'pending_refund', statusLabel: '待退款',
     image: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=100&q=80',
     items: [{ id: 'item-6', name: 'Prada Cleo', sku: 'P-CLEO-WHT', supplier: '欧洲表行', count: 1, price: 15200, status: 'pending_refund', statusLabel: '待退款' }],
     progress: [
       { id: 'p1', time: '2024-08-13 09:15', description: '买家付款成功', items: '全部 (1件)', amountChange: '+¥15,200' },
       { id: 'p2', time: '2024-08-13 11:00', description: '供货商确认缺货', items: 'Prada Cleo', amountChange: '产生退款 ¥15,200' }
+    ]
+  },
+  {
+    id: 'DIST-2024-0812-D4', type: 'distribution', date: '2024-08-12 11:45', brand: 'Hermes', productName: 'Hermes Birkin 30', spuCount: 2, itemCount: 2,
+    buyerName: '李七', buyerPhone: '137****1111', buyerType: 'C端买家', deliveryMethod: '快递发货', warehouse: '上海中转仓', 
+    shippingMode: 'transit', supplierName: '巴黎代购A', distributorName: '轻奢尚品B', shippingAddress: '浙江省杭州市西湖区...',
+    totalPrice: 155000, totalCostPrice: 140000, status: 'shipped', statusLabel: '已发货',
+    image: 'https://images.unsplash.com/photo-1584916201218-f4242ceb4809?auto=format&fit=crop&w=100&q=80',
+    items: [
+      { id: 'item-7', name: 'Hermes Birkin 30', sku: 'H-BK30-BLK', supplier: '巴黎代购A', count: 1, price: 120000, status: 'shipped', statusLabel: '已发货' },
+      { id: 'item-8', name: 'Hermes Twilly', sku: 'H-TW-01', supplier: '巴黎代购A', count: 1, price: 35000, status: 'shipped', statusLabel: '已发货' }
+    ],
+    shipments: [
+      { id: 'PKG-001', type: 'upstream', company: 'DHL国际', trackingNumber: 'DHL1029384756', contents: '全部商品由供货商发出' },
+      { id: 'PKG-002', type: 'downstream', company: '顺丰速运', trackingNumber: 'SF1029384757', contents: 'Hermes Birkin 30 (1件)' },
+      { id: 'PKG-003', type: 'downstream', company: '顺丰速运', trackingNumber: 'SF1029384758', contents: 'Hermes Twilly (1件)' }
+    ],
+    progress: [
+      { id: 'p1', time: '2024-08-12 11:50', description: '买家付款成功', items: '全部 (2件)', amountChange: '+¥155,000' },
+      { id: 'p2', time: '2024-08-12 15:00', description: '供货商已发货', items: '全部 (2件)', amountChange: '-' },
+      { id: 'p3', time: '2024-08-13 10:00', description: '中转仓签收并发出', items: '全部 (2件)', amountChange: '-' }
     ]
   }
 ];
@@ -55,6 +91,9 @@ export function DistributorOrderManagement() {
   const [orders, setOrders] = useState(INITIAL_ORDERS);
   const [selectedOrder, setSelectedOrder] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('all');
+  const [filterSupplier, setFilterSupplier] = useState<string | null>(null);
+  const [filterBuyer, setFilterBuyer] = useState<string | null>(null);
+  const [filterDistributor, setFilterDistributor] = useState<string | null>(null);
   const [newProgressDesc, setNewProgressDesc] = useState('');
   const [newProgressAmount, setNewProgressAmount] = useState('');
 
@@ -110,8 +149,20 @@ export function DistributorOrderManagement() {
   };
 
   const filteredOrders = orders.filter(order => {
-    if (activeTab === 'all') return true;
-    return order.status === activeTab;
+    let matchesTab = false;
+    if (activeTab === 'all') {
+      matchesTab = true;
+    } else {
+      matchesTab = order.status === activeTab;
+    }
+
+    if (!matchesTab) return false;
+
+    if (filterSupplier && order.supplierName !== filterSupplier) return false;
+    if (filterBuyer && order.buyerName !== filterBuyer) return false;
+    if (filterDistributor && order.distributorName !== filterDistributor) return false;
+
+    return true;
   });
 
   const selectedOrderData = orders.find(o => o.id === selectedOrder);
@@ -132,14 +183,52 @@ export function DistributorOrderManagement() {
           <button onClick={() => setActiveTab('pending_payment')} className={`pb-3 text-xs font-bold transition-colors ${activeTab === 'pending_payment' ? 'text-black border-b-2 border-black' : 'text-zinc-500 hover:text-black'}`}>待付款</button>
           <button onClick={() => setActiveTab('pending_confirmation')} className={`pb-3 text-xs font-bold transition-colors ${activeTab === 'pending_confirmation' ? 'text-black border-b-2 border-black' : 'text-zinc-500 hover:text-black'}`}>待供货商确认</button>
           <button onClick={() => setActiveTab('pending_shipment')} className={`pb-3 text-xs font-bold transition-colors ${activeTab === 'pending_shipment' ? 'text-black border-b-2 border-black' : 'text-zinc-500 hover:text-black'}`}>待发货</button>
-          <button onClick={() => setActiveTab('pending_refund')} className={`pb-3 text-xs font-bold transition-colors ${activeTab === 'pending_refund' ? 'text-black border-b-2 border-black' : 'text-zinc-500 hover:text-black'}`}>待退款</button>
+          <button onClick={() => setActiveTab('supplier_shipped')} className={`pb-3 text-xs font-bold transition-colors flex items-center gap-1 ${activeTab === 'supplier_shipped' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-zinc-500 hover:text-black'}`}>
+            <span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+            上游已发货
+          </button>
           <button onClick={() => setActiveTab('shipped')} className={`pb-3 text-xs font-bold transition-colors ${activeTab === 'shipped' ? 'text-black border-b-2 border-black' : 'text-zinc-500 hover:text-black'}`}>已发货</button>
+          <button onClick={() => setActiveTab('pending_refund')} className={`pb-3 text-xs font-bold transition-colors ${activeTab === 'pending_refund' ? 'text-black border-b-2 border-black' : 'text-zinc-500 hover:text-black'}`}>待退款</button>
+        </div>
+
+        <div className="flex flex-col gap-4 mb-6">
+          <div className="flex gap-4 flex-wrap">
+            <div className="flex-1 min-w-[200px] relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" size={16} />
+              <input 
+                type="text" 
+                placeholder="搜索订单号、买家、商品名称..." 
+                className="w-full border border-zinc-200 pl-10 pr-4 py-2 text-sm focus:border-black focus:ring-0 outline-none" 
+              />
+            </div>
+          </div>
+          {(filterSupplier || filterBuyer || filterDistributor) && (
+            <div className="flex items-center gap-2 text-xs">
+              <span className="text-zinc-500 font-bold">当前筛选:</span>
+              {filterSupplier && (
+                <span className="bg-zinc-200 text-zinc-800 px-2 py-1 flex items-center gap-1">
+                  供应商/货主: {filterSupplier} <X size={12} className="cursor-pointer hover:text-black" onClick={() => setFilterSupplier(null)} />
+                </span>
+              )}
+              {filterBuyer && (
+                <span className="bg-zinc-200 text-zinc-800 px-2 py-1 flex items-center gap-1">
+                  买家: {filterBuyer} <X size={12} className="cursor-pointer hover:text-black" onClick={() => setFilterBuyer(null)} />
+                </span>
+              )}
+              {filterDistributor && (
+                <span className="bg-zinc-200 text-zinc-800 px-2 py-1 flex items-center gap-1">
+                  分销商: {filterDistributor} <X size={12} className="cursor-pointer hover:text-black" onClick={() => setFilterDistributor(null)} />
+                </span>
+              )}
+              <button onClick={() => { setFilterSupplier(null); setFilterBuyer(null); setFilterDistributor(null); }} className="text-zinc-500 hover:text-black hover:underline ml-2">清除全部</button>
+            </div>
+          )}
         </div>
 
         <div className="bg-white border border-zinc-200 shadow-sm">
           <div className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-zinc-200 bg-zinc-50 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
             <div className="col-span-3">商品详情</div>
-            <div className="col-span-2">买家</div>
+            <div className="col-span-2">买家信息</div>
             <div className="col-span-2">上游供货商</div>
             <div className="col-span-2 text-right">总价</div>
             <div className="col-span-2 pl-4">状态</div>
@@ -151,6 +240,14 @@ export function DistributorOrderManagement() {
               <div className="bg-zinc-50 px-6 py-3 border-b border-zinc-200 flex items-center gap-4">
                 <span className="font-bold text-xs">{order.id}</span>
                 <span className="text-[10px] text-zinc-500">{order.date}</span>
+                {order.distributorName && (
+                  <span 
+                    className="text-[10px] text-blue-600 ml-4 cursor-pointer hover:underline"
+                    onClick={() => setFilterDistributor(order.distributorName!)}
+                  >
+                    分销商: {order.distributorName}
+                  </span>
+                )}
               </div>
               <div className="grid grid-cols-12 gap-4 px-6 py-6 items-center">
                 <div className="col-span-3 pr-4">
@@ -165,11 +262,21 @@ export function DistributorOrderManagement() {
                   </div>
                 </div>
                 <div className="col-span-2 pr-4">
-                  <div className="text-xs font-bold mb-1">{order.buyerName}</div>
+                  <div 
+                    className="text-xs font-bold mb-1 text-blue-600 cursor-pointer hover:underline"
+                    onClick={() => setFilterBuyer(order.buyerName)}
+                  >
+                    {order.buyerName}
+                  </div>
                   <div className="text-[10px] text-zinc-500 truncate" title={order.shippingAddress}>{order.shippingAddress}</div>
                 </div>
                 <div className="col-span-2 pr-4">
-                  <div className="text-xs font-bold mb-1">{order.supplierName}</div>
+                  <div 
+                    className="text-xs font-bold mb-1 text-blue-600 cursor-pointer hover:underline"
+                    onClick={() => setFilterSupplier(order.supplierName)}
+                  >
+                    {order.supplierName}
+                  </div>
                   <div className="text-[10px] text-zinc-500">{order.shippingMode === 'dropship' ? '代发' : '发往中转仓'}</div>
                 </div>
                 <div className="col-span-2 text-right">
@@ -180,11 +287,54 @@ export function DistributorOrderManagement() {
                     order.status === 'pending_payment' ? 'bg-red-100 text-red-800' :
                     order.status === 'pending_confirmation' ? 'bg-orange-100 text-orange-800' :
                     order.status === 'pending_shipment' ? 'bg-black text-white' :
+                    order.status === 'supplier_shipped' ? 'bg-blue-100 text-blue-800' :
                     order.status === 'pending_refund' ? 'bg-red-100 text-red-800' :
                     'bg-zinc-100 text-zinc-800'
                   }`}>
                     {order.statusLabel}
                   </div>
+                  {(order as any).shipments && (order as any).shipments.length > 0 && (
+                    <div className="mt-2 space-y-2">
+                       {(() => {
+                         const upstream = (order as any).shipments.filter((s:any) => s.type === 'upstream');
+                         const downstream = (order as any).shipments.filter((s:any) => s.type === 'downstream');
+                         return (
+                           <>
+                             {upstream.length > 0 && (
+                               <div className="text-[10px] text-zinc-500 bg-blue-50/50 p-1.5 rounded-sm">
+                                 <div className="font-bold text-blue-600/70 mb-1 flex items-center gap-1"><Truck size={10} /> 上游发货物流:</div>
+                                 <div className="space-y-1">
+                                   {upstream.map((s:any) => (
+                                     <div key={s.id}>
+                                       <span className="text-zinc-800">{s.company}</span>
+                                       <a href="#" onClick={(e) => { e.preventDefault(); alert(`查看物流轨迹\r\n\r\n单号: ${s.trackingNumber}\r\n状态: 运输中...\r\n包裹内容: ${s.contents}`); }} className="text-blue-600 hover:underline ml-1">
+                                         {s.trackingNumber}
+                                       </a>
+                                     </div>
+                                   ))}
+                                 </div>
+                               </div>
+                             )}
+                             {downstream.length > 0 && (
+                               <div className="text-[10px] text-zinc-500 bg-green-50/50 p-1.5 rounded-sm">
+                                 <div className="font-bold text-green-600/80 mb-1 flex items-center gap-1"><Truck size={10} /> 发往买家物流:</div>
+                                 <div className="space-y-1">
+                                   {downstream.map((s:any) => (
+                                     <div key={s.id}>
+                                       <span className="text-zinc-800">{s.company}</span>
+                                       <a href="#" onClick={(e) => { e.preventDefault(); alert(`查看物流轨迹\r\n\r\n单号: ${s.trackingNumber}\r\n状态: 运输中...\r\n包裹内容: ${s.contents}`); }} className="text-blue-600 hover:underline ml-1">
+                                         {s.trackingNumber}
+                                       </a>
+                                     </div>
+                                   ))}
+                                 </div>
+                               </div>
+                             )}
+                           </>
+                         )
+                       })()}
+                    </div>
+                  )}
                 </div>
                 <div className="col-span-1 text-right">
                   <button 
@@ -237,6 +387,7 @@ export function DistributorOrderManagement() {
                       selectedOrderData.status === 'pending_payment' ? 'bg-red-100 text-red-800' :
                       selectedOrderData.status === 'pending_confirmation' ? 'bg-orange-100 text-orange-800' :
                       selectedOrderData.status === 'pending_shipment' ? 'bg-black text-white' :
+                      selectedOrderData.status === 'supplier_shipped' ? 'bg-blue-100 text-blue-800' :
                       selectedOrderData.status === 'pending_refund' ? 'bg-red-100 text-red-800' :
                       'bg-zinc-100 text-zinc-800'
                     }`}>{selectedOrderData.statusLabel}</span>
@@ -347,6 +498,71 @@ export function DistributorOrderManagement() {
                   </table>
                 </div>
               </div>
+
+              {/* Logistics Trackings */}
+              {selectedOrderData.shipments && selectedOrderData.shipments.length > 0 && (
+                <div className="mt-8">
+                  <h3 className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-4 flex items-center gap-1"><Truck size={14} /> 物流跟踪 (分段发货)</h3>
+                  <div className="border border-zinc-200 bg-white">
+                    {(() => {
+                      const upstream = selectedOrderData.shipments.filter((s: any) => s.type === 'upstream');
+                      const downstream = selectedOrderData.shipments.filter((s: any) => s.type === 'downstream');
+                      return (
+                        <div className="divide-y divide-zinc-200">
+                           {upstream.length > 0 && (
+                             <div className="p-6">
+                               <div className="text-xs font-bold mb-4 flex items-center gap-2">
+                                 <span className="w-2 h-2 rounded-full bg-blue-500"></span> 段一：上游发货 
+                                 <span className="text-[10px] text-zinc-500 font-normal">({selectedOrderData.supplierName} ➔ {selectedOrderData.warehouse || '中转仓/代发'})</span>
+                               </div>
+                               <div className="space-y-4 pl-4 border-l-2 border-zinc-100 ml-1">
+                                 {upstream.map((s: any) => (
+                                   <div key={s.id} className="text-xs">
+                                     <div className="font-bold text-zinc-800 flex items-center gap-2">
+                                       {s.company} 
+                                       <span 
+                                         className="text-blue-600 cursor-pointer hover:underline" 
+                                         onClick={(e) => { e.preventDefault(); alert(`查看物流轨迹\r\n\r\n单号: ${s.trackingNumber}\r\n状态: 运输中...\r\n包裹内容: ${s.contents}`); }}
+                                       >
+                                         {s.trackingNumber}
+                                       </span>
+                                     </div>
+                                     <div className="text-zinc-500 mt-1">包裹内容: {s.contents}</div>
+                                   </div>
+                                 ))}
+                               </div>
+                             </div>
+                           )}
+                           {downstream.length > 0 && (
+                             <div className="p-6 bg-zinc-50/50">
+                               <div className="text-xs font-bold mb-4 flex items-center gap-2">
+                                 <span className="w-2 h-2 rounded-full bg-green-500"></span> 段二：发往买家 
+                                 <span className="text-[10px] text-zinc-500 font-normal">({selectedOrderData.warehouse || '中转仓/代发' } ➔ {selectedOrderData.buyerName})</span>
+                               </div>
+                               <div className="space-y-4 pl-4 border-l-2 border-zinc-100 ml-1">
+                                 {downstream.map((s: any) => (
+                                   <div key={s.id} className="text-xs">
+                                     <div className="font-bold text-zinc-800 flex items-center gap-2">
+                                       {s.company} 
+                                       <span 
+                                         className="text-blue-600 cursor-pointer hover:underline" 
+                                         onClick={(e) => { e.preventDefault(); alert(`查看物流轨迹\r\n\r\n单号: ${s.trackingNumber}\r\n状态: 运输中...\r\n包裹内容: ${s.contents}`); }}
+                                       >
+                                         {s.trackingNumber}
+                                       </span>
+                                     </div>
+                                     <div className="text-zinc-500 mt-1">包裹内容: {s.contents}</div>
+                                   </div>
+                                 ))}
+                               </div>
+                             </div>
+                           )}
+                        </div>
+                      );
+                    })()}
+                  </div>
+                </div>
+              )}
 
               {/* Order Progress Details */}
               <div className="mt-8">

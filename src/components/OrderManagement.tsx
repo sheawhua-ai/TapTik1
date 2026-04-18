@@ -60,6 +60,10 @@ const INITIAL_ORDERS = [
       { id: 'item-7', name: 'Nautilus 5711', sku: 'PP-5711-1A', productNumber: '5711/1A-010', supplier: '自营库存', count: 1, price: 850000, status: 'shipped', statusLabel: '已发货' },
       { id: 'item-8', name: 'Aquanaut 5167', sku: 'PP-5167-1A', productNumber: '5167A-001', supplier: '自营库存', count: 1, price: 100000, status: 'shipped', statusLabel: '已发货' }
     ],
+    shipments: [
+      { id: 'PKG-001', company: '顺丰速运', trackingNumber: 'SF1029384756', contents: 'Nautilus 5711 (1件)' },
+      { id: 'PKG-002', company: '顺丰速运', trackingNumber: 'SF1029384757', contents: 'Aquanaut 5167 (1件)' }
+    ],
     progress: [
       { id: 'p1', time: '2024-08-13 09:20', description: '买家付款成功', items: '全部 (2件)', amountChange: '+¥950,000' },
       { id: 'p2', time: '2024-08-13 14:00', description: '商品发货', items: '全部 (2件)', amountChange: '-' }
@@ -282,6 +286,7 @@ export function OrderManagement() {
           totalPrice: shippedTotal,
           status: 'shipped',
           statusLabel: '已发货',
+          shipments: trackingNumber ? [{ id: `PKG-${Date.now()}`, company: '快递', trackingNumber, contents: `发货 ${shippedItems.length} 件` }] : [],
           progress: [
             { id: `p-${Date.now()}-1`, time: now, description: '子订单生成并已发货', items: `共 ${shippedItems.length} 件`, amountChange: '-' }
           ]
@@ -314,6 +319,7 @@ export function OrderManagement() {
           status: 'shipped',
           statusLabel: '已发货',
           items: updatedItems,
+          shipments: trackingNumber ? [...(order.shipments || []), { id: `PKG-${Date.now()}`, company: '快递', trackingNumber, contents: `发货 ${selectedItems.length} 件` }] : (order.shipments || []),
           progress: [...(order.progress || []), newProgress]
         };
         return newOrders;
@@ -629,6 +635,19 @@ export function OrderManagement() {
                   }`}>
                     {getOrderOverallStatusLabel(order, activeTab)}
                   </div>
+                  {(order as any).shipments && (order as any).shipments.length > 0 && (
+                    <div className="mt-2 space-y-1">
+                      {(order as any).shipments.map((shipment: any) => (
+                        <div key={shipment.id} className="text-[10px] text-zinc-500">
+                          <span className="text-zinc-800">{shipment.company}</span>
+                          <br/>
+                          <a href="#" onClick={(e) => { e.preventDefault(); alert(`查看物流轨迹\r\n\r\n单号: ${shipment.trackingNumber}\r\n状态: 运输中...\r\n包裹内容: ${shipment.contents}`); }} className="text-blue-600 hover:underline">
+                            {shipment.trackingNumber}
+                          </a>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
                 <div className="col-span-1 text-right">
                   <button 

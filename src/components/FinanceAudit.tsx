@@ -259,8 +259,8 @@ export function FinanceAudit() {
       </div>
 
       <div className="flex gap-8 border-b border-zinc-200 mb-6">
-        <button onClick={() => setActiveMainTab('reconciliation')} className={`pb-3 text-sm font-bold transition-colors ${activeMainTab === 'reconciliation' ? 'text-black border-b-2 border-black' : 'text-zinc-500 hover:text-black'}`}>对账核销</button>
-        <button onClick={() => setActiveMainTab('withdrawal')} className={`pb-3 text-sm font-bold transition-colors ${activeMainTab === 'withdrawal' ? 'text-black border-b-2 border-black' : 'text-zinc-500 hover:text-black'}`}>资金提现</button>
+        <button onClick={() => setActiveMainTab('reconciliation')} className={`pb-3 text-sm font-bold transition-colors ${activeMainTab === 'reconciliation' ? 'text-black border-b-2 border-black' : 'text-zinc-500 hover:text-black'}`}>收款核销</button>
+        <button onClick={() => setActiveMainTab('withdrawal')} className={`pb-3 text-sm font-bold transition-colors ${activeMainTab === 'withdrawal' ? 'text-black border-b-2 border-black' : 'text-zinc-500 hover:text-black'}`}>对账</button>
       </div>
 
       {activeMainTab === 'reconciliation' ? (
@@ -567,82 +567,180 @@ export function FinanceAudit() {
       ) : (
         <div className="space-y-8">
           <div className="grid grid-cols-3 gap-6">
-            <div className="bg-white border border-zinc-200 p-6">
-              <div className="text-sm font-bold text-zinc-500 mb-2">账户可提现余额</div>
-              <div className="text-3xl font-black mb-2">¥ 284,500.00</div>
-              <div className="text-xs text-zinc-400">已开启自动提现，无手动提现选项</div>
+            <div className="bg-white border border-zinc-200 p-6 flex flex-col">
+              <div className="text-sm font-bold text-zinc-500 mb-2">服务账户余额</div>
+              <div className="text-3xl font-black mb-2">¥ 12,500.00</div>
+              <div className="text-xs text-zinc-400 mt-auto">用于扣除税费、运费等服务开支</div>
             </div>
-            <div className="bg-white border border-zinc-200 p-6">
-              <div className="text-sm font-bold text-zinc-500 mb-2">待结算金额 (流程中)</div>
-              <div className="text-3xl font-black text-zinc-400 mb-2">¥ 45,000.00</div>
-              <a href="#" className="text-sm text-blue-600 hover:underline">查看结算明细</a>
+            <div className="bg-white border border-zinc-200 p-6 flex flex-col">
+              <div className="text-sm font-bold text-zinc-500 mb-2">分账余额账户</div>
+              <div className="text-3xl font-black text-orange-600 mb-2">-¥ 3,200.00</div>
+              <div className="text-xs text-zinc-400 mt-auto">用于代扣税运及向上游支付货款（可为负数）</div>
             </div>
-            <div className="bg-white border border-zinc-200 p-6">
-              <div className="text-sm font-bold text-zinc-500 mb-2">累计已提现</div>
+            <div className="bg-white border border-zinc-200 p-6 flex flex-col">
+              <div className="text-sm font-bold text-zinc-500 mb-2">累计订单总流水</div>
               <div className="text-3xl font-black text-zinc-400 mb-2">¥ 1,250,000.00</div>
+              <a href="#" className="text-sm text-blue-600 hover:underline mt-auto pt-2">导出流水账单</a>
             </div>
           </div>
 
-          <div className="bg-white border border-zinc-200 p-6">
-            <h2 className="text-lg font-black uppercase tracking-tight mb-6 flex items-center gap-2">
-              <Settings size={20} />
-              自动提现设置
-            </h2>
-            
-            <div className="space-y-4 max-w-2xl">
-              <p className="text-sm text-zinc-500 mb-4">开启自动提现后，系统将根据您设置的结算规则，自动将款项打入您绑定的银行卡（默认打入建设银行尾号 4821）。</p>
-              
-              <label className={`flex items-start gap-3 p-4 border ${withdrawRuleLocked ? 'bg-zinc-50 border-zinc-200 opacity-80 cursor-not-allowed' : 'border-zinc-200 cursor-pointer hover:bg-zinc-50'}`}>
-                <input 
-                  type="radio" 
-                  name="withdraw_rule" 
-                  className="mt-1 accent-black disabled:opacity-50" 
-                  checked={autoWithdrawRule === 't7_signoff_or_confirm'} 
-                  onChange={() => !withdrawRuleLocked && setAutoWithdrawRule('t7_signoff_or_confirm')} 
-                  disabled={withdrawRuleLocked}
-                />
-                <div>
-                  <div className="font-bold text-sm">T+7 (物流签收或客户确认后)</div>
-                  <div className="text-xs text-zinc-500">订单商品物流显示签收，或客户在前台手动确认后，第7天自动结算并提现。此规则能够有效保障客户签收体验。</div>
-                </div>
-              </label>
+          {/* 流水明细块 */}
+          <div className="space-y-6">
+            {/* 订单流水 */}
+            <div className="bg-white border border-zinc-200 shadow-sm">
+              <div className="p-4 border-b border-zinc-200 bg-zinc-50 flex items-center justify-between">
+                <h2 className="text-sm font-black uppercase tracking-tight flex items-center gap-2">
+                  <Banknote size={18} />
+                  订单流水
+                </h2>
+                <div className="text-xs text-zinc-500">展示货品金额及扣除的手续费明细</div>
+              </div>
+              <div className="p-0">
+                <table className="w-full text-left text-sm">
+                  <thead className="bg-zinc-50/50 text-xs text-zinc-500 uppercase">
+                    <tr>
+                      <th className="px-6 py-3 font-bold border-b border-zinc-200">流水号/时间</th>
+                      <th className="px-6 py-3 font-bold border-b border-zinc-200">关联单号</th>
+                      <th className="px-6 py-3 font-bold border-b border-zinc-200 text-right">商品付款金额</th>
+                      <th className="px-6 py-3 font-bold border-b border-zinc-200 text-right text-orange-600">扣除交易手续费</th>
+                      <th className="px-6 py-3 font-bold border-b border-zinc-200 text-right text-green-600">商家实际入账</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="hover:bg-zinc-50 border-b border-zinc-100">
+                      <td className="px-6 py-4">
+                        <div className="font-mono text-xs">TRX-20240502-01</div>
+                        <div className="text-xs text-zinc-400">2024-05-02 10:15</div>
+                      </td>
+                      <td className="px-6 py-4 text-blue-600 hover:underline cursor-pointer">O-DEP-88902</td>
+                      <td className="px-6 py-4 text-right font-bold">¥ 2,000.00</td>
+                      <td className="px-6 py-4 text-right text-orange-600">- ¥ 12.00</td>
+                      <td className="px-6 py-4 text-right text-green-600 font-bold">+ ¥ 1,988.00</td>
+                    </tr>
+                    <tr className="hover:bg-zinc-50 border-b border-zinc-100">
+                      <td className="px-6 py-4">
+                        <div className="font-mono text-xs">TRX-20240502-02</div>
+                        <div className="text-xs text-zinc-400">2024-05-02 11:30</div>
+                      </td>
+                      <td className="px-6 py-4 text-blue-600 hover:underline cursor-pointer">O-FUL-77234</td>
+                      <td className="px-6 py-4 text-right font-bold">¥ 28,900.00</td>
+                      <td className="px-6 py-4 text-right text-orange-600">- ¥ 173.40</td>
+                      <td className="px-6 py-4 text-right text-green-600 font-bold">+ ¥ 28,726.60</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
 
-              <label className={`flex items-start gap-3 p-4 border ${withdrawRuleLocked ? 'bg-zinc-50 border-zinc-200 opacity-80 cursor-not-allowed' : 'border-zinc-200 cursor-pointer hover:bg-zinc-50'}`}>
-                <input 
-                  type="radio" 
-                  name="withdraw_rule" 
-                  className="mt-1 accent-black disabled:opacity-50" 
-                  checked={autoWithdrawRule === 't1_track'} 
-                  onChange={() => !withdrawRuleLocked && setAutoWithdrawRule('t1_track')} 
-                  disabled={withdrawRuleLocked}
-                />
-                <div>
-                  <div className="font-bold text-sm">T+1 (有物流轨迹后)</div>
-                  <div className="text-xs text-zinc-500">发货并产生第一条物流揽收轨迹后，次日（T+1）即自动结算并提现。适合需要快速回款的商家。</div>
-                </div>
-              </label>
-              
-              <div className="mt-6">
-                {withdrawRuleLocked ? (
-                  <div className="text-sm text-orange-600 bg-orange-50 px-4 py-3 border border-orange-200 flex items-center gap-2">
-                    <Info size={16} />
-                    提现规则已锁定。为保障资金流安全，设置保存后 6 个月内不可更改（解锁时间：{withdrawRuleLockedUntil}）。
-                  </div>
-                ) : (
-                  <button
-                    onClick={() => {
-                      const lockDate = new Date();
-                      lockDate.setMonth(lockDate.getMonth() + 6);
-                      const formattedDate = lockDate.toISOString().split('T')[0];
-                      setWithdrawRuleLocked(true);
-                      setWithdrawRuleLockedUntil(formattedDate);
-                      alert(`已保存自动提现规则。该规则在接下来的 6 个月内不可修改。`);
-                    }}
-                    className="bg-black text-white px-6 py-3 text-sm font-bold hover:bg-zinc-800 transition-colors"
-                  >
-                    保存并锁定提现规则
-                  </button>
-                )}
+            {/* 服务账户流水 */}
+            <div className="bg-white border border-zinc-200 shadow-sm">
+              <div className="p-4 border-b border-zinc-200 bg-zinc-50 flex items-center justify-between">
+                <h2 className="text-sm font-black uppercase tracking-tight flex items-center gap-2">
+                  <CreditCard size={18} />
+                  服务账户流水
+                </h2>
+                <div className="text-xs text-zinc-500">展示充值金额以及税费、运费扣除明细</div>
+              </div>
+              <div className="p-0">
+                <table className="w-full text-left text-sm">
+                  <thead className="bg-zinc-50/50 text-xs text-zinc-500 uppercase">
+                    <tr>
+                      <th className="px-6 py-3 font-bold border-b border-zinc-200">流水号/时间</th>
+                      <th className="px-6 py-3 font-bold border-b border-zinc-200">交易类型</th>
+                      <th className="px-6 py-3 font-bold border-b border-zinc-200">关联单号</th>
+                      <th className="px-6 py-3 font-bold border-b border-zinc-200 text-right">金额变动</th>
+                      <th className="px-6 py-3 font-bold border-b border-zinc-200 text-right">账户余额</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="hover:bg-zinc-50 border-b border-zinc-100">
+                      <td className="px-6 py-4">
+                        <div className="font-mono text-xs">SRV-20240502-01</div>
+                        <div className="text-xs text-zinc-400">2024-05-02 09:00</div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className="px-2 py-1 bg-green-100 text-green-800 text-[10px] font-bold">在线充值</span>
+                      </td>
+                      <td className="px-6 py-4 text-zinc-400">-</td>
+                      <td className="px-6 py-4 text-right text-green-600 font-bold">+ ¥ 5,000.00</td>
+                      <td className="px-6 py-4 text-right font-bold">¥ 12,500.00</td>
+                    </tr>
+                    <tr className="hover:bg-zinc-50 border-b border-zinc-100">
+                      <td className="px-6 py-4">
+                        <div className="font-mono text-xs">SRV-20240501-88</div>
+                        <div className="text-xs text-zinc-400">2024-05-01 16:45</div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className="px-2 py-1 bg-orange-100 text-orange-800 text-[10px] font-bold">扣除税费及运费</span>
+                      </td>
+                      <td className="px-6 py-4 text-blue-600 hover:underline cursor-pointer">O-FUL-88902</td>
+                      <td className="px-6 py-4 text-right text-orange-600 font-bold">- ¥ 650.00</td>
+                      <td className="px-6 py-4 text-right font-bold">¥ 7,500.00</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* 分账余额账户 */}
+            <div className="bg-white border border-zinc-200 shadow-sm">
+              <div className="p-4 border-b border-zinc-200 bg-zinc-50 flex items-center justify-between">
+                <h2 className="text-sm font-black uppercase tracking-tight flex items-center gap-2">
+                  <Package size={18} />
+                  分账余额账户
+                </h2>
+                <div className="text-xs text-zinc-500">用于展示代扣税运、向上游支付货款流水（可为负数）</div>
+              </div>
+              <div className="p-0">
+                <table className="w-full text-left text-sm">
+                  <thead className="bg-zinc-50/50 text-xs text-zinc-500 uppercase">
+                    <tr>
+                      <th className="px-6 py-3 font-bold border-b border-zinc-200">流水号/时间</th>
+                      <th className="px-6 py-3 font-bold border-b border-zinc-200">交易类型</th>
+                      <th className="px-6 py-3 font-bold border-b border-zinc-200">收款方/上游</th>
+                      <th className="px-6 py-3 font-bold border-b border-zinc-200 text-right">金额变动</th>
+                      <th className="px-6 py-3 font-bold border-b border-zinc-200 text-right">分账余额</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="hover:bg-zinc-50 border-b border-zinc-100">
+                      <td className="px-6 py-4">
+                        <div className="font-mono text-xs">SPL-20240502-05</div>
+                        <div className="text-xs text-zinc-400">2024-05-02 12:30</div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className="px-2 py-1 bg-red-100 text-red-800 text-[10px] font-bold">支付上游货款</span>
+                      </td>
+                      <td className="px-6 py-4 font-bold">欧洲表行</td>
+                      <td className="px-6 py-4 text-right text-red-600 font-bold">- ¥ 60,000.00</td>
+                      <td className="px-6 py-4 text-right font-bold text-orange-600">- ¥ 3,200.00</td>
+                    </tr>
+                    <tr className="hover:bg-zinc-50 border-b border-zinc-100">
+                      <td className="px-6 py-4">
+                        <div className="font-mono text-xs">SPL-20240502-04</div>
+                        <div className="text-xs text-zinc-400">2024-05-02 11:15</div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className="px-2 py-1 bg-blue-100 text-blue-800 text-[10px] font-bold">收入订单结算</span>
+                      </td>
+                      <td className="px-6 py-4 text-zinc-400">-</td>
+                      <td className="px-6 py-4 text-right text-blue-600 font-bold">+ ¥ 65,000.00</td>
+                      <td className="px-6 py-4 text-right font-bold">¥ 56,800.00</td>
+                    </tr>
+                    <tr className="hover:bg-zinc-50 border-b border-zinc-100">
+                      <td className="px-6 py-4">
+                        <div className="font-mono text-xs">SPL-20240501-12</div>
+                        <div className="text-xs text-zinc-400">2024-05-01 18:00</div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className="px-2 py-1 bg-zinc-200 text-zinc-800 text-[10px] font-bold">代扣跨境税费</span>
+                      </td>
+                      <td className="px-6 py-4 font-bold">海关专户</td>
+                      <td className="px-6 py-4 text-right text-orange-600 font-bold">- ¥ 5,915.00</td>
+                      <td className="px-6 py-4 text-right font-bold text-orange-600">- ¥ 8,200.00</td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>

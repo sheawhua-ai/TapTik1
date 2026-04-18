@@ -38,10 +38,10 @@ export function ProductManagement() {
         </div>
         <div className="flex gap-3 items-center">
           <button
-            className={`bg-white border border-zinc-200 text-black px-6 py-3 flex items-center gap-2 font-bold transition-colors ${filterMarketplaceOffer === 'no' ? 'hover:bg-zinc-50' : 'opacity-50 cursor-not-allowed'}`}
-            disabled={filterMarketplaceOffer !== 'no'}
+            className={`bg-white border border-zinc-200 text-black px-6 py-3 flex items-center gap-2 font-bold transition-colors ${activeListTab === 'in_warehouse' ? 'hover:bg-zinc-50' : 'opacity-50 cursor-not-allowed'}`}
+            disabled={activeListTab !== 'in_warehouse'}
             onClick={() => {
-               if(filterMarketplaceOffer === 'no') {
+               if(activeListTab === 'in_warehouse') {
                   if (selectedProducts.length === 0) {
                     alert('请先勾选需要新建公共库商品的项');
                     return;
@@ -49,7 +49,7 @@ export function ProductManagement() {
                   setIsBatchApplyModalOpen(true);
                }
             }}
-            title={filterMarketplaceOffer === 'no' ? '' : '请先筛选"集市出价: 否"的项目'}
+            title={activeListTab === 'in_warehouse' ? '' : '请先切换到"仓库中"进行公共库商品映射创建'}
           >
             申请新建公共库商品
           </button>
@@ -84,13 +84,13 @@ export function ProductManagement() {
               onClick={() => setActiveListTab('on_sale')}
               className={`pb-3 text-xs font-bold transition-colors ${activeListTab === 'on_sale' ? 'text-black border-b-2 border-black' : 'text-zinc-500 hover:text-black'}`}
             >
-              在售商品 (有库存)
+              在售商品 (已映射)
             </button>
             <button 
               onClick={() => setActiveListTab('in_warehouse')}
               className={`pb-3 text-xs font-bold transition-colors ${activeListTab === 'in_warehouse' ? 'text-black border-b-2 border-black' : 'text-zinc-500 hover:text-black'}`}
             >
-              仓库中 (缺主图)
+              仓库中 (未映射公共库)
             </button>
             <button 
               onClick={() => setActiveListTab('delisted')}
@@ -129,17 +129,6 @@ export function ProductManagement() {
               placeholder="全部仓库" 
             />
           </div>
-          <div className="w-32 border border-zinc-200 bg-white">
-            <select 
-              value={filterMarketplaceOffer} 
-              onChange={(e) => setFilterMarketplaceOffer(e.target.value)}
-              className="w-full text-xs font-bold bg-transparent outline-none py-2 px-3 h-[34px]"
-            >
-              <option value="all">全部出价状态</option>
-              <option value="yes">集市出价: 是</option>
-              <option value="no">集市出价: 否</option>
-            </select>
-          </div>
           <button className="bg-black text-white px-6 py-2 text-xs font-bold hover:bg-zinc-800 transition-colors h-[36px]">
             查询
           </button>
@@ -148,7 +137,7 @@ export function ProductManagement() {
 
       <div className="bg-white border border-zinc-200 shadow-sm">
         <div className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-zinc-200 bg-zinc-50 text-[10px] font-bold text-zinc-500 uppercase tracking-widest items-center">
-          <div className="col-span-3 flex items-center gap-2">
+          <div className="col-span-4 flex items-center gap-2">
             <input 
               type="checkbox" 
               className="accent-black w-4 h-4 mr-2" 
@@ -164,7 +153,6 @@ export function ProductManagement() {
             />
             商品信息 / SPU 名称
           </div>
-          <div className="col-span-1 text-center">集市出价</div>
           <div className="col-span-1 text-right">品牌原价</div>
           <div className="col-span-2 text-center">规格与仓库</div>
           <div className="col-span-1 text-center">当前库存</div>
@@ -178,7 +166,7 @@ export function ProductManagement() {
             {/* Row 1 */}
             <div className="border-b border-zinc-200 group">
               <div className="grid grid-cols-12 gap-4 px-6 py-6 items-center hover:bg-zinc-50 transition-colors">
-                <div className="col-span-3 flex items-center gap-4">
+                <div className="col-span-4 flex items-center gap-4">
                   <div className="w-16 h-16 bg-zinc-100 flex items-center justify-center p-2">
                     <img src="https://images.unsplash.com/photo-1523170335258-f5ed11844a49?auto=format&fit=crop&w=200&q=80" alt="Rolex" className="w-full h-full object-contain mix-blend-multiply grayscale group-hover:grayscale-0 transition-all" />
                   </div>
@@ -190,9 +178,6 @@ export function ProductManagement() {
                       <span className="text-[10px] text-zinc-500">2 个 SKU 已上架</span>
                     </div>
                   </div>
-                </div>
-                <div className="col-span-1 flex items-center justify-center">
-                  <span className="bg-green-100 text-green-700 font-bold px-2 py-0.5 text-[10px]">是</span>
                 </div>
                 <div className="col-span-1 text-right text-sm font-bold text-zinc-400">¥85,000</div>
                 <div className="col-span-2 flex flex-col items-center justify-center gap-1">
@@ -214,7 +199,7 @@ export function ProductManagement() {
             {/* Row 2 */}
             <div className="border-b border-zinc-200 group">
               <div className="grid grid-cols-12 gap-4 px-6 py-6 items-center hover:bg-zinc-50 transition-colors">
-                <div className="col-span-3 flex items-center gap-4">
+                <div className="col-span-4 flex items-center gap-4">
                   <div className="w-16 h-16 bg-zinc-100 flex items-center justify-center p-2">
                     <img src="https://images.unsplash.com/photo-1603252109303-2751441dd157?auto=format&fit=crop&w=200&q=80" alt="Burberry" className="w-full h-full object-contain mix-blend-multiply grayscale group-hover:grayscale-0 transition-all" />
                   </div>
@@ -226,9 +211,6 @@ export function ProductManagement() {
                       <span className="text-[10px] text-zinc-500">4 个 SKU 已上架</span>
                     </div>
                   </div>
-                </div>
-                <div className="col-span-1 flex items-center justify-center">
-                  <span className="bg-zinc-100 text-zinc-600 font-bold px-2 py-0.5 text-[10px]">否</span>
                 </div>
                 <div className="col-span-1 text-right text-sm font-bold text-zinc-400">¥5,900</div>
                 <div className="col-span-2 flex flex-col items-center justify-center gap-1">
@@ -252,7 +234,7 @@ export function ProductManagement() {
         {activeListTab === 'in_warehouse' && (
           <div className="border-b border-zinc-200 group">
             <div className="grid grid-cols-12 gap-4 px-6 py-6 items-center hover:bg-zinc-50 transition-colors">
-              <div className="col-span-3 flex items-center gap-4">
+              <div className="col-span-4 flex items-center gap-4">
                 <input 
                   type="checkbox" 
                   className="accent-black w-4 h-4" 
@@ -263,19 +245,16 @@ export function ProductManagement() {
                   }}
                 />
                 <div className="w-16 h-16 bg-zinc-100 flex items-center justify-center p-2 text-zinc-300">
-                  <ImageIcon size={24} />
+                  <img src="https://images.unsplash.com/photo-1584916201218-f4242ceb4809?auto=format&fit=crop&w=200&q=80" alt="Gucci" className="w-full h-full object-contain mix-blend-multiply grayscale group-hover:grayscale-0 transition-all" />
                 </div>
                 <div>
                   <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1">Gucci</div>
                   <div className="text-base font-black tracking-tight leading-none mb-2">Ophidia GG 小号托特包</div>
                   <div className="flex items-center gap-2">
                     <span className="bg-black text-white text-[9px] px-1.5 py-0.5 font-mono uppercase">GC-547551</span>
-                    <span className="text-[10px] text-orange-500 font-medium">缺主图</span>
+                    <span className="text-[10px] text-orange-500 font-medium">未映射公共库</span>
                   </div>
                 </div>
-              </div>
-              <div className="col-span-1 flex items-center justify-center">
-                  <span className="bg-green-100 text-green-700 font-bold px-2 py-0.5 text-[10px]">是</span>
               </div>
               <div className="col-span-1 text-right text-sm font-bold text-zinc-400">¥13,500</div>
               <div className="col-span-2 flex flex-col items-center justify-center gap-1">
@@ -288,7 +267,7 @@ export function ProductManagement() {
               <div className="col-span-1 text-right text-sm font-bold text-zinc-300">—</div>
               <div className="col-span-1 text-right text-sm font-bold text-zinc-300">—</div>
               <div className="col-span-2 flex justify-center items-center gap-4">
-                <button className="text-xs font-bold text-blue-600 hover:underline transition-colors" onClick={() => setEditingSpu('gucci')}>上传主图</button>
+                <button className="text-xs font-bold text-blue-600 hover:underline transition-colors" onClick={() => setIsBatchApplyModalOpen(true)}>申请映射</button>
                 <button className="text-xs font-bold text-zinc-500 hover:text-red-600 transition-colors">删除</button>
               </div>
             </div>
@@ -298,7 +277,7 @@ export function ProductManagement() {
         {activeListTab === 'delisted' && (
           <div className="group">
             <div className="grid grid-cols-12 gap-4 px-6 py-6 items-center hover:bg-zinc-50 transition-colors">
-              <div className="col-span-3 flex items-center gap-4">
+              <div className="col-span-4 flex items-center gap-4">
                 <div className="w-16 h-16 bg-zinc-100 flex items-center justify-center p-2 opacity-50">
                   <img src="https://images.unsplash.com/photo-1548171915-e76a3a41117b?auto=format&fit=crop&w=200&q=80" alt="Patek" className="w-full h-full object-contain mix-blend-multiply grayscale transition-all" />
                 </div>
@@ -310,9 +289,6 @@ export function ProductManagement() {
                     <span className="text-[10px] text-red-500 font-medium">售罄 / 下架</span>
                   </div>
                 </div>
-              </div>
-              <div className="col-span-1 flex items-center justify-center">
-                  <span className="bg-zinc-100 text-zinc-600 font-bold px-2 py-0.5 text-[10px]">否</span>
               </div>
               <div className="col-span-1 text-right text-sm font-bold text-zinc-400">¥280,000</div>
               <div className="col-span-2 flex flex-col items-center justify-center gap-1">
