@@ -51,7 +51,7 @@ export function ProductManagement() {
             }}
             title={activeListTab === 'in_warehouse' ? '' : '请先切换到"仓库中"进行公共库商品映射创建'}
           >
-            申请新建公共库商品
+            申请新增至公共库
           </button>
           <button 
             onClick={() => setIsLogOpen(true)}

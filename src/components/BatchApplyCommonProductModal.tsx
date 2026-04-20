@@ -56,7 +56,7 @@ export function BatchApplyCommonProductModal({ isOpen, onClose, selectedIds, onS
         {/* Header */}
         <div className="flex justify-between items-center px-6 py-4 border-b border-zinc-200">
           <div>
-            <h2 className="text-lg font-black uppercase tracking-tight">批量申请新建公共库商品</h2>
+            <h2 className="text-lg font-black uppercase tracking-tight">批量申请新增至公共库</h2>
             <p className="text-xs text-zinc-500 mt-1">自动带入原商品的基础信息（价格与库存除外），请确认后提交</p>
           </div>
           <button onClick={onClose} className="text-zinc-400 hover:text-black transition-colors rounded-full p-2 hover:bg-zinc-100">

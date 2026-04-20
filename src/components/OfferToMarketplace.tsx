@@ -243,9 +243,12 @@ export function OfferToMarketplace({ setActiveTab }: OfferToMarketplaceProps) {
                   </div>
                 </div>
 
-                <div className="p-6 border-t border-zinc-100 bg-zinc-50 flex justify-end gap-3">
-                  <button onClick={handleCloseManualMatch} className="px-6 py-2 text-sm font-bold text-zinc-600 hover:text-black transition-colors">取消</button>
-                  <button onClick={() => setSelectedPublicSpu('spu1')} className="bg-black text-white px-8 py-2 text-sm font-bold hover:bg-zinc-800 transition-colors">下一步：匹配 SKU</button>
+                <div className="p-6 border-t border-zinc-100 bg-zinc-50 flex justify-between items-center gap-3">
+                  <button className="px-6 py-2 text-sm font-bold border border-zinc-200 bg-white hover:bg-zinc-50 transition-colors">申请新增至公共库</button>
+                  <div className="flex gap-3">
+                    <button onClick={handleCloseManualMatch} className="px-6 py-2 text-sm font-bold text-zinc-600 hover:text-black transition-colors">取消</button>
+                    <button onClick={() => setSelectedPublicSpu('spu1')} className="bg-black text-white px-8 py-2 text-sm font-bold hover:bg-zinc-800 transition-colors">下一步：匹配 SKU</button>
+                  </div>
                 </div>
               </>
             ) : (
