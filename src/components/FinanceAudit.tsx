@@ -126,6 +126,8 @@ const MOCK_ORDERS = [
 export function FinanceAudit() {
   const [activeMainTab, setActiveMainTab] = useState<'reconciliation' | 'withdrawal'>('reconciliation');
   
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
+  
   const [ordersData, setOrdersData] = useState(MOCK_ORDERS);
   const [inputAmounts, setInputAmounts] = useState<Record<string, string>>({});
   const [viewingSlip, setViewingSlip] = useState<{url: string, slipId: string, orderId: string} | null>(null);
@@ -360,202 +362,94 @@ export function FinanceAudit() {
         </div>
       </div>
 
-      {/* Orders List */}
-      <div className="space-y-6">
-        {filteredOrders.map(order => {
-          const totalDue = order.depositDue + order.balanceDue;
-          const pendingAmount = Math.max(0, totalDue - order.confirmedPaid);
-          const isFullyPaid = pendingAmount === 0;
+      {/* Orders List / Horizontal Layout */}
+      <div className="bg-white border border-zinc-200 shadow-sm">
+        <div className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-zinc-200 bg-zinc-50 text-[10px] font-bold text-zinc-500 uppercase tracking-widest items-center">
+          <div className="col-span-4">商品详情 / 货单</div>
+          <div className="col-span-2">买家</div>
+          <div className="col-span-2 text-right">总价</div>
+          <div className="col-span-2 text-right">待付金额</div>
+          <div className="col-span-1 text-center">状态</div>
+          <div className="col-span-1 text-right">操作</div>
+        </div>
 
-          // Determine Status
-          let statusLabel = '待核销';
-          let statusClass = 'bg-red-50 text-red-700 border-red-200';
-          if (isFullyPaid) {
-            statusLabel = '已结清';
-            statusClass = 'bg-green-50 text-green-700 border-green-200';
-          } else if (order.confirmedPaid > 0) {
-            statusLabel = '部分核销';
-            statusClass = 'bg-blue-50 text-blue-700 border-blue-200';
-          }
+        <div className="flex flex-col">
+          {filteredOrders.map(order => {
+            const totalDue = order.depositDue + order.balanceDue;
+            const pendingAmount = Math.max(0, totalDue - order.confirmedPaid);
+            const isFullyPaid = pendingAmount === 0;
 
-          return (
-            <div key={order.orderId} className="bg-white border border-zinc-200 shadow-sm">
-              {/* Order Header */}
-              <div className="flex items-center justify-between px-6 py-4 bg-zinc-50 border-b border-zinc-200">
-                <div className="flex items-center gap-6">
-                  <div className="flex items-center gap-2">
-                    <Package size={16} className="text-zinc-400" />
-                    <span className="font-bold text-lg">{order.orderId}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-zinc-500">
-                    <User size={14} />
-                    {order.customerName}
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-zinc-500">
-                    <Phone size={14} />
-                    {order.phone}
-                  </div>
-                  <div className={`text-xs font-bold px-2 py-1 border rounded-sm ${statusClass}`}>
-                    {statusLabel}
-                  </div>
-                </div>
-                <div className="flex items-center gap-6">
-                  <div className="text-sm text-zinc-500 font-mono">
-                    {order.date}
-                  </div>
-                  <div className="flex items-center gap-2 text-sm font-bold">
-                    <Building2 size={16} className="text-zinc-400" />
-                    银行转账
-                  </div>
-                </div>
-              </div>
+            let statusLabel = '待核销';
+            let statusClass = 'bg-red-50 text-red-700 border-red-200';
+            if (isFullyPaid) {
+              statusLabel = '已结清';
+              statusClass = 'bg-green-50 text-green-700 border-green-200';
+            } else if (order.confirmedPaid > 0) {
+              statusLabel = '部分核销';
+              statusClass = 'bg-blue-50 text-blue-700 border-blue-200';
+            }
 
-              <div className="grid grid-cols-12 divide-x divide-zinc-200">
-                {/* Order Details */}
-                <div className="col-span-7 p-6">
-                  <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-4">货单归属</div>
-                  
-                  <div className="mb-4">
-                    <div className="text-sm font-bold mb-1 flex items-center gap-2">
-                      <FileText size={16} className="text-zinc-400" />
+            const totalQty = order.products.reduce((acc: number, p: any) => acc + p.qty, 0);
+
+            return (
+              <div key={order.orderId} className="border-b border-zinc-200 last:border-0 group hover:bg-zinc-50 transition-colors">
+                <div className="bg-zinc-50/50 px-6 py-3 border-b border-zinc-100 flex items-center justify-between text-[10px]">
+                  <div className="flex items-center gap-4">
+                    <span className="font-bold flex items-center gap-2">
+                      <FileText size={14} className="text-zinc-400" />
                       {order.manifestName}
-                    </div>
-                  </div>
-
-                  {order.notes && (
-                    <div className="bg-orange-50/50 border border-orange-100 p-3 mb-6 text-xs text-orange-900 flex gap-2 rounded-sm">
-                      <MessageSquare size={14} className="mt-0.5 flex-shrink-0 text-orange-500" />
-                      <div>
-                        <span className="font-bold mr-1">订单备注:</span>
-                        {order.notes}
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-3">包含商品</div>
-                  <div className="space-y-2">
-                    {order.products.map((product: any, pIdx: number) => (
-                      <div key={pIdx} className="flex items-center justify-between text-xs bg-white p-3 border border-zinc-100">
-                        <div>
-                          <div className="flex items-center gap-2 mb-0.5">
-                            <span className="font-bold">{product.name}</span>
-                            {product.confirmed ? (
-                              <span className="text-[10px] text-green-600 bg-green-50 px-1.5 py-0.5 rounded-sm border border-green-200">已确认</span>
-                            ) : (
-                              <span className="text-[10px] text-orange-600 bg-orange-50 px-1.5 py-0.5 rounded-sm border border-orange-200">待确认</span>
-                            )}
-                          </div>
-                          <div className="text-zinc-500 font-mono text-[10px]">SKU: {product.sku}</div>
-                        </div>
-                        <div className="text-right">
-                          <div className="font-bold">¥ {product.price.toLocaleString()}</div>
-                          <div className="text-zinc-500">x {product.qty}</div>
-                        </div>
-                      </div>
-                    ))}
+                    </span>
+                    <span className="font-bold">{order.orderId}</span>
+                    <span className="text-zinc-500 font-mono">{order.date}</span>
                   </div>
                 </div>
-
-                {/* Reconciliation Panel */}
-                <div className="col-span-5 p-6 bg-zinc-50/30 flex flex-col justify-between">
-                  <div>
-                    <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-4">财务核销汇总</div>
-                    
-                    <div className="grid grid-cols-2 gap-4 mb-6">
-                      <div className="bg-white border border-zinc-200 p-4">
-                        <div className="text-xs text-zinc-500 mb-1">订单总应付</div>
-                        <div className="text-xl font-black">¥ {totalDue.toLocaleString()}</div>
-                        <div className="text-[10px] text-zinc-400 mt-2">
-                          定金: ¥{order.depositDue.toLocaleString()} | 尾款: ¥{order.balanceDue.toLocaleString()}
-                        </div>
-                      </div>
-                      <div className="bg-white border border-zinc-200 p-4">
-                        <div className="text-xs text-zinc-500 mb-1">当前待付金额</div>
-                        <div className={`text-xl font-black ${pendingAmount > 0 ? 'text-red-600' : 'text-green-600'}`}>
-                          ¥ {pendingAmount.toLocaleString()}
-                        </div>
-                        <div className="text-[10px] text-zinc-400 mt-2">
-                          已确认收款: ¥{order.confirmedPaid.toLocaleString()}
-                        </div>
-                      </div>
+                
+                <div className="grid grid-cols-12 gap-4 px-6 py-4 items-center">
+                  <div className="col-span-4 flex items-center gap-4">
+                    <div className="w-16 h-16 bg-zinc-100 flex items-center justify-center p-2 text-zinc-300">
+                      <ImageIcon size={24} />
                     </div>
-
-                    {/* Reconciliation Records */}
-                    {order.reconciliationRecords.length > 0 && (
-                      <div className="mb-6">
-                        <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-3">已核销记录</div>
-                        <div className="space-y-2">
-                          {order.reconciliationRecords.map((rec: any) => (
-                            <div key={rec.id} className="flex items-center justify-between text-xs bg-white border border-zinc-200 p-3">
-                              <div className="flex items-center gap-2 text-zinc-600">
-                                <CheckCircle2 size={14} className="text-green-600" />
-                                {rec.time}
-                              </div>
-                              <div className="font-bold">¥ {rec.amount.toLocaleString()}</div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
+                    <div>
+                      <div className="text-xs font-bold mb-1 leading-tight">{order.products[0]?.name} {order.products.length > 1 ? '等多件' : ''}</div>
+                      <div className="text-[10px] text-zinc-400 font-mono">共 {order.products.length} 款, {totalQty} 件</div>
+                    </div>
                   </div>
-
-                  <div className="border-t border-zinc-200 pt-6">
-                    {isFullyPaid ? (
-                      <div className="flex items-center justify-center gap-2 bg-green-50 text-green-700 py-3 border border-green-200 font-bold text-sm">
-                        <CheckCircle2 size={18} />
-                        该订单已全部结清
-                      </div>
-                    ) : (
-                      <div>
-                        <div className="text-xs font-bold mb-3 flex items-center justify-between">
-                          <span>前端上传的水单记录</span>
-                          <span className="text-zinc-400 font-normal">点击查看并核销</span>
-                        </div>
-                        
-                        {order.uploadedSlips.length > 0 ? (
-                          <div className="space-y-3">
-                            {order.uploadedSlips.map((slip: any) => (
-                              <div key={slip.id} className="flex items-center justify-between bg-white border border-zinc-200 p-3">
-                                <div className="flex items-center gap-3">
-                                  <div className="w-10 h-10 bg-zinc-100 flex items-center justify-center text-zinc-400">
-                                    <ImageIcon size={18} />
-                                  </div>
-                                  <div>
-                                    <div className="text-xs font-bold mb-0.5">银行汇款凭证</div>
-                                    <div className="text-[10px] text-zinc-500 flex items-center gap-1">
-                                      <Clock size={10} />
-                                      上传于 {slip.uploadTime}
-                                    </div>
-                                  </div>
-                                </div>
-                                {slip.status === 'confirmed' ? (
-                                  <span className="text-[10px] font-bold text-green-600 bg-green-50 px-2 py-1 rounded-sm flex items-center gap-1">
-                                    <Check size={12} /> 已核销
-                                  </span>
-                                ) : (
-                                  <button 
-                                    onClick={() => setViewingSlip({ url: slip.imageUrl, slipId: slip.id, orderId: order.orderId })}
-                                    className="text-xs font-bold bg-black text-white px-4 py-2 hover:bg-zinc-800 transition-colors"
-                                  >
-                                    查看并核销
-                                  </button>
-                                )}
-                              </div>
-                            ))}
-                          </div>
-                        ) : (
-                          <div className="text-center py-6 text-xs text-zinc-500 bg-white border border-dashed border-zinc-300">
-                            暂无待核销的水单记录
-                          </div>
-                        )}
-                      </div>
-                    )}
+                  
+                  <div className="col-span-2 flex flex-col">
+                    <div className="text-xs font-bold mb-1">{order.customerName}</div>
+                    <div className="text-[10px] text-zinc-500">{order.phone}</div>
+                  </div>
+                  
+                  <div className="col-span-2 text-right">
+                    <div className="text-sm font-bold">¥ {totalDue.toLocaleString()}</div>
+                    <div className="text-[10px] text-zinc-400 mt-0.5">已付: ¥ {order.confirmedPaid.toLocaleString()}</div>
+                  </div>
+                  
+                  <div className="col-span-2 text-right">
+                    <div className={`text-sm font-bold ${pendingAmount > 0 ? 'text-red-500' : 'text-zinc-400'}`}>
+                      ¥ {pendingAmount.toLocaleString()}
+                    </div>
+                  </div>
+                  
+                  <div className="col-span-1 text-center">
+                    <span className={`text-[10px] font-bold px-2 py-0.5 border ${statusClass}`}>
+                      {statusLabel}
+                    </span>
+                  </div>
+                  
+                  <div className="col-span-1 flex justify-end">
+                    <button 
+                      onClick={() => setSelectedOrderId(order.orderId)}
+                      className="w-8 h-8 flex items-center justify-center border border-zinc-200 bg-white hover:bg-zinc-100 hover:border-zinc-300 transition-all text-zinc-500 hover:text-black"
+                    >
+                      <ChevronRight size={14} />
+                    </button>
                   </div>
                 </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
         
         {filteredOrders.length === 0 && (
           <div className="text-center py-20 text-zinc-500 border border-zinc-200 bg-white">
@@ -746,6 +640,177 @@ export function FinanceAudit() {
           </div>
         </div>
       )}
+
+      {/* Order Details Drawer */}
+      {selectedOrderId && (() => {
+        const order = ordersData.find(o => o.orderId === selectedOrderId);
+        if (!order) return null;
+        
+        const totalDue = order.depositDue + order.balanceDue;
+        const pendingAmount = Math.max(0, totalDue - order.confirmedPaid);
+        const isFullyPaid = pendingAmount === 0;
+
+        return (
+          <div className="fixed inset-0 z-40 flex justify-end">
+            <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setSelectedOrderId(null)}></div>
+            <div className="relative w-[1000px] bg-white h-full shadow-2xl flex flex-col animate-in slide-in-from-right duration-300">
+              <div className="flex items-center justify-between px-8 py-6 border-b border-zinc-100">
+                <div>
+                  <h2 className="text-xl font-black uppercase tracking-tight mb-1">订单收银核销详情</h2>
+                  <div className="text-xs text-zinc-500 font-mono">订单编号: {order.orderId}</div>
+                </div>
+                <button onClick={() => setSelectedOrderId(null)} className="text-zinc-400 hover:text-black transition-colors"><X size={24} /></button>
+              </div>
+              
+              <div className="flex-1 overflow-y-auto">
+                <div className="grid grid-cols-12 divide-x divide-zinc-200 min-h-full">
+                  {/* Order Details */}
+                  <div className="col-span-7 p-8">
+                    <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-4">货单归属</div>
+                    
+                    <div className="mb-4">
+                      <div className="text-sm font-bold mb-1 flex items-center gap-2">
+                        <FileText size={16} className="text-zinc-400" />
+                        {order.manifestName}
+                      </div>
+                    </div>
+
+                    {order.notes && (
+                      <div className="bg-orange-50/50 border border-orange-100 p-3 mb-6 text-xs text-orange-900 flex gap-2 rounded-sm">
+                        <MessageSquare size={14} className="mt-0.5 flex-shrink-0 text-orange-500" />
+                        <div>
+                          <span className="font-bold mr-1">订单备注:</span>
+                          {order.notes}
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-3">包含商品</div>
+                    <div className="space-y-2">
+                      {order.products.map((product: any, pIdx: number) => (
+                        <div key={pIdx} className="flex items-center justify-between text-xs bg-zinc-50 p-3 border border-zinc-100">
+                          <div>
+                            <div className="flex items-center gap-2 mb-0.5">
+                              <span className="font-bold">{product.name}</span>
+                              {product.confirmed ? (
+                                <span className="text-[10px] text-green-600 bg-green-50 px-1.5 py-0.5 rounded-sm border border-green-200">已确认</span>
+                              ) : (
+                                <span className="text-[10px] text-orange-600 bg-orange-50 px-1.5 py-0.5 rounded-sm border border-orange-200">待确认</span>
+                              )}
+                            </div>
+                            <div className="text-zinc-500 font-mono text-[10px]">SKU: {product.sku}</div>
+                          </div>
+                          <div className="text-right">
+                            <div className="font-bold">¥ {product.price.toLocaleString()}</div>
+                            <div className="text-zinc-500">x {product.qty}</div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Reconciliation Panel */}
+                  <div className="col-span-5 p-8 bg-zinc-50/30 flex flex-col">
+                    <div>
+                      <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-4">财务核销汇总</div>
+                      
+                      <div className="grid grid-cols-2 gap-4 mb-6">
+                        <div className="bg-white border border-zinc-200 p-4">
+                          <div className="text-xs text-zinc-500 mb-1">订单总应付</div>
+                          <div className="text-xl font-black">¥ {totalDue.toLocaleString()}</div>
+                          <div className="text-[10px] text-zinc-400 mt-2">
+                            定金: ¥{order.depositDue.toLocaleString()} | 尾款: ¥{order.balanceDue.toLocaleString()}
+                          </div>
+                        </div>
+                        <div className="bg-white border border-zinc-200 p-4">
+                          <div className="text-xs text-zinc-500 mb-1">当前待付金额</div>
+                          <div className={`text-xl font-black ${pendingAmount > 0 ? 'text-red-600' : 'text-green-600'}`}>
+                            ¥ {pendingAmount.toLocaleString()}
+                          </div>
+                          <div className="text-[10px] text-zinc-400 mt-2">
+                            已确认收款: ¥{order.confirmedPaid.toLocaleString()}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Reconciliation Records */}
+                      {order.reconciliationRecords.length > 0 && (
+                        <div className="mb-6">
+                          <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-3">已核销记录</div>
+                          <div className="space-y-2">
+                            {order.reconciliationRecords.map((rec: any) => (
+                              <div key={rec.id} className="flex items-center justify-between text-xs bg-white border border-zinc-200 p-3">
+                                <div className="flex items-center gap-2 text-zinc-600">
+                                  <CheckCircle2 size={14} className="text-green-600" />
+                                  {rec.time}
+                                </div>
+                                <div className="font-bold">¥ {rec.amount.toLocaleString()}</div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="border-t border-zinc-200 pt-6 mt-auto">
+                      {isFullyPaid ? (
+                        <div className="flex items-center justify-center gap-2 bg-green-50 text-green-700 py-3 border border-green-200 font-bold text-sm">
+                          <CheckCircle2 size={18} />
+                          该订单已全部结清
+                        </div>
+                      ) : (
+                        <div>
+                          <div className="text-xs font-bold mb-3 flex items-center justify-between">
+                            <span>前端上传的水单记录</span>
+                            <span className="text-zinc-400 font-normal">点击查看并核销</span>
+                          </div>
+                          
+                          {order.uploadedSlips.length > 0 ? (
+                            <div className="space-y-3">
+                              {order.uploadedSlips.map((slip: any) => (
+                                <div key={slip.id} className="flex items-center justify-between bg-white border border-zinc-200 p-3">
+                                  <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 bg-zinc-100 flex items-center justify-center text-zinc-400">
+                                      <ImageIcon size={18} />
+                                    </div>
+                                    <div>
+                                      <div className="text-xs font-bold mb-0.5">银行汇款凭证</div>
+                                      <div className="text-[10px] text-zinc-500 flex items-center gap-1">
+                                        <Clock size={10} />
+                                        上传于 {slip.uploadTime}
+                                      </div>
+                                    </div>
+                                  </div>
+                                  {slip.status === 'confirmed' ? (
+                                    <span className="text-[10px] font-bold text-green-600 bg-green-50 px-2 py-1 rounded-sm flex items-center gap-1">
+                                      <Check size={12} /> 已核销
+                                    </span>
+                                  ) : (
+                                    <button 
+                                      onClick={() => setViewingSlip({ url: slip.imageUrl, slipId: slip.id, orderId: order.orderId })}
+                                      className="text-xs font-bold bg-black text-white px-4 py-2 hover:bg-zinc-800 transition-colors"
+                                    >
+                                      查看并核销
+                                    </button>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <div className="text-center py-6 text-xs text-zinc-500 bg-white border border-dashed border-zinc-300">
+                              暂无待核销的水单记录
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* Slip Viewer Modal */}
       {viewingSlip && (
