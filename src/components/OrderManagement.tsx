@@ -437,21 +437,21 @@ export function OrderManagement() {
   return (
     <div className="max-w-7xl mx-auto flex h-[calc(100vh-80px)]">
       {/* Main Content */}
-      <div className="flex-1 overflow-y-auto">
-        <div className="flex justify-between items-end mb-8">
+      <div className="flex-1 overflow-y-auto pb-20 md:pb-0">
+        <div className="flex flex-col md:flex-row md:justify-between md:items-end mb-6 md:mb-8 gap-4">
           <div>
             <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-[0.2em] mb-2">Operational Dashboard</div>
-            <h1 className="text-3xl font-black tracking-tighter uppercase mb-2">订单管理</h1>
-            <p className="text-sm text-zinc-500">统一管理零售订单与批发订单，处理库存确认与发货</p>
+            <h1 className="text-2xl md:text-3xl font-black tracking-tighter uppercase mb-2">订单管理</h1>
+            <p className="text-xs md:text-sm text-zinc-500">统一管理零售订单与批发订单，处理库存确认与发货</p>
           </div>
-          <div className="flex gap-4">
-            <button className="bg-zinc-200 text-zinc-800 text-xs font-bold uppercase tracking-widest px-6 py-3 hover:bg-zinc-300 transition-colors">
+          <div className="flex gap-4 w-full md:w-auto">
+            <button className="w-full md:w-auto bg-zinc-200 text-zinc-800 text-xs font-bold uppercase tracking-widest px-6 py-3 hover:bg-zinc-300 transition-colors">
               导出数据
             </button>
           </div>
         </div>
 
-        <div className="flex gap-8 border-b border-zinc-200 mb-6">
+        <div className="flex gap-4 md:gap-8 border-b border-zinc-200 mb-6 overflow-x-auto whitespace-nowrap scrollbar-hide pb-1">
           <button onClick={() => setActiveTab('all')} className={`pb-3 text-xs font-bold transition-colors ${activeTab === 'all' ? 'text-black border-b-2 border-black' : 'text-zinc-500 hover:text-black'}`}>全部订单</button>
           <button onClick={() => setActiveTab('pending_payment')} className={`pb-3 text-xs font-bold transition-colors ${activeTab === 'pending_payment' ? 'text-black border-b-2 border-black' : 'text-zinc-500 hover:text-black'}`}>待付款</button>
           <button onClick={() => setActiveTab('pending_confirmation')} className={`pb-3 text-xs font-bold transition-colors ${activeTab === 'pending_confirmation' ? 'text-black border-b-2 border-black' : 'text-zinc-500 hover:text-black'}`}>待确认</button>
@@ -522,7 +522,7 @@ export function OrderManagement() {
 
         {activeTab === 'downloads' ? (
           <div className="bg-white border border-zinc-200 shadow-sm">
-            <div className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-zinc-200 bg-zinc-50 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
+            <div className="hidden md:grid grid-cols-12 gap-4 px-6 py-4 border-b border-zinc-200 bg-zinc-50 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
               <div className="col-span-4">文件名称</div>
               <div className="col-span-3">生成时间</div>
               <div className="col-span-3">状态</div>
@@ -532,15 +532,21 @@ export function OrderManagement() {
               <div className="p-8 text-center text-sm text-zinc-500">暂无下载文件</div>
             ) : (
               downloads.map(file => (
-                <div key={file.id} className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-zinc-200 items-center hover:bg-zinc-50">
-                  <div className="col-span-4 text-sm font-bold flex items-center gap-2">
+                <div key={file.id} className="flex flex-col md:grid md:grid-cols-12 gap-4 px-4 md:px-6 py-4 border-b border-zinc-200 md:items-center hover:bg-zinc-50 transition-colors">
+                  <div className="md:col-span-4 text-sm font-bold flex items-center gap-2">
                     <FileText size={16} className="text-zinc-400" />
                     {file.name}
                   </div>
-                  <div className="col-span-3 text-xs text-zinc-500">{file.date}</div>
-                  <div className="col-span-3 text-xs text-green-600 font-bold">{file.status}</div>
-                  <div className="col-span-2 text-right">
-                    <button className="text-xs font-bold border border-zinc-200 px-4 py-2 hover:border-black transition-colors flex items-center gap-2 ml-auto">
+                  <div className="flex justify-between items-center md:contents">
+                    <div className="text-xs text-zinc-500 md:hidden">生成时间</div>
+                    <div className="md:col-span-3 text-xs text-zinc-500">{file.date}</div>
+                  </div>
+                  <div className="flex justify-between items-center md:contents">
+                    <div className="text-xs text-zinc-500 md:hidden">状态</div>
+                    <div className="md:col-span-3 text-xs text-green-600 font-bold">{file.status}</div>
+                  </div>
+                  <div className="md:col-span-2 md:text-right mt-2 md:mt-0">
+                    <button className="w-full md:w-auto text-xs font-bold border border-zinc-200 px-4 py-2 hover:border-black transition-colors flex items-center justify-center gap-2 md:ml-auto">
                       <Download size={14} />
                       下载 Excel
                     </button>
@@ -551,7 +557,7 @@ export function OrderManagement() {
           </div>
         ) : (
           <div className="bg-white border border-zinc-200 shadow-sm">
-            <div className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-zinc-200 bg-zinc-50 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
+            <div className="hidden md:grid grid-cols-12 gap-4 px-6 py-4 border-b border-zinc-200 bg-zinc-50 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
             <div className="col-span-3">商品 SPU 详情</div>
             <div className="col-span-2">买家</div>
             <div className="col-span-2">配送方式 / 仓库</div>
@@ -563,19 +569,19 @@ export function OrderManagement() {
           {filteredOrders.map(order => (
             <div key={order.id} className="border-b border-zinc-200 hover:border-black transition-colors bg-white mb-4 shadow-sm">
               {/* Order Header */}
-              <div className="bg-zinc-50 px-6 py-3 border-b border-zinc-200 flex items-center gap-4">
+              <div className="bg-zinc-50 px-4 md:px-6 py-3 border-b border-zinc-200 flex flex-wrap items-center gap-2 md:gap-4">
                 <span className="font-bold text-xs">{order.id}</span>
                 <span className="text-[10px] text-zinc-500">{order.date}</span>
                 {order.manager ? (
                   <span 
-                    className="text-[10px] text-blue-600 ml-4 cursor-pointer hover:underline"
+                    className="text-[10px] text-blue-600 md:ml-4 cursor-pointer hover:underline"
                     onClick={() => setFilterManager(order.manager)}
                   >
                     主理人: {order.manager}
                   </span>
                 ) : order.distributor ? (
                   <span 
-                    className="text-[10px] text-blue-600 ml-4 cursor-pointer hover:underline"
+                    className="text-[10px] text-blue-600 md:ml-4 cursor-pointer hover:underline"
                     onClick={() => setFilterDistributor(order.distributor)}
                   >
                     分销商: {order.distributor}
@@ -583,8 +589,8 @@ export function OrderManagement() {
                 ) : null}
               </div>
               {/* Order Body */}
-              <div className="grid grid-cols-12 gap-4 px-6 py-6 items-center">
-                <div className="col-span-3 pr-4">
+              <div className="flex flex-col md:grid md:grid-cols-12 gap-4 px-4 md:px-6 py-4 md:py-6 md:items-center">
+                <div className="md:col-span-3 md:pr-4">
                   <div className="flex gap-3 mb-2">
                     <div className="w-10 h-10 bg-zinc-100 p-1 flex-shrink-0">
                       <img src={order.image} alt={order.brand} className="w-full h-full object-contain mix-blend-multiply grayscale" />
@@ -598,63 +604,73 @@ export function OrderManagement() {
                     <div className="text-[9px] font-bold text-zinc-500 bg-zinc-100 px-2 py-0.5 inline-block">共 {order.spuCount} 款 SPU, {order.itemCount} 件</div>
                   )}
                 </div>
-                <div className="col-span-2 pr-4">
-                  <div className="text-xs font-bold mb-1">{order.buyerName} ({order.buyerPhone})</div>
-                  <div className="text-[10px] text-zinc-500 truncate" title={order.shippingAddress}>{order.shippingAddress}</div>
-                </div>
-                <div className="col-span-2 pr-4">
-                  <div 
-                    className="text-xs font-bold mb-1 text-blue-600 cursor-pointer hover:underline"
-                    onClick={() => setFilterDelivery(order.deliveryMethod)}
-                  >
-                    {order.deliveryMethod}
+                <div className="flex flex-col md:contents gap-4 border-t border-zinc-100 pt-4 md:border-none md:pt-0">
+                  <div className="md:col-span-2 md:pr-4">
+                    <div className="text-xs text-zinc-500 md:hidden mb-1">买家</div>
+                    <div className="text-xs font-bold mb-1">{order.buyerName} ({order.buyerPhone})</div>
+                    <div className="text-[10px] text-zinc-500 truncate" title={order.shippingAddress}>{order.shippingAddress}</div>
                   </div>
-                  <div 
-                    className="text-[10px] text-blue-600 cursor-pointer hover:underline"
-                    onClick={() => setFilterWarehouse(order.warehouse)}
-                  >
-                    {order.warehouse}
-                  </div>
-                </div>
-                <div className="col-span-2 text-right">
-                  <div className="text-sm font-bold mb-1">¥ {order.totalPrice.toLocaleString()}</div>
-                  {order.depositPaid ? (
-                    <div className="text-[9px] text-orange-600 font-bold">已付定金: ¥{order.depositPaid.toLocaleString()}</div>
-                  ) : (
-                    <div className="text-[9px] text-zinc-400">{order.status === 'pending_payment' ? '未付款' : ''}</div>
-                  )}
-                </div>
-                <div className="col-span-2 pl-4">
-                  <div className={`text-[9px] font-bold px-2 py-1 uppercase tracking-wider inline-block mb-1 ${
-                    getOrderOverallStatusLabel(order, activeTab).includes('部分') ? 'bg-yellow-100 text-yellow-800' :
-                    order.items.every((i: any) => i.status === 'pending_confirmation') ? 'bg-orange-100 text-orange-800' :
-                    order.items.every((i: any) => i.status === 'pending_shipment') ? 'bg-black text-white' :
-                    order.items.every((i: any) => i.status === 'pending_refund') ? 'bg-red-100 text-red-800' :
-                    order.status === 'pending_payment' ? 'bg-red-100 text-red-800' :
-                    'bg-zinc-100 text-zinc-800'
-                  }`}>
-                    {getOrderOverallStatusLabel(order, activeTab)}
-                  </div>
-                  {(order as any).shipments && (order as any).shipments.length > 0 && (
-                    <div className="mt-2 space-y-1">
-                      {(order as any).shipments.map((shipment: any) => (
-                        <div key={shipment.id} className="text-[10px] text-zinc-500">
-                          <span className="text-zinc-800">{shipment.company}</span>
-                          <br/>
-                          <a href="#" onClick={(e) => { e.preventDefault(); alert(`查看物流轨迹\r\n\r\n单号: ${shipment.trackingNumber}\r\n状态: 运输中...\r\n包裹内容: ${shipment.contents}`); }} className="text-blue-600 hover:underline">
-                            {shipment.trackingNumber}
-                          </a>
-                        </div>
-                      ))}
+                  <div className="md:col-span-2 md:pr-4 flex md:block gap-4">
+                    <div className="text-xs text-zinc-500 md:hidden mb-1 flex-shrink-0">配送方式 / 仓库</div>
+                    <div>
+                      <div 
+                        className="text-xs font-bold md:mb-1 text-blue-600 cursor-pointer hover:underline"
+                        onClick={() => setFilterDelivery(order.deliveryMethod)}
+                      >
+                        {order.deliveryMethod}
+                      </div>
+                      <div 
+                        className="text-[10px] text-blue-600 cursor-pointer hover:underline"
+                        onClick={() => setFilterWarehouse(order.warehouse)}
+                      >
+                        {order.warehouse}
+                      </div>
                     </div>
-                  )}
+                  </div>
                 </div>
-                <div className="col-span-1 text-right">
+                <div className="flex justify-between items-center md:contents border-t border-zinc-100 pt-3 md:border-none md:pt-0">
+                  <div className="md:col-span-2 md:text-right">
+                    <div className="text-xs text-zinc-500 md:hidden mb-1">总价</div>
+                    <div className="text-sm font-bold mb-1">¥ {order.totalPrice.toLocaleString()}</div>
+                    {order.depositPaid ? (
+                      <div className="text-[9px] text-orange-600 font-bold">已付定金: ¥{order.depositPaid.toLocaleString()}</div>
+                    ) : (
+                      <div className="text-[9px] text-zinc-400">{order.status === 'pending_payment' ? '未付款' : ''}</div>
+                    )}
+                  </div>
+                  <div className="md:col-span-2 md:pl-4 text-right md:text-left">
+                    <div className={`text-[9px] font-bold px-2 py-1 uppercase tracking-wider inline-block md:mb-1 ${
+                      getOrderOverallStatusLabel(order, activeTab).includes('部分') ? 'bg-yellow-100 text-yellow-800' :
+                      order.items.every((i: any) => i.status === 'pending_confirmation') ? 'bg-orange-100 text-orange-800' :
+                      order.items.every((i: any) => i.status === 'pending_shipment') ? 'bg-black text-white' :
+                      order.items.every((i: any) => i.status === 'pending_refund') ? 'bg-red-100 text-red-800' :
+                      order.status === 'pending_payment' ? 'bg-red-100 text-red-800' :
+                      'bg-zinc-100 text-zinc-800'
+                    }`}>
+                      {getOrderOverallStatusLabel(order, activeTab)}
+                    </div>
+                    {(order as any).shipments && (order as any).shipments.length > 0 && (
+                      <div className="mt-2 space-y-1">
+                        {(order as any).shipments.map((shipment: any) => (
+                          <div key={shipment.id} className="text-[10px] text-zinc-500">
+                            <span className="text-zinc-800">{shipment.company}</span>
+                            <br/>
+                            <a href="#" onClick={(e) => { e.preventDefault(); alert(`查看物流轨迹\r\n\r\n单号: ${shipment.trackingNumber}\r\n状态: 运输中...\r\n包裹内容: ${shipment.contents}`); }} className="text-blue-600 hover:underline">
+                              {shipment.trackingNumber}
+                            </a>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className="md:col-span-1 md:text-right mt-3 md:mt-0 flex justify-end w-full md:w-auto">
                   <button 
                     onClick={() => setSelectedOrder(order.id)}
-                    className="w-8 h-8 border border-zinc-200 inline-flex items-center justify-center hover:border-black transition-colors"
+                    className="w-full md:w-8 md:h-8 flex items-center justify-center border border-zinc-200 bg-zinc-50 hover:bg-zinc-100 hover:border-black transition-colors md:ml-auto gap-2 md:gap-0 py-2 md:py-0 text-xs md:text-base font-bold text-black"
                   >
-                    <ChevronRight size={16} />
+                    <span className="md:hidden">查看详情</span>
+                    <ChevronRight size={16} className="text-zinc-400 md:text-black" />
                   </button>
                 </div>
               </div>

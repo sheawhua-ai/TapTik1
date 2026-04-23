@@ -170,15 +170,15 @@ export function DistributorOrderManagement() {
   return (
     <div className="max-w-7xl mx-auto flex h-[calc(100vh-80px)]">
       <div className="flex-1 overflow-y-auto">
-        <div className="flex justify-between items-end mb-8">
+        <div className="flex flex-col md:flex-row justify-between md:items-end mb-6 md:mb-8 gap-4">
           <div>
             <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-[0.2em] mb-2">Distributor Orders</div>
-            <h1 className="text-3xl font-black tracking-tighter uppercase mb-2">分销订单管理</h1>
-            <p className="text-sm text-zinc-500">管理您的分销订单，查看上游供货商发货状态</p>
+            <h1 className="text-2xl md:text-3xl font-black tracking-tighter uppercase mb-2">分销订单管理</h1>
+            <p className="text-xs md:text-sm text-zinc-500">管理您的分销订单，查看上游供货商发货状态</p>
           </div>
         </div>
 
-        <div className="flex gap-8 border-b border-zinc-200 mb-6">
+        <div className="flex gap-4 md:gap-8 border-b border-zinc-200 mb-6 overflow-x-auto no-scrollbar whitespace-nowrap">
           <button onClick={() => setActiveTab('all')} className={`pb-3 text-xs font-bold transition-colors ${activeTab === 'all' ? 'text-black border-b-2 border-black' : 'text-zinc-500 hover:text-black'}`}>全部订单</button>
           <button onClick={() => setActiveTab('pending_payment')} className={`pb-3 text-xs font-bold transition-colors ${activeTab === 'pending_payment' ? 'text-black border-b-2 border-black' : 'text-zinc-500 hover:text-black'}`}>待付款</button>
           <button onClick={() => setActiveTab('pending_confirmation')} className={`pb-3 text-xs font-bold transition-colors ${activeTab === 'pending_confirmation' ? 'text-black border-b-2 border-black' : 'text-zinc-500 hover:text-black'}`}>待供货商确认</button>
@@ -226,7 +226,7 @@ export function DistributorOrderManagement() {
         </div>
 
         <div className="bg-white border border-zinc-200 shadow-sm">
-          <div className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-zinc-200 bg-zinc-50 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
+          <div className="hidden md:grid grid-cols-12 gap-4 px-6 py-4 border-b border-zinc-200 bg-zinc-50 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
             <div className="col-span-3">商品详情</div>
             <div className="col-span-2">买家信息</div>
             <div className="col-span-2">上游供货商</div>
@@ -237,64 +237,75 @@ export function DistributorOrderManagement() {
 
           {filteredOrders.map(order => (
             <div key={order.id} className="border-b border-zinc-200 hover:border-black transition-colors bg-white mb-4 shadow-sm">
-              <div className="bg-zinc-50 px-6 py-3 border-b border-zinc-200 flex items-center gap-4">
+              <div className="bg-zinc-50 px-4 md:px-6 py-3 border-b border-zinc-200 flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
                 <span className="font-bold text-xs">{order.id}</span>
                 <span className="text-[10px] text-zinc-500">{order.date}</span>
                 {order.distributorName && (
                   <span 
-                    className="text-[10px] text-blue-600 ml-4 cursor-pointer hover:underline"
+                    className="text-[10px] text-blue-600 md:ml-4 cursor-pointer hover:underline"
                     onClick={() => setFilterDistributor(order.distributorName!)}
                   >
                     分销商: {order.distributorName}
                   </span>
                 )}
               </div>
-              <div className="grid grid-cols-12 gap-4 px-6 py-6 items-center">
-                <div className="col-span-3 pr-4">
-                  <div className="flex gap-3 mb-2">
-                    <div className="w-10 h-10 bg-zinc-100 p-1 flex-shrink-0">
+              <div className="flex flex-col md:grid md:grid-cols-12 gap-4 px-4 md:px-6 py-4 md:py-6 md:items-center">
+                <div className="md:col-span-3 md:pr-4">
+                  <div className="flex gap-3 mb-2 md:mb-0">
+                    <div className="w-16 h-16 md:w-10 md:h-10 bg-zinc-100 p-1 flex-shrink-0">
                       <img src={order.image} alt={order.brand} className="w-full h-full object-contain mix-blend-multiply grayscale" />
                     </div>
                     <div>
-                      <div className="text-xs font-bold uppercase tracking-tight truncate w-32">{order.productName}</div>
+                      <div className="text-sm md:text-xs font-bold uppercase tracking-tight md:truncate md:w-32">{order.productName}</div>
                       <div className="text-[10px] text-zinc-500">x {order.itemCount}</div>
                     </div>
                   </div>
                 </div>
-                <div className="col-span-2 pr-4">
-                  <div 
-                    className="text-xs font-bold mb-1 text-blue-600 cursor-pointer hover:underline"
-                    onClick={() => setFilterBuyer(order.buyerName)}
-                  >
-                    {order.buyerName}
+                <div className="flex justify-between md:contents">
+                  <div className="text-xs text-zinc-500 md:hidden ml-16 md:ml-0 md:pl-0">买家信息</div>
+                  <div className="md:col-span-2 md:pr-4 text-right md:text-left">
+                    <div 
+                      className="text-xs font-bold mb-1 text-blue-600 cursor-pointer hover:underline"
+                      onClick={() => setFilterBuyer(order.buyerName)}
+                    >
+                      {order.buyerName}
+                    </div>
+                    <div className="text-[10px] text-zinc-500 truncate w-32 md:w-auto ml-auto md:ml-0" title={order.shippingAddress}>{order.shippingAddress}</div>
                   </div>
-                  <div className="text-[10px] text-zinc-500 truncate" title={order.shippingAddress}>{order.shippingAddress}</div>
                 </div>
-                <div className="col-span-2 pr-4">
-                  <div 
-                    className="text-xs font-bold mb-1 text-blue-600 cursor-pointer hover:underline"
-                    onClick={() => setFilterSupplier(order.supplierName)}
-                  >
-                    {order.supplierName}
+                <div className="flex justify-between md:contents">
+                  <div className="text-xs text-zinc-500 md:hidden ml-16 md:ml-0 md:pl-0">上游供货商</div>
+                  <div className="md:col-span-2 md:pr-4 text-right md:text-left">
+                    <div 
+                      className="text-xs font-bold mb-1 text-blue-600 cursor-pointer hover:underline"
+                      onClick={() => setFilterSupplier(order.supplierName)}
+                    >
+                      {order.supplierName}
+                    </div>
+                    <div className="text-[10px] text-zinc-500">{order.shippingMode === 'dropship' ? '代发' : '发往中转仓'}</div>
                   </div>
-                  <div className="text-[10px] text-zinc-500">{order.shippingMode === 'dropship' ? '代发' : '发往中转仓'}</div>
                 </div>
-                <div className="col-span-2 text-right">
-                  <div className="text-sm font-bold mb-1">¥ {order.totalPrice.toLocaleString()}</div>
-                </div>
-                <div className="col-span-2 pl-4">
-                  <div className={`text-[9px] font-bold px-2 py-1 uppercase tracking-wider inline-block mb-1 ${
-                    order.status === 'pending_payment' ? 'bg-red-100 text-red-800' :
-                    order.status === 'pending_confirmation' ? 'bg-orange-100 text-orange-800' :
-                    order.status === 'pending_shipment' ? 'bg-black text-white' :
-                    order.status === 'supplier_shipped' ? 'bg-blue-100 text-blue-800' :
-                    order.status === 'pending_refund' ? 'bg-red-100 text-red-800' :
-                    'bg-zinc-100 text-zinc-800'
-                  }`}>
-                    {order.statusLabel}
+                <div className="flex justify-between md:contents">
+                  <div className="text-xs text-zinc-500 md:hidden ml-16 md:ml-0 md:pl-0">总价</div>
+                  <div className="md:col-span-2 text-right">
+                    <div className="text-sm font-bold mb-1">¥ {order.totalPrice.toLocaleString()}</div>
                   </div>
-                  {(order as any).shipments && (order as any).shipments.length > 0 && (
-                    <div className="mt-2 space-y-2">
+                </div>
+                <div className="flex justify-between md:contents">
+                  <div className="text-xs text-zinc-500 md:hidden ml-16 md:ml-0 md:pl-0">状态</div>
+                  <div className="md:col-span-2 md:pl-4 text-right md:text-left">
+                    <div className={`text-[9px] font-bold px-2 py-1 uppercase tracking-wider inline-block mb-1 ${
+                      order.status === 'pending_payment' ? 'bg-red-100 text-red-800' :
+                      order.status === 'pending_confirmation' ? 'bg-orange-100 text-orange-800' :
+                      order.status === 'pending_shipment' ? 'bg-black text-white' :
+                      order.status === 'supplier_shipped' ? 'bg-blue-100 text-blue-800' :
+                      order.status === 'pending_refund' ? 'bg-red-100 text-red-800' :
+                      'bg-zinc-100 text-zinc-800'
+                    }`}>
+                      {order.statusLabel}
+                    </div>
+                    {(order as any).shipments && (order as any).shipments.length > 0 && (
+                      <div className="mt-2 space-y-2 text-left">
                        {(() => {
                          const upstream = (order as any).shipments.filter((s:any) => s.type === 'upstream');
                          const downstream = (order as any).shipments.filter((s:any) => s.type === 'downstream');
@@ -335,12 +346,14 @@ export function DistributorOrderManagement() {
                        })()}
                     </div>
                   )}
+                  </div>
                 </div>
-                <div className="col-span-1 text-right">
+                <div className="md:col-span-1 text-right mt-4 md:mt-0 ml-16 md:ml-0 md:pl-0 flex justify-end">
                   <button 
                     onClick={() => setSelectedOrder(order.id)}
-                    className="w-8 h-8 border border-zinc-200 inline-flex items-center justify-center hover:border-black transition-colors"
+                    className="w-full md:w-8 h-8 border border-zinc-200 inline-flex items-center justify-center hover:border-black transition-colors"
                   >
+                    <span className="md:hidden text-xs font-bold mr-2">查看详情</span>
                     <ChevronRight size={16} />
                   </button>
                 </div>
@@ -351,13 +364,13 @@ export function DistributorOrderManagement() {
       </div>
 
       {selectedOrderData && (
-        <div className="fixed inset-0 z-50 flex justify-end p-4">
+        <div className="fixed inset-0 z-50 flex justify-end md:p-4">
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setSelectedOrder(null)}></div>
-          <div className="relative w-[800px] bg-white shadow-2xl flex flex-col h-full rounded-xl overflow-hidden animate-in slide-in-from-right duration-300">
-            <div className="flex items-center justify-between px-8 py-6 border-b border-zinc-100 bg-zinc-50">
+          <div className="relative w-full md:w-[800px] bg-white shadow-2xl flex flex-col h-full md:rounded-xl overflow-hidden animate-in slide-in-from-right duration-300">
+            <div className="flex items-center justify-between px-4 md:px-8 py-4 md:py-6 border-b border-zinc-100 bg-zinc-50">
               <div>
                 <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1">订单详情</div>
-                <h2 className="text-xl font-black uppercase tracking-tight">{selectedOrderData.id}</h2>
+                <h2 className="text-lg md:text-xl font-black uppercase tracking-tight">{selectedOrderData.id}</h2>
               </div>
               <button 
                 onClick={() => {
@@ -368,8 +381,8 @@ export function DistributorOrderManagement() {
               </button>
             </div>
           
-            <div className="flex-1 overflow-y-auto p-8">
-              <div className="grid grid-cols-2 gap-8 mb-8">
+            <div className="flex-1 overflow-y-auto p-4 md:p-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 mb-6 md:mb-8">
                 <div>
                   <h3 className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-4">买家/收件信息</h3>
                   <div className="text-sm font-bold mb-1">{selectedOrderData.buyerName} ({selectedOrderData.buyerPhone})</div>
@@ -382,7 +395,7 @@ export function DistributorOrderManagement() {
                 </div>
                 <div>
                   <h3 className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-4">订单状态</h3>
-                  <div className="flex items-center gap-2 mb-2">
+                  <div className="flex flex-wrap items-center gap-2 mb-2">
                     <span className={`text-[10px] font-bold px-2 py-1 uppercase tracking-wider ${
                       selectedOrderData.status === 'pending_payment' ? 'bg-red-100 text-red-800' :
                       selectedOrderData.status === 'pending_confirmation' ? 'bg-orange-100 text-orange-800' :
@@ -398,7 +411,7 @@ export function DistributorOrderManagement() {
               </div>
 
               {/* Payment Info */}
-              <div className="bg-zinc-50 p-6 border border-zinc-200 mb-8">
+              <div className="bg-zinc-50 p-4 md:p-6 border border-zinc-200 mb-6 md:mb-8">
                 <h3 className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-4">支付与结算</h3>
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-sm">订单总额</span>
@@ -464,38 +477,40 @@ export function DistributorOrderManagement() {
                   <h3 className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">商品明细与操作</h3>
                 </div>
                 
-                <div className="border border-zinc-200">
-                  <table className="w-full text-left text-sm">
-                    <thead className="bg-zinc-50 border-b border-zinc-200 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
-                      <tr>
-                        <th className="p-4 w-10">
-                          <input type="checkbox" className="accent-black" disabled />
-                        </th>
-                        <th className="p-4">商品</th>
-                        <th className="p-4">上游供应商</th>
-                        <th className="p-4 text-right">数量</th>
-                        <th className="p-4 text-right">单价</th>
-                        <th className="p-4 text-center">状态</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-zinc-100">
-                      {selectedOrderData.items.map((item: any) => (
-                        <tr key={item.id} className="hover:bg-zinc-50">
-                          <td className="p-4">
+                <div className="border border-zinc-200 bg-white">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-sm min-w-[700px]">
+                      <thead className="bg-zinc-50 border-b border-zinc-200 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
+                        <tr>
+                          <th className="p-4 w-10">
                             <input type="checkbox" className="accent-black" disabled />
-                          </td>
-                          <td className="p-4">
-                            <div className="font-bold text-xs">{item.name}</div>
-                            <div className="text-[10px] text-zinc-400">SKU: {item.sku}</div>
-                          </td>
-                          <td className="p-4 text-xs text-zinc-500">{item.supplier}</td>
-                          <td className="p-4 text-right font-mono">{item.count}</td>
-                          <td className="p-4 text-right font-mono">¥ {item.price.toLocaleString()}</td>
-                          <td className="p-4 text-center"><span className="text-orange-600 text-xs font-bold">{item.statusLabel}</span></td>
+                          </th>
+                          <th className="p-4">商品</th>
+                          <th className="p-4">上游供应商</th>
+                          <th className="p-4 text-right">数量</th>
+                          <th className="p-4 text-right">单价</th>
+                          <th className="p-4 text-center">状态</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody className="divide-y divide-zinc-100">
+                        {selectedOrderData.items.map((item: any) => (
+                          <tr key={item.id} className="hover:bg-zinc-50">
+                            <td className="p-4">
+                              <input type="checkbox" className="accent-black" disabled />
+                            </td>
+                            <td className="p-4">
+                              <div className="font-bold text-xs">{item.name}</div>
+                              <div className="text-[10px] text-zinc-400">SKU: {item.sku}</div>
+                            </td>
+                            <td className="p-4 text-xs text-zinc-500">{item.supplier}</td>
+                            <td className="p-4 text-right font-mono">{item.count}</td>
+                            <td className="p-4 text-right font-mono">¥ {item.price.toLocaleString()}</td>
+                            <td className="p-4 text-center"><span className="text-orange-600 text-xs font-bold">{item.statusLabel}</span></td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
 
@@ -568,74 +583,78 @@ export function DistributorOrderManagement() {
               <div className="mt-8">
                 <h3 className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-4">订单进程明细</h3>
                 <div className="border border-zinc-200">
-                  <table className="w-full text-left text-sm">
-                    <thead className="bg-zinc-50 border-b border-zinc-200 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
-                      <tr>
-                        <th className="p-4">操作时间</th>
-                        <th className="p-4">进程说明</th>
-                        <th className="p-4">涉及商品</th>
-                        <th className="p-4">金额变动</th>
-                      </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-zinc-100 text-zinc-800">
-                      {selectedOrderData.progress?.map((p: any) => (
-                        <tr key={p.id} className="hover:bg-zinc-50 transition-colors">
-                          <td className="p-4 font-mono text-xs">{p.time}</td>
-                          <td className="p-4 font-bold text-black">{p.description}</td>
-                          <td className="p-4">{p.items}</td>
-                          <td className="p-4 font-mono">{p.amountChange}</td>
-                        </tr>
-                      ))}
-                      {(!selectedOrderData.progress || selectedOrderData.progress.length === 0) && (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-sm min-w-[700px]">
+                      <thead className="bg-zinc-50 border-b border-zinc-200 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
                         <tr>
-                          <td colSpan={4} className="p-8 text-center text-zinc-500 text-xs">暂无进程记录</td>
+                          <th className="p-4">操作时间</th>
+                          <th className="p-4">进程说明</th>
+                          <th className="p-4">涉及商品</th>
+                          <th className="p-4">金额变动</th>
                         </tr>
-                      )}
-                    </tbody>
-                  </table>
-                  <div className="p-4 bg-zinc-50 border-t border-zinc-200 flex gap-4 items-center">
+                      </thead>
+                      <tbody className="bg-white divide-y divide-zinc-100 text-zinc-800">
+                        {selectedOrderData.progress?.map((p: any) => (
+                          <tr key={p.id} className="hover:bg-zinc-50 transition-colors">
+                            <td className="p-4 font-mono text-xs">{p.time}</td>
+                            <td className="p-4 font-bold text-black">{p.description}</td>
+                            <td className="p-4">{p.items}</td>
+                            <td className="p-4 font-mono">{p.amountChange}</td>
+                          </tr>
+                        ))}
+                        {(!selectedOrderData.progress || selectedOrderData.progress.length === 0) && (
+                          <tr>
+                            <td colSpan={4} className="p-8 text-center text-zinc-500 text-xs">暂无进程记录</td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className="p-4 bg-zinc-50 border-t border-zinc-200 flex flex-col md:flex-row gap-4 items-center">
                     <input 
                       type="text" 
                       placeholder="手动添加进程说明 (如: 供货商部分退款)" 
                       value={newProgressDesc}
                       onChange={(e) => setNewProgressDesc(e.target.value)}
-                      className="flex-1 bg-white border border-zinc-200 px-3 py-2 text-xs text-black focus:border-black outline-none"
+                      className="w-full md:flex-1 bg-white border border-zinc-200 px-3 py-2 text-xs text-black focus:border-black outline-none"
                     />
-                    <input 
-                      type="text" 
-                      placeholder="金额变动 (如: -¥5,000)" 
-                      value={newProgressAmount}
-                      onChange={(e) => setNewProgressAmount(e.target.value)}
-                      className="w-48 bg-white border border-zinc-200 px-3 py-2 text-xs text-black focus:border-black outline-none"
-                    />
-                    <button 
-                      onClick={handleAddManualProgress}
-                      disabled={!newProgressDesc}
-                      className="bg-black text-white px-4 py-2 text-xs font-bold hover:bg-zinc-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      添加记录
-                    </button>
+                    <div className="flex gap-4 w-full md:w-auto">
+                      <input 
+                        type="text" 
+                        placeholder="金额变动 (如: -¥5,000)" 
+                        value={newProgressAmount}
+                        onChange={(e) => setNewProgressAmount(e.target.value)}
+                        className="w-full md:w-48 bg-white border border-zinc-200 px-3 py-2 text-xs text-black focus:border-black outline-none"
+                      />
+                      <button 
+                        onClick={handleAddManualProgress}
+                        disabled={!newProgressDesc}
+                        className="bg-black text-white px-4 py-2 text-xs font-bold hover:bg-zinc-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                      >
+                        添加记录
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Action Footer */}
-            <div className="p-6 border-t border-zinc-200 bg-zinc-50 flex justify-between items-center">
-              <div className="text-xs text-zinc-500">已选 0 件商品</div>
-              <div className="flex gap-3">
+            <div className="p-4 md:p-6 border-t border-zinc-200 bg-zinc-50 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] md:shadow-none">
+              <div className="text-xs text-zinc-500 w-full md:w-auto">已选 0 件商品</div>
+              <div className="flex flex-col md:flex-row gap-3 w-full md:w-auto">
                 {selectedOrderData.status === 'pending_payment' ? (
                   <button 
                     onClick={() => {
                       setTempPrice(selectedOrderData.totalPrice.toString());
                       setIsEditingPrice(true);
                     }}
-                    className="bg-black text-white px-6 py-2 text-xs font-bold uppercase tracking-widest hover:bg-zinc-800 transition-colors"
+                    className="w-full md:w-auto bg-black text-white px-6 py-2 text-xs font-bold uppercase tracking-widest hover:bg-zinc-800 transition-colors"
                   >
                     修改订单金额
                   </button>
                 ) : (
-                  <button className="bg-white border border-zinc-200 text-black px-6 py-2 text-xs font-bold uppercase tracking-widest hover:border-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                  <button className="w-full md:w-auto bg-white border border-zinc-200 text-black px-6 py-2 text-xs font-bold uppercase tracking-widest hover:border-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
                     申请退款
                   </button>
                 )}

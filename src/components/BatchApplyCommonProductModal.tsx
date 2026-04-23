@@ -51,8 +51,8 @@ export function BatchApplyCommonProductModal({ isOpen, onClose, selectedIds, onS
   });
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <div className="bg-white w-full max-w-5xl h-[85vh] flex flex-col shadow-2xl overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-0 md:p-4">
+      <div className="bg-white w-full h-full md:max-w-5xl md:h-[85vh] flex flex-col shadow-2xl overflow-hidden md:rounded-md">
         {/* Header */}
         <div className="flex justify-between items-center px-6 py-4 border-b border-zinc-200">
           <div>
@@ -73,7 +73,7 @@ export function BatchApplyCommonProductModal({ isOpen, onClose, selectedIds, onS
                 <span>系统已自动为您带入品牌、类目、图片及规格信息。提交后将进入公共商品库审核队列。</span>
               </div>
 
-              <div className="grid grid-cols-12 gap-4 px-6 py-3 bg-white border border-zinc-200 text-[10px] font-bold text-zinc-500 uppercase tracking-widest shadow-sm">
+              <div className="hidden md:grid grid-cols-12 gap-4 px-6 py-3 bg-white border border-zinc-200 text-[10px] font-bold text-zinc-500 uppercase tracking-widest shadow-sm">
                 <div className="col-span-1">主图</div>
                 <div className="col-span-3">品牌 / SPU 名称</div>
                 <div className="col-span-2">分类</div>
@@ -82,9 +82,9 @@ export function BatchApplyCommonProductModal({ isOpen, onClose, selectedIds, onS
               </div>
 
               {productsToApply.map((product, idx) => (
-                <div key={idx} className="grid grid-cols-12 gap-4 px-6 py-5 bg-white border border-zinc-200 items-center shadow-sm">
-                  <div className="col-span-1">
-                    <div className="w-12 h-12 bg-zinc-100 flex items-center justify-center border border-zinc-200">
+                <div key={idx} className="flex flex-col md:grid md:grid-cols-12 gap-4 px-4 md:px-6 py-4 md:py-5 bg-white border border-zinc-200 items-start md:items-center shadow-sm">
+                  <div className="flex md:col-span-4 items-center gap-4 w-full">
+                    <div className="w-16 h-16 md:w-12 md:h-12 bg-zinc-100 flex items-center justify-center border border-zinc-200 shrink-0">
                       {product.image ? (
                         <img src={product.image} alt={product.name} className="w-full h-full object-contain" />
                       ) : (
@@ -94,19 +94,20 @@ export function BatchApplyCommonProductModal({ isOpen, onClose, selectedIds, onS
                         </div>
                       )}
                     </div>
+                    <div className="flex-1">
+                      <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1">{product.brand}</div>
+                      <input 
+                        type="text" 
+                        defaultValue={product.name} 
+                        className="text-sm font-bold w-full border-b border-transparent hover:border-zinc-300 focus:border-black focus:outline-none bg-transparent transition-colors pb-0.5"
+                      />
+                    </div>
                   </div>
-                  <div className="col-span-3">
-                    <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1">{product.brand}</div>
-                    <input 
-                      type="text" 
-                      defaultValue={product.name} 
-                      className="text-sm font-bold w-full border-b border-transparent hover:border-zinc-300 focus:border-black focus:outline-none bg-transparent transition-colors pb-0.5"
-                    />
-                  </div>
-                  <div className="col-span-2 flex items-center">
+                  <div className="md:col-span-2 flex flex-col md:block w-full">
+                    <div className="md:hidden text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1">分类</div>
                     <select 
                       defaultValue={product.category}
-                      className="text-sm border border-zinc-200 px-2 py-1 bg-white outline-none focus:border-black w-full"
+                      className="text-sm border border-zinc-200 px-2 py-1.5 md:py-1 bg-white outline-none focus:border-black w-full"
                     >
                       <option value="腕表">腕表</option>
                       <option value="箱包">箱包</option>
@@ -115,14 +116,16 @@ export function BatchApplyCommonProductModal({ isOpen, onClose, selectedIds, onS
                       <option value="美妆">美妆</option>
                     </select>
                   </div>
-                  <div className="col-span-2">
+                  <div className="md:col-span-2 flex flex-col md:block w-full">
+                    <div className="md:hidden text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1 mt-2">原 SPU 编码</div>
                     <input 
                       type="text" 
                       defaultValue={product.spuCode} 
                       className="text-sm font-mono w-full border-b border-transparent hover:border-zinc-300 focus:border-black focus:outline-none bg-transparent pb-0.5"
                     />
                   </div>
-                  <div className="col-span-4">
+                  <div className="md:col-span-4 flex flex-col md:block w-full">
+                    <div className="md:hidden text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1 mt-2">包含规格</div>
                     <div className="flex flex-wrap gap-1.5">
                       {product.specs.split(',').map((spec: string, i: number) => (
                         <span key={i} className="bg-zinc-100 text-zinc-600 text-[10px] px-2 py-1 rounded-sm border border-zinc-200">
@@ -164,20 +167,20 @@ export function BatchApplyCommonProductModal({ isOpen, onClose, selectedIds, onS
 
         {/* Footer */}
         {step === 1 && (
-          <div className="flex justify-between items-center px-6 py-4 border-t border-zinc-200 bg-white">
-            <div className="text-sm">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-0 px-4 md:px-6 py-4 border-t border-zinc-200 bg-white">
+            <div className="text-sm w-full text-center sm:text-left">
               已选中 <span className="font-bold">{productsToApply.length}</span> 个商品 
             </div>
-            <div className="flex gap-3">
+            <div className="flex gap-3 w-full sm:w-auto">
               <button
                 onClick={onClose}
-                className="px-6 py-2.5 border border-zinc-200 font-bold hover:bg-zinc-50 transition-colors text-sm"
+                className="flex-1 sm:flex-none px-6 py-2.5 border border-zinc-200 font-bold hover:bg-zinc-50 transition-colors text-sm"
               >
                 取消
               </button>
               <button
                 onClick={() => setStep(2)}
-                className="px-8 py-2.5 bg-black text-white font-bold hover:bg-zinc-800 transition-colors text-sm flex items-center gap-2"
+                className="flex-1 sm:flex-none px-6 sm:px-8 py-2.5 bg-black text-white font-bold hover:bg-zinc-800 transition-colors text-sm flex items-center justify-center gap-2"
               >
                 提交申请
                 <ChevronRight size={16} />

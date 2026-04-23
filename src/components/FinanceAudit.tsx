@@ -244,23 +244,23 @@ export function FinanceAudit() {
   return (
     <div className="max-w-7xl mx-auto pb-12">
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 md:mb-8 gap-4">
         <div className="flex items-center gap-4">
-          <button className="w-8 h-8 flex items-center justify-center hover:bg-zinc-200 rounded-full transition-colors">
+          <button className="w-8 h-8 flex items-center justify-center hover:bg-zinc-200 rounded-full transition-colors shrink-0">
             <ArrowLeft size={20} />
           </button>
           <div>
-            <h1 className="text-3xl font-black tracking-tighter uppercase mb-1">财务管理</h1>
-            <p className="text-sm text-zinc-500">按订单维度核对银行转账汇款及提现管理</p>
+            <h1 className="text-2xl md:text-3xl font-black tracking-tighter uppercase mb-1">财务管理</h1>
+            <p className="text-xs md:text-sm text-zinc-500">按订单维度核对银行转账汇款及提现管理</p>
           </div>
         </div>
-        <div className="bg-zinc-100 text-zinc-600 px-4 py-2 rounded-md flex items-center gap-2 text-sm">
-          <Info size={16} className="text-zinc-400" />
+        <div className="bg-zinc-100 text-zinc-600 px-4 py-2 rounded-md flex items-center gap-2 text-xs md:text-sm">
+          <Info size={16} className="text-zinc-400 shrink-0" />
           当前版本仅支持银行转账核销
         </div>
       </div>
 
-      <div className="flex gap-8 border-b border-zinc-200 mb-6">
+      <div className="flex gap-8 border-b border-zinc-200 mb-6 overflow-x-auto no-scrollbar whitespace-nowrap">
         <button onClick={() => setActiveMainTab('reconciliation')} className={`pb-3 text-sm font-bold transition-colors ${activeMainTab === 'reconciliation' ? 'text-black border-b-2 border-black' : 'text-zinc-500 hover:text-black'}`}>收款核销</button>
         <button onClick={() => setActiveMainTab('withdrawal')} className={`pb-3 text-sm font-bold transition-colors ${activeMainTab === 'withdrawal' ? 'text-black border-b-2 border-black' : 'text-zinc-500 hover:text-black'}`}>对账</button>
       </div>
@@ -268,14 +268,14 @@ export function FinanceAudit() {
       {activeMainTab === 'reconciliation' ? (
         <>
           {/* Filters Bar */}
-          <div className="flex items-center gap-4 mb-8">
+          <div className="flex flex-col md:flex-row md:items-center gap-4 mb-6 md:mb-8">
         {/* Date Range Picker */}
-        <div className="relative" ref={calendarRef}>
+        <div className="relative w-full md:w-auto" ref={calendarRef}>
           <button 
             onClick={() => setShowCalendar(!showCalendar)}
-            className="flex items-center gap-2 bg-white border border-zinc-200 px-4 py-2 shadow-sm hover:border-black transition-colors min-w-[260px]"
+            className="flex items-center gap-2 bg-white border border-zinc-200 px-4 py-2 shadow-sm hover:border-black transition-colors min-w-[260px] w-full md:w-auto overflow-hidden text-ellipsis whitespace-nowrap text-left"
           >
-            <CalendarIcon size={18} className="text-zinc-400" />
+            <CalendarIcon size={18} className="text-zinc-400 shrink-0" />
             <span className="text-sm font-bold">
               {dateRange.start ? dateRange.start : '选择开始日期'} 
               {' 至 '} 
@@ -343,12 +343,12 @@ export function FinanceAudit() {
         </div>
 
         {/* Status Filter */}
-        <div className="flex items-center gap-2 bg-white border border-zinc-200 px-4 py-2 shadow-sm">
-          <Filter size={18} className="text-zinc-400" />
+        <div className="flex items-center gap-2 bg-white border border-zinc-200 px-4 py-2 shadow-sm w-full md:w-auto">
+          <Filter size={18} className="text-zinc-400 shrink-0" />
           <select 
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value as any)}
-            className="bg-transparent text-sm font-bold focus:outline-none cursor-pointer"
+            className="bg-transparent text-sm font-bold focus:outline-none cursor-pointer w-full"
           >
             <option value="all">全部对账状态</option>
             <option value="pending">待核销 (未付款)</option>
@@ -357,23 +357,14 @@ export function FinanceAudit() {
           </select>
         </div>
 
-        <div className="text-sm text-zinc-500 ml-auto">
+        <div className="text-xs md:text-sm text-zinc-500 md:ml-auto w-full md:w-auto text-left md:text-right">
           共找到 {filteredOrders.length} 个符合条件的订单记录
         </div>
       </div>
 
       {/* Orders List / Horizontal Layout */}
-      <div className="bg-white border border-zinc-200 shadow-sm">
-        <div className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-zinc-200 bg-zinc-50 text-[10px] font-bold text-zinc-500 uppercase tracking-widest items-center">
-          <div className="col-span-4">商品详情 / 货单</div>
-          <div className="col-span-2">买家</div>
-          <div className="col-span-2 text-right">总价</div>
-          <div className="col-span-2 text-right">待付金额</div>
-          <div className="col-span-1 text-center">状态</div>
-          <div className="col-span-1 text-right">操作</div>
-        </div>
-
-        <div className="flex flex-col">
+      <div className="mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {filteredOrders.map(order => {
             const totalDue = order.depositDue + order.balanceDue;
             const pendingAmount = Math.max(0, totalDue - order.confirmedPaid);
@@ -389,62 +380,38 @@ export function FinanceAudit() {
               statusClass = 'bg-blue-50 text-blue-700 border-blue-200';
             }
 
-            const totalQty = order.products.reduce((acc: number, p: any) => acc + p.qty, 0);
-
             return (
-              <div key={order.orderId} className="border-b border-zinc-200 last:border-0 group hover:bg-zinc-50 transition-colors">
-                <div className="bg-zinc-50/50 px-6 py-3 border-b border-zinc-100 flex items-center justify-between text-[10px]">
-                  <div className="flex items-center gap-4">
-                    <span className="font-bold flex items-center gap-2">
-                      <FileText size={14} className="text-zinc-400" />
-                      {order.manifestName}
-                    </span>
-                    <span className="font-bold">{order.orderId}</span>
-                    <span className="text-zinc-500 font-mono">{order.date}</span>
-                  </div>
+              <div key={order.orderId} className="bg-white border border-zinc-200 shadow-sm flex flex-col hover:border-black transition-colors cursor-pointer group" onClick={() => setSelectedOrderId(order.orderId)}>
+                <div className="bg-zinc-50/50 px-4 py-3 border-b border-zinc-100 flex items-center justify-between">
+                  <div className="text-[10px] font-bold font-mono">{order.orderId}</div>
+                  <span className={`text-[10px] font-bold px-2 py-0.5 border ${statusClass}`}>
+                    {statusLabel}
+                  </span>
                 </div>
                 
-                <div className="grid grid-cols-12 gap-4 px-6 py-4 items-center">
-                  <div className="col-span-4 flex items-center gap-4">
-                    <div className="w-16 h-16 bg-zinc-100 flex items-center justify-center p-2 text-zinc-300">
-                      <ImageIcon size={24} />
+                <div className="p-4 flex-1 flex flex-col">
+                  <div className="mb-4">
+                    <div className="text-xs font-bold text-zinc-500 mb-1 flex items-center gap-1"><FileText size={12} /> {order.manifestName}</div>
+                    <div className="text-lg font-black tracking-tight leading-tight truncate">{order.customerName}</div>
+                    <div className="text-[10px] text-zinc-400 font-mono mt-1">{order.date}</div>
+                  </div>
+                  
+                  <div className="mt-auto grid grid-cols-2 gap-4 border-t border-zinc-100 pt-4">
+                    <div>
+                      <div className="text-[10px] text-zinc-500 mb-1">订单总价</div>
+                      <div className="text-sm font-bold">¥ {totalDue.toLocaleString()}</div>
                     </div>
                     <div>
-                      <div className="text-xs font-bold mb-1 leading-tight">{order.products[0]?.name} {order.products.length > 1 ? '等多件' : ''}</div>
-                      <div className="text-[10px] text-zinc-400 font-mono">共 {order.products.length} 款, {totalQty} 件</div>
+                      <div className="text-[10px] text-zinc-500 mb-1">待付金额</div>
+                      <div className={`text-sm font-bold ${pendingAmount > 0 ? 'text-red-500' : 'text-zinc-600'}`}>
+                        ¥ {pendingAmount.toLocaleString()}
+                      </div>
                     </div>
                   </div>
-                  
-                  <div className="col-span-2 flex flex-col">
-                    <div className="text-xs font-bold mb-1">{order.customerName}</div>
-                    <div className="text-[10px] text-zinc-500">{order.phone}</div>
-                  </div>
-                  
-                  <div className="col-span-2 text-right">
-                    <div className="text-sm font-bold">¥ {totalDue.toLocaleString()}</div>
-                    <div className="text-[10px] text-zinc-400 mt-0.5">已付: ¥ {order.confirmedPaid.toLocaleString()}</div>
-                  </div>
-                  
-                  <div className="col-span-2 text-right">
-                    <div className={`text-sm font-bold ${pendingAmount > 0 ? 'text-red-500' : 'text-zinc-400'}`}>
-                      ¥ {pendingAmount.toLocaleString()}
-                    </div>
-                  </div>
-                  
-                  <div className="col-span-1 text-center">
-                    <span className={`text-[10px] font-bold px-2 py-0.5 border ${statusClass}`}>
-                      {statusLabel}
-                    </span>
-                  </div>
-                  
-                  <div className="col-span-1 flex justify-end">
-                    <button 
-                      onClick={() => setSelectedOrderId(order.orderId)}
-                      className="w-8 h-8 flex items-center justify-center border border-zinc-200 bg-white hover:bg-zinc-100 hover:border-zinc-300 transition-all text-zinc-500 hover:text-black"
-                    >
-                      <ChevronRight size={14} />
-                    </button>
-                  </div>
+                </div>
+                <div className="px-4 py-3 border-t border-zinc-100 bg-zinc-50 flex justify-between items-center group-hover:bg-zinc-100 transition-colors">
+                  <span className="text-xs font-bold text-zinc-500">查看详情</span>
+                  <ChevronRight size={16} className="text-zinc-400 group-hover:text-black" />
                 </div>
               </div>
             );
@@ -460,20 +427,20 @@ export function FinanceAudit() {
       </>
       ) : (
         <div className="space-y-8">
-          <div className="grid grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
             <div className="bg-white border border-zinc-200 p-6 flex flex-col">
               <div className="text-sm font-bold text-zinc-500 mb-2">服务账户余额</div>
-              <div className="text-3xl font-black mb-2">¥ 12,500.00</div>
+              <div className="text-2xl md:text-3xl font-black mb-2">¥ 12,500.00</div>
               <div className="text-xs text-zinc-400 mt-auto">用于扣除税费、运费等服务开支</div>
             </div>
             <div className="bg-white border border-zinc-200 p-6 flex flex-col">
               <div className="text-sm font-bold text-zinc-500 mb-2">分账余额账户</div>
-              <div className="text-3xl font-black text-orange-600 mb-2">-¥ 3,200.00</div>
+              <div className="text-2xl md:text-3xl font-black text-orange-600 mb-2">-¥ 3,200.00</div>
               <div className="text-xs text-zinc-400 mt-auto">用于代扣税运及向上游支付货款（可为负数）</div>
             </div>
             <div className="bg-white border border-zinc-200 p-6 flex flex-col">
               <div className="text-sm font-bold text-zinc-500 mb-2">累计订单总流水</div>
-              <div className="text-3xl font-black text-zinc-400 mb-2">¥ 1,250,000.00</div>
+              <div className="text-2xl md:text-3xl font-black text-zinc-400 mb-2">¥ 1,250,000.00</div>
               <a href="#" className="text-sm text-blue-600 hover:underline mt-auto pt-2">导出流水账单</a>
             </div>
           </div>
@@ -489,8 +456,8 @@ export function FinanceAudit() {
                 </h2>
                 <div className="text-xs text-zinc-500">展示货品金额及扣除的手续费明细</div>
               </div>
-              <div className="p-0">
-                <table className="w-full text-left text-sm">
+              <div className="p-0 overflow-x-auto">
+                <table className="w-full text-left text-sm min-w-[700px]">
                   <thead className="bg-zinc-50/50 text-xs text-zinc-500 uppercase">
                     <tr>
                       <th className="px-6 py-3 font-bold border-b border-zinc-200">流水号/时间</th>
@@ -535,8 +502,8 @@ export function FinanceAudit() {
                 </h2>
                 <div className="text-xs text-zinc-500">展示充值金额以及税费、运费扣除明细</div>
               </div>
-              <div className="p-0">
-                <table className="w-full text-left text-sm">
+              <div className="p-0 overflow-x-auto">
+                <table className="w-full text-left text-sm min-w-[700px]">
                   <thead className="bg-zinc-50/50 text-xs text-zinc-500 uppercase">
                     <tr>
                       <th className="px-6 py-3 font-bold border-b border-zinc-200">流水号/时间</th>
@@ -585,8 +552,8 @@ export function FinanceAudit() {
                 </h2>
                 <div className="text-xs text-zinc-500">用于展示代扣税运、向上游支付货款流水（可为负数）</div>
               </div>
-              <div className="p-0">
-                <table className="w-full text-left text-sm">
+              <div className="p-0 overflow-x-auto">
+                <table className="w-full text-left text-sm min-w-[700px]">
                   <thead className="bg-zinc-50/50 text-xs text-zinc-500 uppercase">
                     <tr>
                       <th className="px-6 py-3 font-bold border-b border-zinc-200">流水号/时间</th>
@@ -651,21 +618,21 @@ export function FinanceAudit() {
         const isFullyPaid = pendingAmount === 0;
 
         return (
-          <div className="fixed inset-0 z-40 flex justify-end">
+          <div className="fixed inset-0 z-40 flex justify-end md:p-4">
             <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setSelectedOrderId(null)}></div>
-            <div className="relative w-[1000px] bg-white h-full shadow-2xl flex flex-col animate-in slide-in-from-right duration-300">
-              <div className="flex items-center justify-between px-8 py-6 border-b border-zinc-100">
+            <div className="relative w-full md:w-[1000px] bg-white h-full shadow-2xl flex flex-col animate-in slide-in-from-right duration-300 md:rounded-xl overflow-hidden">
+              <div className="flex items-center justify-between px-4 md:px-8 py-4 md:py-6 border-b border-zinc-100">
                 <div>
-                  <h2 className="text-xl font-black uppercase tracking-tight mb-1">订单收银核销详情</h2>
+                  <h2 className="text-lg md:text-xl font-black uppercase tracking-tight mb-1">订单收银核销详情</h2>
                   <div className="text-xs text-zinc-500 font-mono">订单编号: {order.orderId}</div>
                 </div>
                 <button onClick={() => setSelectedOrderId(null)} className="text-zinc-400 hover:text-black transition-colors"><X size={24} /></button>
               </div>
               
               <div className="flex-1 overflow-y-auto">
-                <div className="grid grid-cols-12 divide-x divide-zinc-200 min-h-full">
+                <div className="flex flex-col md:grid md:grid-cols-12 md:divide-x divide-zinc-200 min-h-full">
                   {/* Order Details */}
-                  <div className="col-span-7 p-8">
+                  <div className="md:col-span-7 p-4 md:p-8">
                     <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-4">货单归属</div>
                     
                     <div className="mb-4">
@@ -710,11 +677,11 @@ export function FinanceAudit() {
                   </div>
 
                   {/* Reconciliation Panel */}
-                  <div className="col-span-5 p-8 bg-zinc-50/30 flex flex-col">
+                  <div className="md:col-span-5 p-4 md:p-8 bg-zinc-50/30 flex flex-col border-t md:border-t-0 border-zinc-200">
                     <div>
                       <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-4">财务核销汇总</div>
                       
-                      <div className="grid grid-cols-2 gap-4 mb-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                         <div className="bg-white border border-zinc-200 p-4">
                           <div className="text-xs text-zinc-500 mb-1">订单总应付</div>
                           <div className="text-xl font-black">¥ {totalDue.toLocaleString()}</div>

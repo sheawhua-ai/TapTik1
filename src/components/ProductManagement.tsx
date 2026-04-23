@@ -29,16 +29,16 @@ export function ProductManagement() {
   ];
 
   return (
-    <div className="max-w-7xl mx-auto">
-      <div className="flex justify-between items-end mb-8">
+    <div className="max-w-7xl mx-auto pb-24 md:pb-0">
+      <div className="flex flex-col md:flex-row justify-between md:items-end mb-6 md:mb-8 gap-4">
         <div>
           <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-[0.2em] mb-2">Supplier Dashboard</div>
-          <h1 className="text-3xl font-black tracking-tighter uppercase mb-2">商品管理</h1>
-          <p className="text-sm text-zinc-500">管理全球精品库存、规格及定价模式</p>
+          <h1 className="text-2xl md:text-3xl font-black tracking-tighter uppercase mb-2">商品管理</h1>
+          <p className="text-xs md:text-sm text-zinc-500">管理全球精品库存、规格及定价模式</p>
         </div>
-        <div className="flex gap-3 items-center">
+        <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-zinc-200 z-20 flex flex-wrap gap-2 md:static md:bg-transparent md:border-none md:p-0 md:flex-nowrap md:gap-3 items-center">
           <button
-            className={`bg-white border border-zinc-200 text-black px-6 py-3 flex items-center gap-2 font-bold transition-colors ${activeListTab === 'in_warehouse' ? 'hover:bg-zinc-50' : 'opacity-50 cursor-not-allowed'}`}
+            className={`flex-1 md:flex-none justify-center bg-white border border-zinc-200 text-black px-4 md:px-6 py-3 flex items-center gap-2 font-bold transition-colors ${activeListTab === 'in_warehouse' ? 'hover:bg-zinc-50' : 'opacity-50 cursor-not-allowed'}`}
             disabled={activeListTab !== 'in_warehouse'}
             onClick={() => {
                if(activeListTab === 'in_warehouse') {
@@ -55,21 +55,21 @@ export function ProductManagement() {
           </button>
           <button 
             onClick={() => setIsLogOpen(true)}
-            className="bg-white border border-zinc-200 text-black px-6 py-3 flex items-center gap-2 font-bold hover:bg-zinc-50 transition-colors"
+            className="flex-1 md:flex-none justify-center bg-white border border-zinc-200 text-black px-4 md:px-6 py-3 flex items-center gap-2 font-bold hover:bg-zinc-50 transition-colors"
           >
             <History size={18} />
-            操作记录
+            <span className="hidden md:inline">操作记录</span>
           </button>
           <button 
             onClick={() => setIsBatchUploadOpen(true)}
-            className="bg-white border border-zinc-200 text-black px-6 py-3 flex items-center gap-2 font-bold hover:bg-zinc-50 transition-colors"
+            className="flex-1 md:flex-none justify-center bg-white border border-zinc-200 text-black px-4 md:px-6 py-3 flex items-center gap-2 font-bold hover:bg-zinc-50 transition-colors"
           >
             <Upload size={18} />
-            批量新增
+            <span className="hidden md:inline">批量新增</span>
           </button>
           <button 
             onClick={() => setIsAddModalOpen(true)}
-            className="bg-black text-white px-6 py-3 flex items-center gap-2 font-bold hover:bg-zinc-800 transition-colors"
+            className="w-full md:w-auto justify-center bg-black text-white px-4 md:px-6 py-3 flex items-center gap-2 font-bold hover:bg-zinc-800 transition-colors"
           >
             <Plus size={18} />
             新增商品
@@ -78,8 +78,8 @@ export function ProductManagement() {
       </div>
 
       <div className="flex flex-col gap-4 mb-6">
-        <div className="flex items-center justify-between">
-          <div className="flex gap-8 border-b border-zinc-200 w-full max-w-2xl">
+        <div className="flex items-center justify-between overflow-x-auto hide-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
+          <div className="flex gap-8 border-b border-zinc-200 w-full md:max-w-2xl whitespace-nowrap">
             <button 
               onClick={() => setActiveListTab('on_sale')}
               className={`pb-3 text-xs font-bold transition-colors ${activeListTab === 'on_sale' ? 'text-black border-b-2 border-black' : 'text-zinc-500 hover:text-black'}`}
@@ -100,43 +100,45 @@ export function ProductManagement() {
             </button>
           </div>
         </div>
-        <div className="flex gap-4 items-center bg-zinc-50 p-4 border border-zinc-200">
-          <div className="flex-1 flex items-center gap-2 bg-white border border-zinc-200 px-3 py-2">
-            <Search size={16} className="text-zinc-400" />
-            <input type="text" placeholder="搜索商品名称、货号..." className="w-full text-xs font-bold outline-none" />
+        <div className="flex flex-col md:flex-row gap-4 md:items-center bg-zinc-50 p-4 border border-zinc-200">
+          <div className="w-full md:flex-1 flex items-center gap-2 bg-white border border-zinc-200 px-3 py-2">
+            <Search size={16} className="text-zinc-400 flex-shrink-0" />
+            <input type="text" placeholder="搜索商品名称、货号..." className="w-full text-xs font-bold outline-none min-w-0" />
           </div>
-          <div className="w-32">
-            <MultiSelectDropdown 
-              options={ALL_BRANDS} 
-              selected={filterBrands} 
-              onChange={setFilterBrands} 
-              placeholder="全部品牌" 
-            />
+          <div className="grid grid-cols-2 md:flex gap-3 w-full md:w-auto">
+            <div className="w-full md:w-32">
+              <MultiSelectDropdown 
+                options={ALL_BRANDS} 
+                selected={filterBrands} 
+                onChange={setFilterBrands} 
+                placeholder="全部品牌" 
+              />
+            </div>
+            <div className="w-full md:w-48">
+              <CategoryMultiSelectDropdown 
+                options={CATEGORY_HIERARCHY} 
+                selected={filterCategories} 
+                onChange={setFilterCategories} 
+                placeholder="全部分类" 
+              />
+            </div>
+            <div className="w-full md:w-32 col-span-2 md:col-span-1">
+              <MultiSelectDropdown 
+                options={allWarehouses} 
+                selected={filterWarehouses} 
+                onChange={setFilterWarehouses} 
+                placeholder="全部仓库" 
+              />
+            </div>
           </div>
-          <div className="w-48">
-            <CategoryMultiSelectDropdown 
-              options={CATEGORY_HIERARCHY} 
-              selected={filterCategories} 
-              onChange={setFilterCategories} 
-              placeholder="全部分类" 
-            />
-          </div>
-          <div className="w-32">
-            <MultiSelectDropdown 
-              options={allWarehouses} 
-              selected={filterWarehouses} 
-              onChange={setFilterWarehouses} 
-              placeholder="全部仓库" 
-            />
-          </div>
-          <button className="bg-black text-white px-6 py-2 text-xs font-bold hover:bg-zinc-800 transition-colors h-[36px]">
+          <button className="w-full md:w-auto bg-black text-white px-6 py-2 text-xs font-bold hover:bg-zinc-800 transition-colors h-[36px]">
             查询
           </button>
         </div>
       </div>
 
       <div className="bg-white border border-zinc-200 shadow-sm">
-        <div className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-zinc-200 bg-zinc-50 text-[10px] font-bold text-zinc-500 uppercase tracking-widest items-center">
+        <div className="hidden md:grid grid-cols-12 gap-4 px-6 py-4 border-b border-zinc-200 bg-zinc-50 text-[10px] font-bold text-zinc-500 uppercase tracking-widest items-center">
           <div className="col-span-4 flex items-center gap-2">
             <input 
               type="checkbox" 
@@ -165,66 +167,108 @@ export function ProductManagement() {
           <>
             {/* Row 1 */}
             <div className="border-b border-zinc-200 group">
-              <div className="grid grid-cols-12 gap-4 px-6 py-6 items-center hover:bg-zinc-50 transition-colors">
-                <div className="col-span-4 flex items-center gap-4">
-                  <div className="w-16 h-16 bg-zinc-100 flex items-center justify-center p-2">
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-4 px-4 md:px-6 py-4 md:py-6 items-start md:items-center hover:bg-zinc-50 transition-colors">
+                <div className="md:col-span-4 flex items-start md:items-center gap-4">
+                  <div className="w-20 h-20 md:w-16 md:h-16 shrink-0 bg-zinc-100 flex items-center justify-center p-2">
                     <img src="https://images.unsplash.com/photo-1523170335258-f5ed11844a49?auto=format&fit=crop&w=200&q=80" alt="Rolex" className="w-full h-full object-contain mix-blend-multiply grayscale group-hover:grayscale-0 transition-all" />
                   </div>
                   <div>
                     <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1">Rolex</div>
                     <div className="text-base font-black tracking-tight leading-none mb-2">Submariner Date</div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
                       <span className="bg-black text-white text-[9px] px-1.5 py-0.5 font-mono uppercase">RX-126610LN</span>
                       <span className="text-[10px] text-zinc-500">2 个 SKU 已上架</span>
                     </div>
                   </div>
                 </div>
-                <div className="col-span-1 text-right text-sm font-bold text-zinc-400">¥85,000</div>
-                <div className="col-span-2 flex flex-col items-center justify-center gap-1">
+
+                {/* Mobile Extra Info Card */}
+                <div className="md:hidden flex flex-col gap-2 mt-2 bg-zinc-50 p-3 rounded-sm border border-zinc-100 mx-2 md:mx-0">
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-zinc-500">品牌原价</span>
+                    <span className="text-sm font-bold text-zinc-400">¥85,000</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-zinc-500">库存</span>
+                    <span className="font-black text-lg">15</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-zinc-500">规格/仓库</span>
+                    <div className="text-right">
+                      <div className="text-xs font-bold text-black">40mm, 41mm</div>
+                      <div className="text-[10px] text-zinc-500">香港, 伦敦</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="hidden md:block col-span-1 text-right text-sm font-bold text-zinc-400">¥85,000</div>
+                <div className="hidden md:flex col-span-2 flex-col items-center justify-center gap-1">
                   <div className="text-xs font-bold">40mm, 41mm</div>
                   <div className="text-[10px] text-zinc-500">香港直邮仓, 伦敦海外仓</div>
                 </div>
-                <div className="col-span-1 text-center font-black text-lg">
+                <div className="hidden md:block col-span-1 text-center font-black text-lg">
                   15
                 </div>
-                <div className="col-span-1 text-right text-sm font-bold text-zinc-300">—</div>
-                <div className="col-span-1 text-right text-sm font-bold text-zinc-300">—</div>
-                <div className="col-span-2 flex justify-center items-center gap-4">
-                  <button className="text-xs font-bold text-zinc-500 hover:text-black transition-colors" onClick={() => setEditingSpu('rolex')}>编辑</button>
-                  <button className="text-xs font-bold text-zinc-500 hover:text-red-600 transition-colors">下架</button>
+                <div className="hidden md:block col-span-1 text-right text-sm font-bold text-zinc-300">—</div>
+                <div className="hidden md:block col-span-1 text-right text-sm font-bold text-zinc-300">—</div>
+                
+                <div className="mt-2 md:mt-0 md:col-span-2 flex justify-end md:justify-center items-center gap-3 pt-4 md:pt-0 border-t border-zinc-100 md:border-none w-full md:w-auto">
+                  <button className="flex-1 md:flex-none text-xs font-bold text-zinc-600 hover:text-black transition-colors px-4 py-2 border border-zinc-200 md:border-none md:p-0 bg-white md:bg-transparent" onClick={() => setEditingSpu('rolex')}>编辑</button>
+                  <button className="flex-1 md:flex-none text-xs font-bold text-red-600 hover:text-red-700 transition-colors px-4 py-2 border border-red-100 bg-red-50 md:bg-transparent md:border-none md:p-0">下架</button>
                 </div>
               </div>
             </div>
 
             {/* Row 2 */}
             <div className="border-b border-zinc-200 group">
-              <div className="grid grid-cols-12 gap-4 px-6 py-6 items-center hover:bg-zinc-50 transition-colors">
-                <div className="col-span-4 flex items-center gap-4">
-                  <div className="w-16 h-16 bg-zinc-100 flex items-center justify-center p-2">
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-4 px-4 md:px-6 py-4 md:py-6 items-start md:items-center hover:bg-zinc-50 transition-colors">
+                <div className="md:col-span-4 flex items-start md:items-center gap-4">
+                  <div className="w-20 h-20 md:w-16 md:h-16 shrink-0 bg-zinc-100 flex items-center justify-center p-2">
                     <img src="https://images.unsplash.com/photo-1603252109303-2751441dd157?auto=format&fit=crop&w=200&q=80" alt="Burberry" className="w-full h-full object-contain mix-blend-multiply grayscale group-hover:grayscale-0 transition-all" />
                   </div>
                   <div>
                     <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1">Burberry</div>
                     <div className="text-base font-black tracking-tight leading-none mb-2">经典格纹纯棉衬衫</div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
                       <span className="bg-black text-white text-[9px] px-1.5 py-0.5 font-mono uppercase">BB-SHIRT-CHK</span>
                       <span className="text-[10px] text-zinc-500">4 个 SKU 已上架</span>
                     </div>
                   </div>
                 </div>
-                <div className="col-span-1 text-right text-sm font-bold text-zinc-400">¥5,900</div>
-                <div className="col-span-2 flex flex-col items-center justify-center gap-1">
+
+                {/* Mobile Extra Info Card */}
+                <div className="md:hidden flex flex-col gap-2 mt-2 bg-zinc-50 p-3 rounded-sm border border-zinc-100 mx-2 md:mx-0">
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-zinc-500">品牌原价</span>
+                    <span className="text-sm font-bold text-zinc-400">¥5,900</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-zinc-500">库存</span>
+                    <span className="font-black text-lg">137</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-zinc-500">规格/仓库</span>
+                    <div className="text-right">
+                      <div className="text-xs font-bold text-black">S码, M码, L码</div>
+                      <div className="text-[10px] text-zinc-500">深圳保税仓, 杭州国内仓</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="hidden md:block col-span-1 text-right text-sm font-bold text-zinc-400">¥5,900</div>
+                <div className="hidden md:flex col-span-2 flex-col items-center justify-center gap-1">
                   <div className="text-xs font-bold">S码, M码, L码</div>
                   <div className="text-[10px] text-zinc-500">深圳保税仓, 杭州国内仓</div>
                 </div>
-                <div className="col-span-1 text-center font-black text-lg">
+                <div className="hidden md:block col-span-1 text-center font-black text-lg">
                   137
                 </div>
-                <div className="col-span-1 text-right text-sm font-bold text-zinc-300">—</div>
-                <div className="col-span-1 text-right text-sm font-bold text-zinc-300">—</div>
-                <div className="col-span-2 flex justify-center items-center gap-4">
-                  <button className="text-xs font-bold text-zinc-500 hover:text-black transition-colors" onClick={() => setEditingSpu('burberry')}>编辑</button>
-                  <button className="text-xs font-bold text-zinc-500 hover:text-red-600 transition-colors">下架</button>
+                <div className="hidden md:block col-span-1 text-right text-sm font-bold text-zinc-300">—</div>
+                <div className="hidden md:block col-span-1 text-right text-sm font-bold text-zinc-300">—</div>
+                
+                <div className="mt-2 md:mt-0 md:col-span-2 flex justify-end md:justify-center items-center gap-3 pt-4 md:pt-0 border-t border-zinc-100 md:border-none w-full md:w-auto">
+                  <button className="flex-1 md:flex-none text-xs font-bold text-zinc-600 hover:text-black transition-colors px-4 py-2 border border-zinc-200 md:border-none md:p-0 bg-white md:bg-transparent" onClick={() => setEditingSpu('burberry')}>编辑</button>
+                  <button className="flex-1 md:flex-none text-xs font-bold text-red-600 hover:text-red-700 transition-colors px-4 py-2 border border-red-100 bg-red-50 md:bg-transparent md:border-none md:p-0">下架</button>
                 </div>
               </div>
             </div>
@@ -233,42 +277,61 @@ export function ProductManagement() {
 
         {activeListTab === 'in_warehouse' && (
           <div className="border-b border-zinc-200 group">
-            <div className="grid grid-cols-12 gap-4 px-6 py-6 items-center hover:bg-zinc-50 transition-colors">
-              <div className="col-span-4 flex items-center gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-4 px-4 md:px-6 py-4 md:py-6 items-start md:items-center hover:bg-zinc-50 transition-colors">
+              <div className="md:col-span-4 flex items-start md:items-center gap-4">
                 <input 
                   type="checkbox" 
-                  className="accent-black w-4 h-4" 
+                  className="accent-black w-4 h-4 mt-2 md:mt-0 shrink-0" 
                   checked={selectedProducts.includes('gucci')}
                   onChange={(e) => {
                     if (e.target.checked) setSelectedProducts([...selectedProducts, 'gucci']);
                     else setSelectedProducts(selectedProducts.filter(id => id !== 'gucci'));
                   }}
                 />
-                <div className="w-16 h-16 bg-zinc-100 flex items-center justify-center p-2 text-zinc-300">
+                <div className="w-20 h-20 md:w-16 md:h-16 shrink-0 bg-zinc-100 flex items-center justify-center p-2 text-zinc-300">
                   <img src="https://images.unsplash.com/photo-1584916201218-f4242ceb4809?auto=format&fit=crop&w=200&q=80" alt="Gucci" className="w-full h-full object-contain mix-blend-multiply grayscale group-hover:grayscale-0 transition-all" />
                 </div>
                 <div>
                   <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1">Gucci</div>
                   <div className="text-base font-black tracking-tight leading-none mb-2">Ophidia GG 小号托特包</div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     <span className="bg-black text-white text-[9px] px-1.5 py-0.5 font-mono uppercase">GC-547551</span>
-                    <span className="text-[10px] text-orange-500 font-medium">未映射公共库</span>
+                    <span className="text-[10px] text-orange-500 font-medium bg-orange-50 px-1 rounded-sm">未映射公共库</span>
                   </div>
                 </div>
               </div>
-              <div className="col-span-1 text-right text-sm font-bold text-zinc-400">¥13,500</div>
-              <div className="col-span-2 flex flex-col items-center justify-center gap-1">
+
+              <div className="md:hidden flex flex-col gap-2 mt-2 bg-zinc-50 p-3 rounded-sm border border-zinc-100 mx-2 md:mx-0 ml-8 md:ml-0">
+                <div className="flex justify-between items-center">
+                  <span className="text-xs text-zinc-500">品牌原价</span>
+                  <span className="text-sm font-bold text-zinc-400">¥13,500</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-xs text-zinc-500">库存</span>
+                  <span className="font-black text-lg">24</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-xs text-zinc-500">规格/仓库</span>
+                  <div className="text-right">
+                    <div className="text-xs font-bold text-black">均码</div>
+                    <div className="text-[10px] text-zinc-500">香港直邮仓</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="hidden md:block col-span-1 text-right text-sm font-bold text-zinc-400">¥13,500</div>
+              <div className="hidden md:flex col-span-2 flex-col items-center justify-center gap-1">
                 <div className="text-xs font-bold">均码</div>
                 <div className="text-[10px] text-zinc-500">香港直邮仓</div>
               </div>
-              <div className="col-span-1 text-center font-black text-lg">
+              <div className="hidden md:block col-span-1 text-center font-black text-lg">
                 24
               </div>
-              <div className="col-span-1 text-right text-sm font-bold text-zinc-300">—</div>
-              <div className="col-span-1 text-right text-sm font-bold text-zinc-300">—</div>
-              <div className="col-span-2 flex justify-center items-center gap-4">
-                <button className="text-xs font-bold text-blue-600 hover:underline transition-colors" onClick={() => setIsBatchApplyModalOpen(true)}>申请映射</button>
-                <button className="text-xs font-bold text-zinc-500 hover:text-red-600 transition-colors">删除</button>
+              <div className="hidden md:block col-span-1 text-right text-sm font-bold text-zinc-300">—</div>
+              <div className="hidden md:block col-span-1 text-right text-sm font-bold text-zinc-300">—</div>
+              <div className="mt-2 md:mt-0 md:col-span-2 flex justify-end md:justify-center items-center gap-3 pt-4 md:pt-0 border-t border-zinc-100 md:border-none w-full md:w-auto ml-8 md:ml-0">
+                <button className="flex-1 md:flex-none text-xs font-bold text-blue-600 hover:text-blue-800 transition-colors px-4 py-2 border border-blue-200 bg-blue-50 md:bg-transparent md:border-none md:p-0" onClick={() => setIsBatchApplyModalOpen(true)}>申请映射</button>
+                <button className="flex-1 md:flex-none text-xs font-bold text-red-600 hover:text-red-700 transition-colors px-4 py-2 border border-red-100 bg-red-50 md:bg-transparent md:border-none md:p-0">删除</button>
               </div>
             </div>
           </div>
@@ -276,33 +339,45 @@ export function ProductManagement() {
 
         {activeListTab === 'delisted' && (
           <div className="group">
-            <div className="grid grid-cols-12 gap-4 px-6 py-6 items-center hover:bg-zinc-50 transition-colors">
-              <div className="col-span-4 flex items-center gap-4">
-                <div className="w-16 h-16 bg-zinc-100 flex items-center justify-center p-2 opacity-50">
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-4 px-4 md:px-6 py-4 md:py-6 items-start md:items-center hover:bg-zinc-50 transition-colors">
+              <div className="md:col-span-4 flex items-start md:items-center gap-4">
+                <div className="w-20 h-20 md:w-16 md:h-16 shrink-0 bg-zinc-100 flex items-center justify-center p-2 opacity-50">
                   <img src="https://images.unsplash.com/photo-1548171915-e76a3a41117b?auto=format&fit=crop&w=200&q=80" alt="Patek" className="w-full h-full object-contain mix-blend-multiply grayscale transition-all" />
                 </div>
                 <div>
                   <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1">Patek Philippe</div>
                   <div className="text-base font-black tracking-tight leading-none mb-2 text-zinc-500">Nautilus 5711/1A</div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     <span className="bg-zinc-300 text-zinc-600 text-[9px] px-1.5 py-0.5 font-mono uppercase">PP-5711-BLU</span>
-                    <span className="text-[10px] text-red-500 font-medium">售罄 / 下架</span>
+                    <span className="text-[10px] text-red-500 font-medium bg-red-50 px-1 rounded-sm">售罄 / 下架</span>
                   </div>
                 </div>
               </div>
-              <div className="col-span-1 text-right text-sm font-bold text-zinc-400">¥280,000</div>
-              <div className="col-span-2 flex flex-col items-center justify-center gap-1">
+
+              <div className="md:hidden flex flex-col gap-2 mt-2 bg-zinc-50 p-3 rounded-sm border border-zinc-100 mx-2 md:mx-0 opacity-70">
+                <div className="flex justify-between items-center">
+                  <span className="text-xs text-zinc-500">品牌原价</span>
+                  <span className="text-sm font-bold text-zinc-400">¥280,000</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-xs text-zinc-500">库存</span>
+                  <span className="font-black text-lg text-red-500">0</span>
+                </div>
+              </div>
+
+              <div className="hidden md:block col-span-1 text-right text-sm font-bold text-zinc-400">¥280,000</div>
+              <div className="hidden md:flex col-span-2 flex-col items-center justify-center gap-1">
                 <div className="text-xs font-bold text-zinc-400 line-through">均码</div>
                 <div className="text-[10px] text-zinc-400 line-through">欧洲仓 (EU)</div>
               </div>
-              <div className="col-span-1 text-center font-black text-lg text-red-500">
+              <div className="hidden md:block col-span-1 text-center font-black text-lg text-red-500">
                 0
               </div>
-              <div className="col-span-1 text-right text-sm font-bold text-zinc-300 line-through">¥1,250,000</div>
-              <div className="col-span-1 text-right text-sm font-bold text-zinc-300 line-through">¥1,180,000</div>
-              <div className="col-span-2 flex justify-center items-center gap-4">
-                <button className="text-xs font-bold text-zinc-500 hover:text-black transition-colors" onClick={() => setEditingSpu('patek')}>编辑</button>
-                <button className="text-xs font-bold text-zinc-500 hover:text-red-600 transition-colors">删除</button>
+              <div className="hidden md:block col-span-1 text-right text-sm font-bold text-zinc-300 line-through">¥1,250,000</div>
+              <div className="hidden md:block col-span-1 text-right text-sm font-bold text-zinc-300 line-through">¥1,180,000</div>
+              <div className="mt-2 md:mt-0 md:col-span-2 flex justify-end md:justify-center items-center gap-3 pt-4 md:pt-0 border-t border-zinc-100 md:border-none w-full md:w-auto">
+                <button className="flex-1 md:flex-none text-xs font-bold text-zinc-600 hover:text-black transition-colors px-4 py-2 border border-zinc-200 md:border-none md:p-0 bg-white md:bg-transparent" onClick={() => setEditingSpu('patek')}>编辑</button>
+                <button className="flex-1 md:flex-none text-xs font-bold text-red-600 hover:text-red-700 transition-colors px-4 py-2 border border-red-100 bg-red-50 md:bg-transparent md:border-none md:p-0">删除</button>
               </div>
             </div>
           </div>

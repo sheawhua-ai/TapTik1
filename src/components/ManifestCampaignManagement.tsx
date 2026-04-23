@@ -111,42 +111,42 @@ export function ManifestCampaignManagement() {
 
   if (selectedCampaignId) {
     return (
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto flex flex-col min-h-[calc(100vh-140px)] md:h-[calc(100vh-80px)] pb-12 overflow-y-auto">
         <div className="flex justify-between items-center mb-6">
-          <div className="flex items-center gap-2 text-sm text-zinc-500">
+          <div className="flex items-center gap-2 text-xs md:text-sm text-zinc-500">
             <button onClick={() => setSelectedCampaignId(null)} className="hover:text-black transition-colors">货单管理</button>
             <ChevronRight size={14} />
             <span className="text-black font-bold">货单详情</span>
           </div>
           <button 
             onClick={handleSaveAndReturn}
-            className="bg-black text-white px-6 py-2 text-sm font-bold hover:bg-zinc-800 transition-colors"
+            className="bg-black text-white px-4 md:px-6 py-2 text-xs md:text-sm font-bold hover:bg-zinc-800 transition-colors"
           >
             保存并返回
           </button>
         </div>
 
-        <div className="bg-white border border-zinc-200 shadow-sm p-8 mb-8">
-          <div className="flex items-center gap-3 mb-2">
-            <h1 className="text-3xl font-black tracking-tighter">{campaignDetails.name}</h1>
-            <span className="bg-black text-white text-[10px] font-bold px-2 py-1 uppercase tracking-wider">
+        <div className="bg-white border border-zinc-200 shadow-sm p-4 md:p-8 mb-6 md:mb-8">
+          <div className="flex flex-col md:flex-row md:items-center gap-3 mb-2">
+            <h1 className="text-xl md:text-3xl font-black tracking-tighter leading-tight">{campaignDetails.name}</h1>
+            <span className="bg-black text-white text-[10px] font-bold px-2 py-1 uppercase tracking-wider w-fit">
               {campaignDetails.status}
             </span>
           </div>
-          <div className="text-sm text-zinc-500 mb-8 font-mono">货单编号: {campaignDetails.id}</div>
+          <div className="text-xs md:text-sm text-zinc-500 mb-6 md:mb-8 font-mono">货单编号: {campaignDetails.id}</div>
 
-          <div className="grid grid-cols-3 gap-12">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-12">
             <div>
               <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-2">已下单货值</div>
-              <div className="text-3xl font-black">¥{campaignDetails.orderedValue.toLocaleString()}</div>
+              <div className="text-2xl md:text-3xl font-black">¥{campaignDetails.orderedValue.toLocaleString()}</div>
             </div>
             <div>
               <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-2">剩余时间</div>
-              <div className="text-3xl font-black text-red-600">{campaignDetails.remainingTime}</div>
+              <div className="text-2xl md:text-3xl font-black text-red-600">{campaignDetails.remainingTime}</div>
             </div>
             <div>
               <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-2">截止日期</div>
-              <div className="text-3xl font-black">{campaignDetails.deadline}</div>
+              <div className="text-2xl md:text-3xl font-black">{campaignDetails.deadline}</div>
             </div>
           </div>
         </div>

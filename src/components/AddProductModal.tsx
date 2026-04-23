@@ -14,8 +14,8 @@ export function AddProductModal({ isOpen, onClose }: AddProductModalProps) {
   return (
     <div className="fixed inset-0 z-50 flex justify-end">
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose}></div>
-      <div className="relative w-[1100px] bg-white h-full shadow-2xl flex flex-col animate-in slide-in-from-right duration-300">
-        <div className="flex items-center justify-between px-8 py-6 border-b border-zinc-100">
+      <div className="relative w-full lg:w-[1100px] bg-white h-full shadow-2xl flex flex-col animate-in slide-in-from-right duration-300">
+        <div className="flex items-center justify-between px-4 md:px-8 py-4 md:py-6 border-b border-zinc-100">
           <div>
             <h2 className="text-xl font-black uppercase tracking-tight mb-1">新增商品</h2>
             <div className="text-xs text-zinc-500 font-mono">PRODUCT ENTRY</div>
@@ -25,10 +25,10 @@ export function AddProductModal({ isOpen, onClose }: AddProductModalProps) {
         
         <div className="flex-1 overflow-y-auto">
           {/* SPU Info Section */}
-          <div className="p-8 border-b border-zinc-100 bg-white">
+          <div className="p-4 md:p-8 border-b border-zinc-100 bg-white">
             <h3 className="text-sm font-black uppercase tracking-widest mb-6">SPU 基础信息</h3>
             
-            <div className="grid grid-cols-2 gap-8 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 mb-6">
               <div>
                 <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1.5">商品主图 (多图)</label>
                 <div className="flex gap-2">
@@ -39,7 +39,7 @@ export function AddProductModal({ isOpen, onClose }: AddProductModalProps) {
               </div>
             </div>
 
-            <div className="grid grid-cols-4 gap-6 mb-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6">
               <div>
                 <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1.5">品牌</label>
                 <input type="text" placeholder="输入品牌" className="w-full border border-zinc-200 px-3 py-2 text-sm font-bold focus:border-black focus:ring-0 outline-none" />
@@ -58,7 +58,7 @@ export function AddProductModal({ isOpen, onClose }: AddProductModalProps) {
               </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
               <div>
                 <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1.5">品牌原价 (¥)</label>
                 <input type="number" placeholder="0.00" className="w-full border border-zinc-200 px-3 py-2 text-sm font-bold focus:border-black focus:ring-0 outline-none" />
@@ -71,8 +71,8 @@ export function AddProductModal({ isOpen, onClose }: AddProductModalProps) {
           </div>
 
           {/* SKU Info Section */}
-          <div className="p-8 bg-zinc-50/50">
-            <div className="flex items-center justify-between mb-6">
+          <div className="p-4 md:p-8 bg-zinc-50/50">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4 sm:gap-0">
               <h3 className="text-sm font-black uppercase tracking-widest">SKU 规格与库存</h3>
               <div className="flex gap-4">
                 <button 
@@ -90,24 +90,24 @@ export function AddProductModal({ isOpen, onClose }: AddProductModalProps) {
               </div>
             </div>
 
-            <div className="bg-white border border-zinc-200 p-4 mb-4 flex items-end gap-4 shadow-sm">
-              <div className="flex-1">
+            <div className="bg-white border border-zinc-200 p-4 mb-4 flex flex-col sm:flex-row items-start sm:items-end gap-4 shadow-sm">
+              <div className="w-full sm:flex-1">
                 <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1.5">批量修改供货价</label>
                 <input type="number" placeholder="输入金额" className="w-full border border-zinc-200 px-3 py-2 text-xs font-bold focus:border-black focus:ring-0 outline-none" />
               </div>
-              <div className="flex-1">
+              <div className="w-full sm:flex-1">
                 <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1.5">批量修改零售价</label>
                 <input type="number" placeholder="输入金额" className="w-full border border-zinc-200 px-3 py-2 text-xs font-bold focus:border-black focus:ring-0 outline-none" />
               </div>
-              <div className="flex-1">
+              <div className="w-full sm:flex-1">
                 <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1.5">批量修改库存</label>
                 <input type="number" placeholder="输入数量" className="w-full border border-zinc-200 px-3 py-2 text-xs font-bold focus:border-black focus:ring-0 outline-none" />
               </div>
-              <button className="bg-black text-white px-4 py-2 text-xs font-bold hover:bg-zinc-800 transition-colors h-[34px]">应用批量修改</button>
+              <button className="w-full sm:w-auto bg-black text-white px-4 py-2 text-xs font-bold hover:bg-zinc-800 transition-colors h-[34px]">应用批量修改</button>
             </div>
 
-            <div className="bg-white border border-zinc-200 shadow-sm">
-              <table className="w-full text-left border-collapse">
+            <div className="bg-white border border-zinc-200 shadow-sm overflow-x-auto whitespace-nowrap">
+              <table className="w-full min-w-[800px] text-left border-collapse">
                 <thead>
                   <tr className="bg-zinc-50 border-b border-zinc-200 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
                     <th className="p-4 font-bold">规格 (尺码)</th>
@@ -168,11 +168,11 @@ export function AddProductModal({ isOpen, onClose }: AddProductModalProps) {
           </div>
         </div>
         
-        <div className="p-6 border-t border-zinc-200 bg-white flex justify-between items-center">
-          <div className="text-xs text-zinc-500 italic">* 库存设置为 0 即自动下架该仓库的对应规格</div>
-          <div className="flex gap-3">
-            <button onClick={onClose} className="px-6 py-3 text-xs font-bold text-zinc-600 hover:text-black transition-colors">取消</button>
-            <button onClick={onClose} className="bg-black text-white px-8 py-3 text-xs font-bold hover:bg-zinc-800 transition-colors">确认新增商品</button>
+        <div className="p-4 md:p-6 border-t border-zinc-200 bg-white flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-0">
+          <div className="text-xs text-zinc-500 italic text-center sm:text-left">* 库存设置为 0 即自动下架该仓库的对应规格</div>
+          <div className="flex gap-3 w-full sm:w-auto">
+            <button onClick={onClose} className="flex-1 sm:flex-none px-6 py-3 text-xs font-bold text-zinc-600 hover:text-black transition-colors rounded-none border border-zinc-200 sm:border-none">取消</button>
+            <button onClick={onClose} className="flex-1 sm:flex-none bg-black text-white px-8 py-3 text-xs font-bold hover:bg-zinc-800 transition-colors">确认新增</button>
           </div>
         </div>
       </div>

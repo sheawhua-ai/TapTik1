@@ -67,76 +67,79 @@ export function WarehouseManagement() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto flex flex-col h-[calc(100vh-80px)]">
-      <div className="flex justify-between items-end mb-8">
+    <div className="max-w-7xl mx-auto flex flex-col min-h-[calc(100vh-140px)] md:h-[calc(100vh-80px)] pb-12 overflow-y-auto">
+      <div className="flex flex-col md:flex-row justify-between md:items-end mb-6 md:mb-8 gap-4">
         <div>
           <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-[0.2em] mb-2">Infrastructure</div>
-          <h1 className="text-3xl font-black tracking-tighter uppercase mb-2">仓库管理</h1>
-          <p className="text-sm text-zinc-500">管理您的发货仓库及代发配置</p>
+          <h1 className="text-2xl md:text-3xl font-black tracking-tighter uppercase mb-2">仓库管理</h1>
+          <p className="text-xs md:text-sm text-zinc-500">管理您的发货仓库及代发配置</p>
         </div>
       </div>
 
-      <div className="flex justify-between items-center mb-6 bg-white p-4 border border-zinc-200 shadow-sm">
-        <div className="flex gap-4 items-center">
-          <div className="relative w-64">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 bg-white p-4 border border-zinc-200 shadow-sm gap-4">
+        <div className="flex flex-col md:flex-row gap-4 items-start md:items-center w-full md:w-auto">
+          <div className="relative w-full md:w-64">
             <input 
               type="text" 
               placeholder="请输入仓库名称" 
-              className="w-full border border-zinc-200 px-4 py-2 text-sm focus:border-black focus:ring-0 outline-none" 
+              className="w-full border border-zinc-200 px-4 py-2 text-sm focus:border-black focus:ring-0 outline-none max-w-full" 
             />
           </div>
-          <button className="bg-black text-white text-sm px-6 py-2 hover:bg-zinc-800 transition-colors font-bold">
-            查询
-          </button>
-          <button className="bg-white border border-zinc-200 text-zinc-600 text-sm px-6 py-2 hover:border-black hover:text-black transition-colors font-bold">
-            重置
-          </button>
+          <div className="flex gap-2 w-full md:w-auto">
+            <button className="flex-1 md:flex-none bg-black text-white text-sm px-6 py-2 hover:bg-zinc-800 transition-colors font-bold">
+              查询
+            </button>
+            <button className="flex-1 md:flex-none bg-white border border-zinc-200 text-zinc-600 text-sm px-6 py-2 hover:border-black hover:text-black transition-colors font-bold">
+              重置
+            </button>
+          </div>
         </div>
         <button 
           onClick={() => setIsAddModalOpen(true)}
-          className="bg-black text-white text-sm px-6 py-2 hover:bg-zinc-800 transition-colors font-bold"
+          className="w-full md:w-auto bg-black text-white text-sm px-6 py-2 hover:bg-zinc-800 transition-colors font-bold shrink-0 mt-2 md:mt-0 max-w-full"
         >
           新增仓库
         </button>
       </div>
 
       <div className="bg-white border border-zinc-200 shadow-sm flex-1 overflow-hidden flex flex-col">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
-            <thead className="bg-zinc-50 border-b border-zinc-200 text-xs font-bold text-zinc-600">
+        <div className="overflow-x-auto w-full">
+          <table className="w-full text-left text-sm min-w-[800px]">
+            <thead className="bg-zinc-50 border-b border-zinc-200 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
               <tr>
-                <th className="p-4 font-medium text-center">仓库名称</th>
-                <th className="p-4 font-medium text-center">仓库编码</th>
-                <th className="p-4 font-medium text-center">币种</th>
-                <th className="p-4 font-medium text-center">支持订单代发</th>
-                <th className="p-4 font-medium text-center">自动确认有货</th>
-                <th className="p-4 font-medium text-center">SKU数量</th>
-                <th className="p-4 font-medium text-center">操作</th>
+                <th className="p-4 font-bold text-left">仓库名称</th>
+                <th className="p-4 font-bold text-left">仓库编码</th>
+                <th className="p-4 font-bold text-center">币种</th>
+                <th className="p-4 font-bold text-center">支持订单代发</th>
+                <th className="p-4 font-bold text-center">自动确认有货</th>
+                <th className="p-4 font-bold text-center">SKU数量</th>
+                <th className="p-4 font-bold text-right">操作</th>
               </tr>
             </thead>
+            <div className="md:hidden p-4 text-xs font-bold text-zinc-500 bg-zinc-50 border-b border-zinc-200 text-center w-full min-w-[800px]">向右滑动查看更多列</div>
             <tbody className="divide-y divide-zinc-100">
               {warehouses.map(warehouse => (
-                <tr key={warehouse.id} className="hover:bg-zinc-50 transition-colors text-center">
-                  <td className="p-4">{warehouse.name}</td>
-                  <td className="p-4">{warehouse.code}</td>
-                  <td className="p-4">{warehouse.currency}</td>
-                  <td className="p-4">
+                <tr key={warehouse.id} className="hover:bg-zinc-50 transition-colors">
+                  <td className="p-4 text-left font-bold">{warehouse.name}</td>
+                  <td className="p-4 text-left font-mono text-xs">{warehouse.code}</td>
+                  <td className="p-4 text-center font-bold text-xs">{warehouse.currency}</td>
+                  <td className="p-4 text-center">
                     {warehouse.dropshipping ? (
-                      <span className="text-black border border-black px-2 py-0.5 text-xs font-bold">支持</span>
+                      <span className="text-black border border-black px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest">支持</span>
                     ) : (
-                      <span className="text-zinc-400 border border-zinc-200 px-2 py-0.5 text-xs font-bold">不支持</span>
+                      <span className="text-zinc-400 border border-zinc-200 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest">不支持</span>
                     )}
                   </td>
-                  <td className="p-4">
+                  <td className="p-4 text-center">
                     {warehouse.autoConfirmStock ? (
-                      <span className="text-black border border-black px-2 py-0.5 text-xs font-bold">开启</span>
+                      <span className="text-black border border-black px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest">开启</span>
                     ) : (
-                      <span className="text-zinc-400 border border-zinc-200 px-2 py-0.5 text-xs font-bold">关闭</span>
+                      <span className="text-zinc-400 border border-zinc-200 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest">关闭</span>
                     )}
                   </td>
-                  <td className="p-4">{warehouse.skuCount}</td>
-                  <td className="p-4">
-                    <div className="flex items-center justify-center gap-3 text-black font-bold">
+                  <td className="p-4 text-center font-bold">{warehouse.skuCount}</td>
+                  <td className="p-4 text-right">
+                    <div className="flex items-center justify-end gap-3 text-black font-bold text-xs">
                       <button onClick={() => openEditModal(warehouse)} className="hover:text-zinc-500 transition-colors">修改</button>
                       <button className="hover:text-zinc-500 transition-colors">删除</button>
                     </div>
@@ -146,10 +149,10 @@ export function WarehouseManagement() {
             </tbody>
           </table>
         </div>
-        <div className="p-4 border-t border-zinc-200 flex justify-end items-center text-sm text-zinc-500 bg-zinc-50">
-          <div className="flex items-center gap-4">
-            <span>共 {warehouses.length} 条</span>
-            <select className="border border-zinc-200 px-2 py-1 bg-white outline-none">
+        <div className="p-4 border-t border-zinc-200 flex flex-col md:flex-row justify-between md:items-center text-xs md:text-sm text-zinc-500 bg-zinc-50 gap-4">
+          <div>共 {warehouses.length} 条</div>
+          <div className="flex flex-wrap items-center gap-4">
+            <select className="border border-zinc-200 px-2 py-1 bg-white outline-none font-bold">
               <option>20条/页</option>
               <option>50条/页</option>
             </select>
@@ -157,11 +160,6 @@ export function WarehouseManagement() {
               <button className="text-zinc-400 hover:text-black">&lt;</button>
               <span className="text-black font-bold">1</span>
               <button className="text-zinc-400 hover:text-black">&gt;</button>
-            </div>
-            <div className="flex items-center gap-2">
-              <span>前往</span>
-              <input type="text" defaultValue="1" className="w-10 border border-zinc-200 text-center py-1 outline-none" />
-              <span>页</span>
             </div>
           </div>
         </div>

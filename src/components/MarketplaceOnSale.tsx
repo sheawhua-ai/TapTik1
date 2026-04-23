@@ -19,7 +19,7 @@ function MultiSelectDropdown({ label, options, selected, onChange, placeholder }
   const filteredOptions = options.filter((o: any) => o.label.toLowerCase().includes(search.toLowerCase()));
   
   return (
-    <div className="relative w-48" ref={dropdownRef}>
+    <div className="relative w-full md:w-48" ref={dropdownRef}>
       <div 
         className="w-full border border-zinc-200 px-4 py-2 text-sm bg-white cursor-pointer flex justify-between items-center h-[38px]"
         onClick={() => setIsOpen(!isOpen)}
@@ -86,7 +86,7 @@ export function MarketplaceOnSale() {
 
   return (
     <div className="max-w-7xl mx-auto">
-      <div className="flex justify-between items-end mb-8">
+      <div className="flex justify-between md:items-end mb-6 md:mb-8 gap-4">
         <div>
           <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-[0.2em] mb-2">Supplier Dashboard</div>
           <h1 className="text-3xl font-black tracking-tighter uppercase mb-2">集市在售</h1>
@@ -95,23 +95,23 @@ export function MarketplaceOnSale() {
       </div>
 
       <div className="flex flex-col gap-4 mb-6">
-        <div className="flex gap-8 border-b border-zinc-200 w-full max-w-2xl mb-2">
+        <div className="flex gap-4 md:gap-8 border-b border-zinc-200 w-full mb-2 overflow-x-auto whitespace-nowrap hide-scrollbar">
           <button 
             onClick={() => setActiveTab('on_sale')}
-            className={`pb-3 text-xs font-bold transition-colors ${activeTab === 'on_sale' ? 'text-black border-b-2 border-black' : 'text-zinc-500 hover:text-black'}`}
+            className={`pb-3 text-xs font-bold transition-colors shrink-0 ${activeTab === 'on_sale' ? 'text-black border-b-2 border-black' : 'text-zinc-500 hover:text-black'}`}
           >
-            已映射公共库，集市在售中
+            已映射公共库且在集市在售
           </button>
           <button 
             onClick={() => setActiveTab('not_on_sale')}
-            className={`pb-3 text-xs font-bold transition-colors ${activeTab === 'not_on_sale' ? 'text-black border-b-2 border-black' : 'text-zinc-500 hover:text-black'}`}
+            className={`pb-3 text-xs font-bold transition-colors shrink-0 ${activeTab === 'not_on_sale' ? 'text-black border-b-2 border-black' : 'text-zinc-500 hover:text-black'}`}
           >
-            已映射公共库，未出价不出售
+            已映射公共库且未在集市出售
           </button>
         </div>
 
-        <div className="flex gap-4 items-center">
-          <div className="flex items-center gap-2 bg-white border border-zinc-200 px-3 py-2 w-80">
+        <div className="flex flex-col md:flex-row gap-4 items-start md:items-center">
+          <div className="flex items-center gap-2 bg-white border border-zinc-200 px-3 py-2 w-full md:w-80">
             <Search size={16} className="text-zinc-400" />
             <input 
               type="text" 
@@ -121,28 +121,35 @@ export function MarketplaceOnSale() {
           </div>
           
           {/* Multi-selects */}
-          <MultiSelectDropdown 
-            options={brands} 
-            selected={selectedBrands} 
-            onChange={setSelectedBrands} 
-            placeholder="选择品牌 (多选)" 
-          />
+          <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">
+            <div className="w-full md:w-auto z-20">
+              <MultiSelectDropdown 
+                options={brands} 
+                selected={selectedBrands} 
+                onChange={setSelectedBrands} 
+                placeholder="选择品牌 (多选)" 
+              />
+            </div>
+            <div className="w-full md:w-auto z-10">
+              <MultiSelectDropdown 
+                options={categories} 
+                selected={selectedCategories} 
+                onChange={setSelectedCategories} 
+                placeholder="选择分类 (多选)" 
+              />
+            </div>
+          </div>
 
-          <MultiSelectDropdown 
-            options={categories} 
-            selected={selectedCategories} 
-            onChange={setSelectedCategories} 
-            placeholder="选择分类 (多选)" 
-          />
-
-          <button className="border border-zinc-200 px-6 py-2 text-sm font-bold hover:bg-zinc-50 transition-colors bg-white">
-            重置
-          </button>
-          <button className="bg-black text-white px-8 py-2 text-sm font-bold hover:bg-zinc-800 transition-colors">
-            查询
-          </button>
-          <div className="ml-auto flex gap-2">
-            <button className="border border-zinc-200 px-6 py-2 text-sm font-bold hover:bg-zinc-50 transition-colors bg-white">
+          <div className="flex gap-2 w-full md:w-auto">
+            <button className="flex-1 md:flex-none border border-zinc-200 px-6 py-2 text-sm font-bold hover:bg-zinc-50 transition-colors bg-white">
+              重置
+            </button>
+            <button className="flex-1 md:flex-none bg-black text-white px-8 py-2 text-sm font-bold hover:bg-zinc-800 transition-colors">
+              查询
+            </button>
+          </div>
+          <div className="md:ml-auto flex gap-2 w-full md:w-auto mt-2 md:mt-0">
+            <button className="w-full md:w-auto border border-zinc-200 px-6 py-2 text-sm font-bold hover:bg-zinc-50 transition-colors bg-white">
               {activeTab === 'on_sale' ? '批量取消出价' : '批量进行出价'}
             </button>
           </div>
@@ -150,7 +157,7 @@ export function MarketplaceOnSale() {
       </div>
 
       <div className="bg-white border border-zinc-200 shadow-sm">
-        <div className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-zinc-200 bg-zinc-50 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
+        <div className="hidden md:grid grid-cols-12 gap-4 px-6 py-4 border-b border-zinc-200 bg-zinc-50 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
           <div className="col-span-1 flex justify-center">
             <input type="checkbox" className="w-4 h-4 accent-black" />
           </div>
@@ -164,62 +171,78 @@ export function MarketplaceOnSale() {
         {activeTab === 'on_sale' && (
           <>
             {/* Row 1: RMB Lowest */}
-            <div className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-zinc-200 items-center hover:bg-zinc-50 transition-colors">
-              <div className="col-span-1 flex justify-center">
+            <div className="flex flex-col md:grid md:grid-cols-12 gap-4 px-4 md:px-6 py-4 border-b border-zinc-200 items-start md:items-center hover:bg-zinc-50 transition-colors">
+              <div className="hidden md:flex col-span-1 justify-center">
                 <input type="checkbox" className="w-4 h-4 accent-black" />
               </div>
-              <div className="col-span-4 flex gap-4 items-center">
-                <div className="w-12 h-12 bg-zinc-100 p-1">
+              <div className="flex md:col-span-4 gap-4 items-center w-full">
+                <div className="md:hidden">
+                  <input type="checkbox" className="w-4 h-4 accent-black" />
+                </div>
+                <div className="w-16 h-16 md:w-12 md:h-12 bg-zinc-100 p-1 shrink-0">
                   <img src="https://images.unsplash.com/photo-1599643478514-4a820c56a8f9?auto=format&fit=crop&w=100&q=80" className="w-full h-full object-contain mix-blend-multiply" />
                 </div>
                 <div>
-                  <div className="text-xs font-bold mb-1">Alexander McQueen男款骷髅头编织手链</div>
+                  <div className="md:hidden text-[10px] font-bold text-zinc-400 uppercase mb-1">Alexander McQueen / 配饰</div>
+                  <div className="text-sm md:text-xs font-bold mb-1">Alexander McQueen男款骷髅头编织手链</div>
                   <div className="text-[10px] text-zinc-400">货号: 554602J16KG1000</div>
                 </div>
               </div>
-              <div className="col-span-2">
+              <div className="hidden md:block col-span-2">
                 <div className="text-xs font-bold">Alexander McQueen</div>
                 <div className="text-[10px] text-zinc-500">配饰</div>
               </div>
-              <div className="col-span-2 text-right">
-                <div className="text-xs font-bold">¥800.00</div>
+              <div className="w-full md:w-auto flex justify-between md:flex-col md:col-span-2 md:text-right mt-2 md:mt-0 p-3 md:p-0 bg-zinc-50 md:bg-transparent">
+                <div className="text-xs text-zinc-500 md:hidden">批发供货价</div>
+                <div className="text-sm md:text-xs font-bold">¥800.00</div>
               </div>
-              <div className="col-span-2 text-right">
-                <div className="text-xs font-bold text-zinc-400">¥780.00</div>
+              <div className="w-full md:w-auto flex justify-between md:flex-col md:col-span-2 md:text-right p-3 md:p-0 bg-zinc-50 md:bg-transparent border-t border-zinc-100 md:border-none">
+                <div className="text-xs text-zinc-500 md:hidden">集市最低出价</div>
+                <div className="text-sm md:text-xs font-bold text-zinc-400">¥780.00</div>
               </div>
-              <div className="col-span-1 flex flex-col items-center gap-2">
-                <button onClick={() => setSelectedSpu('mcqueen1')} className="text-[10px] font-bold text-black hover:underline">查看详情</button>
+              <div className="w-full md:w-auto md:col-span-1 flex flex-col md:items-center gap-2 mt-3 md:mt-0">
+                <button onClick={() => setSelectedSpu('mcqueen1')} className="w-full md:w-auto bg-black text-white md:bg-transparent md:text-black py-2 md:py-0 text-sm md:text-[10px] font-bold md:hover:underline">查看详情</button>
               </div>
             </div>
 
             {/* Row 2: HKD Lowest */}
-            <div className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-zinc-200 items-center hover:bg-zinc-50 transition-colors">
-              <div className="col-span-1 flex justify-center">
+            <div className="flex flex-col md:grid md:grid-cols-12 gap-4 px-4 md:px-6 py-4 border-b border-zinc-200 items-start md:items-center hover:bg-zinc-50 transition-colors">
+              <div className="hidden md:flex col-span-1 justify-center">
                 <input type="checkbox" className="w-4 h-4 accent-black" />
               </div>
-              <div className="col-span-4 flex gap-4 items-center">
-                <div className="w-12 h-12 bg-zinc-100 p-1">
+              <div className="flex md:col-span-4 gap-4 items-center w-full">
+                <div className="md:hidden">
+                  <input type="checkbox" className="w-4 h-4 accent-black" />
+                </div>
+                <div className="w-16 h-16 md:w-12 h-12 bg-zinc-100 p-1 shrink-0">
                   <img src="https://images.unsplash.com/photo-1584916201218-f4242ceb4809?auto=format&fit=crop&w=100&q=80" className="w-full h-full object-contain mix-blend-multiply" />
                 </div>
                 <div>
-                  <div className="text-xs font-bold mb-1">CHANEL香奈儿 24年秋冬系列单排扣V长袖针织衫 女款 黑色</div>
+                  <div className="md:hidden text-[10px] font-bold text-zinc-400 uppercase mb-1">CHANEL / 服饰</div>
+                  <div className="text-sm md:text-xs font-bold mb-1">CHANEL香奈儿 24年秋冬系列单排扣V长袖针织衫 女款 黑色</div>
                   <div className="text-[10px] text-zinc-400">货号: P78433-K11320-NZZ03</div>
                 </div>
               </div>
-              <div className="col-span-2">
+              <div className="hidden md:block col-span-2">
                 <div className="text-xs font-bold">CHANEL</div>
                 <div className="text-[10px] text-zinc-500">服饰</div>
               </div>
-              <div className="col-span-2 text-right">
-                <div className="text-xs font-bold">约 ¥2,800.00</div>
-                <div className="text-[10px] text-zinc-400 mt-1">HK$3,000.00</div>
+              <div className="w-full md:w-auto flex justify-between md:flex-col md:col-span-2 md:text-right mt-2 md:mt-0 p-3 md:p-0 bg-zinc-50 md:bg-transparent">
+                <div className="text-xs text-zinc-500 md:hidden">批发供货价</div>
+                <div className="text-right">
+                  <div className="text-sm md:text-xs font-bold">约 ¥2,800.00</div>
+                  <div className="text-[10px] text-zinc-400 mt-1">HK$3,000.00</div>
+                </div>
               </div>
-              <div className="col-span-2 text-right">
-                <div className="text-xs font-bold text-zinc-400">约 ¥2,750.00</div>
-                <div className="text-[10px] text-zinc-400 mt-1">HK$2,950.00</div>
+              <div className="w-full md:w-auto flex justify-between md:flex-col md:col-span-2 md:text-right p-3 md:p-0 bg-zinc-50 md:bg-transparent border-t border-zinc-100 md:border-none">
+                <div className="text-xs text-zinc-500 md:hidden">集市最低出价</div>
+                <div className="text-right">
+                  <div className="text-sm md:text-xs font-bold text-zinc-400">约 ¥2,750.00</div>
+                  <div className="text-[10px] text-zinc-400 mt-1">HK$2,950.00</div>
+                </div>
               </div>
-              <div className="col-span-1 flex flex-col items-center gap-2">
-                <button onClick={() => setSelectedSpu('chanel1')} className="text-[10px] font-bold text-black hover:underline">查看详情</button>
+              <div className="w-full md:w-auto md:col-span-1 flex flex-col md:items-center gap-2 mt-3 md:mt-0">
+                <button onClick={() => setSelectedSpu('chanel1')} className="w-full md:w-auto bg-black text-white md:bg-transparent md:text-black py-2 md:py-0 text-sm md:text-[10px] font-bold md:hover:underline">查看详情</button>
               </div>
             </div>
           </>
@@ -228,32 +251,40 @@ export function MarketplaceOnSale() {
         {activeTab === 'not_on_sale' && (
           <>
             {/* Row 3: Not on sale */}
-            <div className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-zinc-200 items-center hover:bg-zinc-50 transition-colors">
-              <div className="col-span-1 flex justify-center">
+            <div className="flex flex-col md:grid md:grid-cols-12 gap-4 px-4 md:px-6 py-4 border-b border-zinc-200 items-start md:items-center hover:bg-zinc-50 transition-colors">
+              <div className="hidden md:flex col-span-1 justify-center">
                 <input type="checkbox" className="w-4 h-4 accent-black" />
               </div>
-              <div className="col-span-4 flex gap-4 items-center">
-                <div className="w-12 h-12 bg-zinc-100 p-1">
+              <div className="flex md:col-span-4 gap-4 items-center w-full">
+                <div className="md:hidden">
+                  <input type="checkbox" className="w-4 h-4 accent-black" />
+                </div>
+                <div className="w-16 h-16 md:w-12 h-12 bg-zinc-100 p-1 shrink-0">
                   <img src="https://images.unsplash.com/photo-1623330188314-8f4645626731?auto=format&fit=crop&w=100&q=80" className="w-full h-full object-contain mix-blend-multiply" />
                 </div>
                 <div>
-                  <div className="text-xs font-bold mb-1">Burberry 格纹纯棉衬衫</div>
+                  <div className="md:hidden text-[10px] font-bold text-zinc-400 uppercase mb-1">Burberry / 服饰</div>
+                  <div className="text-sm md:text-xs font-bold mb-1">Burberry 格纹纯棉衬衫</div>
                   <div className="text-[10px] text-zinc-400">货号: BB-SHIRT-CHK</div>
                 </div>
               </div>
-              <div className="col-span-2">
+              <div className="hidden md:block col-span-2">
                 <div className="text-xs font-bold">Burberry</div>
                 <div className="text-[10px] text-zinc-500">服饰</div>
               </div>
-              <div className="col-span-2 text-right">
-                <div className="text-xs font-bold">¥5,900.00</div>
+              <div className="w-full md:w-auto flex justify-between md:flex-col md:col-span-2 md:text-right mt-2 md:mt-0 p-3 md:p-0 bg-zinc-50 md:bg-transparent">
+                <div className="text-xs text-zinc-500 md:hidden">批发供货价</div>
+                <div className="text-sm md:text-xs font-bold">¥5,900.00</div>
               </div>
-              <div className="col-span-2 text-right">
-                <div className="text-xs font-bold text-zinc-400">—</div>
-                <div className="text-[10px] text-zinc-400 mt-1">未参与出价</div>
+              <div className="w-full md:w-auto flex justify-between md:flex-col md:col-span-2 md:text-right p-3 md:p-0 bg-zinc-50 md:bg-transparent border-t border-zinc-100 md:border-none">
+                <div className="text-xs text-zinc-500 md:hidden">出价状态</div>
+                <div className="text-right">
+                  <div className="text-sm md:text-xs font-bold text-zinc-400">—</div>
+                  <div className="text-[10px] text-zinc-400 mt-1">未参与出价</div>
+                </div>
               </div>
-              <div className="col-span-1 flex flex-col items-center gap-2">
-                <button onClick={() => setSelectedSpu('burberry1')} className="text-[10px] font-bold text-black hover:underline">编辑出价信息</button>
+              <div className="w-full md:w-auto md:col-span-1 flex flex-col md:items-center gap-2 mt-3 md:mt-0">
+                <button onClick={() => setSelectedSpu('burberry1')} className="w-full md:w-auto bg-black text-white md:bg-transparent md:text-black py-2 md:py-0 text-sm md:text-[10px] font-bold md:hover:underline">编辑出价信息</button>
               </div>
             </div>
           </>
@@ -264,8 +295,8 @@ export function MarketplaceOnSale() {
       {selectedSpu && (
         <div className="fixed inset-0 z-50 flex justify-end">
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setSelectedSpu(null)}></div>
-          <div className="relative w-[1000px] bg-white h-full shadow-2xl flex flex-col animate-in slide-in-from-right duration-300">
-            <div className="flex items-center justify-between px-8 py-6 border-b border-zinc-100">
+          <div className="relative w-full md:w-[1000px] bg-white h-full shadow-2xl flex flex-col animate-in slide-in-from-right duration-300">
+            <div className="flex items-center justify-between px-4 md:px-8 py-4 md:py-6 border-b border-zinc-100">
               <div>
                 <h2 className="text-xl font-black uppercase tracking-tight mb-1">集市在售详情</h2>
                 <div className="text-xs text-zinc-500 font-mono">货号: 554602J16KG1000</div>
@@ -275,14 +306,14 @@ export function MarketplaceOnSale() {
             
             <div className="flex-1 overflow-y-auto">
               {/* Product Header */}
-              <div className="p-8 border-b border-zinc-100 bg-white flex gap-6 items-center">
-                <div className="w-24 h-24 bg-zinc-100 p-2">
+              <div className="p-4 md:p-8 border-b border-zinc-100 bg-white flex gap-4 md:gap-6 items-start md:items-center">
+                <div className="w-20 h-20 md:w-24 md:h-24 bg-zinc-100 p-2 shrink-0">
                   <img src="https://images.unsplash.com/photo-1599643478514-4a820c56a8f9?auto=format&fit=crop&w=200&q=80" className="w-full h-full object-contain mix-blend-multiply" />
                 </div>
                 <div className="flex-1">
-                  <div className="text-sm font-bold text-zinc-500 mb-1">Alexander McQueen</div>
-                  <div className="text-xl font-black tracking-tight mb-2">男款骷髅头编织手链</div>
-                  <div className="flex gap-4 text-sm">
+                  <div className="text-xs md:text-sm font-bold text-zinc-500 mb-1">Alexander McQueen</div>
+                  <div className="text-lg md:text-xl font-black tracking-tight mb-2 leading-tight">男款骷髅头编织手链</div>
+                  <div className="flex flex-col md:flex-row gap-2 md:gap-4 text-xs md:text-sm">
                     <span className="text-zinc-500">分类: 配饰</span>
                     <span className="text-zinc-500">已映射集市公共库</span>
                   </div>
@@ -290,8 +321,8 @@ export function MarketplaceOnSale() {
               </div>
 
               {/* SKU Info Section */}
-              <div className="p-8 bg-zinc-50/50">
-                <div className="flex items-center justify-between mb-6">
+              <div className="p-4 md:p-8 bg-zinc-50/50">
+                <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 md:mb-6 gap-4">
                   <h3 className="text-sm font-black uppercase tracking-widest">在售 SKU 规格</h3>
                   <div className="flex gap-4">
                     <button 
@@ -309,8 +340,8 @@ export function MarketplaceOnSale() {
                   </div>
                 </div>
 
-                <div className="bg-white border border-zinc-200 shadow-sm">
-                  <table className="w-full text-left border-collapse">
+                <div className="bg-white border border-zinc-200 shadow-sm overflow-x-auto whitespace-nowrap">
+                  <table className="w-full text-left border-collapse min-w-[600px]">
                     <thead>
                       <tr className="bg-zinc-50 border-b border-zinc-200 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
                         <th className="p-4 font-bold">规格</th>
@@ -405,7 +436,7 @@ export function MarketplaceOnSale() {
               </div>
             </div>
             
-            <div className="p-6 border-t border-zinc-200 bg-white flex justify-between items-center">
+            <div className="p-4 md:p-6 border-t border-zinc-200 bg-white flex justify-between items-center">
               <button onClick={() => setSelectedSpu(null)} className="px-6 py-3 text-xs font-bold text-red-600 hover:bg-red-50 border border-red-200 transition-colors">从集市下架</button>
               <div className="flex gap-3">
                 <button onClick={() => setSelectedSpu(null)} className="px-6 py-3 text-xs font-bold text-zinc-600 hover:text-black transition-colors">关闭</button>

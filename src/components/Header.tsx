@@ -1,12 +1,13 @@
-import { Search, Bell, Download, FileText } from 'lucide-react';
+import { Search, Bell, Download, FileText, Menu } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 
 interface HeaderProps {
   activeTab: string;
   onActionClick: () => void;
+  toggleMobileMenu: () => void;
 }
 
-export function Header({ activeTab, onActionClick }: HeaderProps) {
+export function Header({ activeTab, onActionClick, toggleMobileMenu }: HeaderProps) {
   const [isDownloadOpen, setIsDownloadOpen] = useState(false);
   const downloadRef = useRef<HTMLDivElement>(null);
 
@@ -27,18 +28,24 @@ export function Header({ activeTab, onActionClick }: HeaderProps) {
   ];
 
   return (
-    <header className="fixed top-0 left-64 right-0 h-16 bg-white/80 backdrop-blur-md border-b border-zinc-200 flex items-center justify-between px-8 z-30">
-      <div className="flex items-center w-96">
-        <div className="relative w-full">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" size={20} />
+    <header className="fixed top-0 left-0 right-0 md:left-64 h-16 bg-white/80 backdrop-blur-md border-b border-zinc-200 flex items-center justify-between px-4 md:px-8 z-30">
+      <div className="flex items-center gap-4 flex-1">
+        <button className="md:hidden text-black shrink-0 p-2 -ml-2" onClick={toggleMobileMenu}>
+          <Menu size={20} />
+        </button>
+        <div className="relative w-full max-w-sm hidden sm:block">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" size={18} />
           <input 
             type="text" 
             placeholder="搜索全球 SKU 编号、订单..." 
             className="w-full bg-zinc-100 border-transparent focus:bg-white focus:border-black focus:ring-0 text-sm py-2 pl-10 pr-4 rounded-none transition-all outline-none"
           />
         </div>
+        <button className="sm:hidden text-zinc-500 hover:text-black transition-colors shrink-0">
+          <Search size={20} />
+        </button>
       </div>
-      <div className="flex items-center gap-6">
+      <div className="flex items-center gap-4 md:gap-6 shrink-0">
         <button className="text-zinc-500 hover:text-black transition-colors relative">
           <Bell size={20} />
           <span className="absolute top-0 right-0 w-2 h-2 bg-black rounded-full"></span>

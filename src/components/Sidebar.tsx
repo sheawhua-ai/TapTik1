@@ -4,9 +4,11 @@ import { useState } from 'react';
 interface SidebarProps {
   activeTab: string;
   setActiveTab: (tab: string) => void;
+  isOpen: boolean;
+  onClose: () => void;
 }
 
-export function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
+export function Sidebar({ activeTab, setActiveTab, isOpen, onClose }: SidebarProps) {
   const [expandedGroups, setExpandedGroups] = useState<string[]>(['self_operated', 'distribution', 'manifest', 'infrastructure']);
 
   const toggleGroup = (groupId: string) => {
@@ -59,10 +61,16 @@ export function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
   ];
 
   return (
-    <aside className="fixed left-0 top-0 h-screen w-64 bg-white border-r border-zinc-200 text-zinc-600 flex flex-col z-40 overflow-y-auto">
-      <div className="h-16 flex items-center px-6 border-b border-zinc-100 flex-shrink-0">
-        <span className="text-lg font-black tracking-tighter uppercase text-black">商家管理后台</span>
-      </div>
+    <>
+      {/* Mobile overlay */}
+      {isOpen && (
+        <div className="fixed inset-0 bg-black/50 z-40 md:hidden backdrop-blur-sm" onClick={onClose} />
+      )}
+      
+      <aside className={`fixed left-0 top-0 h-screen w-64 bg-white border-r border-zinc-200 text-zinc-600 flex flex-col z-50 overflow-y-auto transition-transform duration-300 md:translate-x-0 ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+        <div className="h-16 flex items-center justify-between px-6 border-b border-zinc-100 flex-shrink-0">
+          <span className="text-lg font-black tracking-tighter uppercase text-black">商家管理后台</span>
+        </div>
       
       <div className="p-6 border-b border-zinc-100 flex-shrink-0">
         <div className="flex items-center gap-3">
@@ -109,5 +117,6 @@ export function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
         ))}
       </nav>
     </aside>
+    </>
   );
 }
