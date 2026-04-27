@@ -478,7 +478,8 @@ export function DistributorOrderManagement() {
                 </div>
                 
                 <div className="border border-zinc-200 bg-white">
-                  <div className="overflow-x-auto">
+                  {/* Desktop Table */}
+                  <div className="hidden md:block overflow-x-auto">
                     <table className="w-full text-left text-sm min-w-[700px]">
                       <thead className="bg-zinc-50 border-b border-zinc-200 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
                         <tr>
@@ -510,6 +511,31 @@ export function DistributorOrderManagement() {
                         ))}
                       </tbody>
                     </table>
+                  </div>
+                  
+                  {/* Mobile Stacked List */}
+                  <div className="md:hidden flex flex-col divide-y divide-zinc-100">
+                    {selectedOrderData.items.map((item: any) => (
+                      <div key={item.id} className="p-4 flex flex-col gap-2">
+                        <div className="flex items-start justify-between">
+                          <div className="flex items-start gap-3">
+                            <input type="checkbox" className="accent-black mt-1" disabled />
+                            <div>
+                              <div className="font-bold text-xs">{item.name}</div>
+                              <div className="text-[10px] text-zinc-400 mt-0.5">SKU: {item.sku}</div>
+                              <div className="text-[10px] text-zinc-500 mt-1">上游: {item.supplier}</div>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <div className="font-bold text-xs">¥ {item.price.toLocaleString()}</div>
+                            <div className="text-[10px] text-zinc-500 mt-0.5">x {item.count}</div>
+                          </div>
+                        </div>
+                        <div className="flex justify-end mt-2">
+                          <span className="text-orange-600 text-[10px] font-bold px-2 py-1 bg-orange-50">{item.statusLabel}</span>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
@@ -583,7 +609,8 @@ export function DistributorOrderManagement() {
               <div className="mt-8">
                 <h3 className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-4">订单进程明细</h3>
                 <div className="border border-zinc-200">
-                  <div className="overflow-x-auto">
+                  {/* Desktop Table */}
+                  <div className="hidden md:block overflow-x-auto">
                     <table className="w-full text-left text-sm min-w-[700px]">
                       <thead className="bg-zinc-50 border-b border-zinc-200 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
                         <tr>
@@ -610,6 +637,32 @@ export function DistributorOrderManagement() {
                       </tbody>
                     </table>
                   </div>
+
+                  {/* Mobile Stacked List */}
+                  <div className="md:hidden flex flex-col divide-y divide-zinc-100 bg-white">
+                    {selectedOrderData.progress?.map((p: any) => (
+                      <div key={p.id} className="p-4 flex flex-col gap-2">
+                        <div className="flex justify-between items-start">
+                          <div className="font-bold text-sm text-black">{p.description}</div>
+                          <div className="font-mono text-[10px] text-zinc-400">{p.time}</div>
+                        </div>
+                        <div className="flex justify-between items-end mt-1">
+                          <div className="text-xs text-zinc-500">
+                            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block mb-0.5">涉及商品</span>
+                            {p.items}
+                          </div>
+                          <div className="text-right">
+                            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block mb-0.5">金额变动</span>
+                            <span className="font-mono text-xs font-bold">{p.amountChange}</span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                    {(!selectedOrderData.progress || selectedOrderData.progress.length === 0) && (
+                      <div className="p-8 text-center text-zinc-500 text-xs">暂无进程记录</div>
+                    )}
+                  </div>
+
                   <div className="p-4 bg-zinc-50 border-t border-zinc-200 flex flex-col md:flex-row gap-4 items-center">
                     <input 
                       type="text" 

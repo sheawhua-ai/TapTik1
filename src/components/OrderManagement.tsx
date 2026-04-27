@@ -869,60 +869,116 @@ export function OrderManagement() {
               </div>
               
               <div className="border border-zinc-200">
-                <table className="w-full text-left text-sm">
-                  <thead className="bg-zinc-50 border-b border-zinc-200 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
-                    <tr>
-                      <th className="p-4 w-10">
-                        <input 
-                          type="checkbox" 
-                          className="accent-black" 
-                          onChange={(e) => {
-                            if (e.target.checked) {
-                              const selectableItems = selectedOrderData.items.filter((i: any) => activeTab === 'all' || i.status === activeTab).map((i: any) => i.id);
-                              setSelectedItems(selectableItems);
-                            } else {
-                              setSelectedItems([]);
-                            }
-                          }}
-                          checked={selectedOrderData.items.filter((i: any) => activeTab === 'all' || i.status === activeTab).length > 0 && selectedItems.length === selectedOrderData.items.filter((i: any) => activeTab === 'all' || i.status === activeTab).length}
-                        />
-                      </th>
-                      <th className="p-4">商品</th>
-                      <th className="p-4 text-right">数量</th>
-                      <th className="p-4 text-right">单价</th>
-                      <th className="p-4 text-center">状态</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-zinc-100">
-                    {selectedOrderData.items.map((item: any) => (
-                      <tr key={item.id} className="hover:bg-zinc-50">
-                        <td className="p-4">
+                {/* Desktop Table */}
+                <div className="hidden md:block overflow-x-auto">
+                  <table className="w-full text-left text-sm">
+                    <thead className="bg-zinc-50 border-b border-zinc-200 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
+                      <tr>
+                        <th className="p-4 w-10">
                           <input 
                             type="checkbox" 
                             className="accent-black" 
-                            checked={selectedItems.includes(item.id)} 
-                            disabled={activeTab !== 'all' && item.status !== activeTab}
                             onChange={(e) => {
                               if (e.target.checked) {
-                                setSelectedItems([...selectedItems, item.id]);
+                                const selectableItems = selectedOrderData.items.filter((i: any) => activeTab === 'all' || i.status === activeTab).map((i: any) => i.id);
+                                setSelectedItems(selectableItems);
                               } else {
-                                setSelectedItems(selectedItems.filter(id => id !== item.id));
+                                setSelectedItems([]);
                               }
-                            }} 
+                            }}
+                            checked={selectedOrderData.items.filter((i: any) => activeTab === 'all' || i.status === activeTab).length > 0 && selectedItems.length === selectedOrderData.items.filter((i: any) => activeTab === 'all' || i.status === activeTab).length}
                           />
-                        </td>
-                        <td className="p-4">
-                          <div className="font-bold text-xs">{item.name}</div>
-                          <div className="text-[10px] text-zinc-400">货号: {item.productNumber}</div>
-                          <div className="text-[10px] text-zinc-400">SKU条码: {item.sku}</div>
-                        </td>
-                        <td className="p-4 text-right font-mono">{item.count}</td>
-                        <td className="p-4 text-right font-mono">¥ {item.price.toLocaleString()}</td>
-                        <td className="p-4 text-center"><span className={`${item.status === 'refunded' ? 'text-red-600' : 'text-orange-600'} text-xs font-bold`}>{item.statusLabel}</span></td>
+                        </th>
+                        <th className="p-4">商品</th>
+                        <th className="p-4 text-right">数量</th>
+                        <th className="p-4 text-right">单价</th>
+                        <th className="p-4 text-center">状态</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody className="divide-y divide-zinc-100">
+                      {selectedOrderData.items.map((item: any) => (
+                        <tr key={item.id} className="hover:bg-zinc-50">
+                          <td className="p-4">
+                            <input 
+                              type="checkbox" 
+                              className="accent-black" 
+                              checked={selectedItems.includes(item.id)} 
+                              disabled={activeTab !== 'all' && item.status !== activeTab}
+                              onChange={(e) => {
+                                if (e.target.checked) {
+                                  setSelectedItems([...selectedItems, item.id]);
+                                } else {
+                                  setSelectedItems(selectedItems.filter(id => id !== item.id));
+                                }
+                              }} 
+                            />
+                          </td>
+                          <td className="p-4">
+                            <div className="font-bold text-xs">{item.name}</div>
+                            <div className="text-[10px] text-zinc-400">货号: {item.productNumber}</div>
+                            <div className="text-[10px] text-zinc-400">SKU条码: {item.sku}</div>
+                          </td>
+                          <td className="p-4 text-right font-mono">{item.count}</td>
+                          <td className="p-4 text-right font-mono">¥ {item.price.toLocaleString()}</td>
+                          <td className="p-4 text-center"><span className={`${item.status === 'refunded' ? 'text-red-600' : 'text-orange-600'} text-xs font-bold`}>{item.statusLabel}</span></td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Mobile Stacked List */}
+                <div className="md:hidden flex flex-col divide-y divide-zinc-100 bg-white">
+                  {/* Select All Bar */}
+                  <div className="p-4 flex items-center justify-between bg-zinc-50 border-b border-zinc-200">
+                    <label className="flex items-center gap-2 text-xs font-bold text-zinc-600">
+                      <input 
+                        type="checkbox" 
+                        className="accent-black" 
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            const selectableItems = selectedOrderData.items.filter((i: any) => activeTab === 'all' || i.status === activeTab).map((i: any) => i.id);
+                            setSelectedItems(selectableItems);
+                          } else {
+                            setSelectedItems([]);
+                          }
+                        }}
+                        checked={selectedOrderData.items.filter((i: any) => activeTab === 'all' || i.status === activeTab).length > 0 && selectedItems.length === selectedOrderData.items.filter((i: any) => activeTab === 'all' || i.status === activeTab).length}
+                      />
+                      全选可选商品
+                    </label>
+                  </div>
+                  
+                  {selectedOrderData.items.map((item: any) => (
+                    <div key={item.id} className="p-4 flex gap-3">
+                      <input 
+                        type="checkbox" 
+                        className="accent-black mt-1" 
+                        checked={selectedItems.includes(item.id)} 
+                        disabled={activeTab !== 'all' && item.status !== activeTab}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setSelectedItems([...selectedItems, item.id]);
+                          } else {
+                            setSelectedItems(selectedItems.filter(id => id !== item.id));
+                          }
+                        }} 
+                      />
+                      <div className="flex-1 flex flex-col">
+                        <div className="flex justify-between items-start gap-2 mb-2">
+                          <div className="font-bold text-xs">{item.name}</div>
+                          <span className={`${item.status === 'refunded' ? 'text-red-600' : 'text-orange-600'} text-xs font-bold shrink-0`}>{item.statusLabel}</span>
+                        </div>
+                        <div className="text-[10px] text-zinc-400 mb-0.5">货号: {item.productNumber}</div>
+                        <div className="text-[10px] text-zinc-400 mb-2">SKU条码: {item.sku}</div>
+                        <div className="flex justify-between items-end mt-auto pt-2 border-t border-zinc-100">
+                          <div className="text-[10px] text-zinc-500">数量: <span className="font-mono text-black font-bold">{item.count}</span></div>
+                          <div className="font-mono font-bold text-sm">¥ {item.price.toLocaleString()}</div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
 
@@ -930,53 +986,84 @@ export function OrderManagement() {
             <div className="mt-8">
               <h3 className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-4">订单进程明细</h3>
               <div className="border border-zinc-200">
-                <table className="w-full text-left text-sm">
-                  <thead className="bg-zinc-50 border-b border-zinc-200 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
-                    <tr>
-                      <th className="p-4">操作时间</th>
-                      <th className="p-4">进程说明</th>
-                      <th className="p-4">涉及商品</th>
-                      <th className="p-4">金额变动</th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-zinc-100 text-zinc-800">
-                    {selectedOrderData.progress?.map((p: any) => (
-                      <tr key={p.id} className="hover:bg-zinc-50 transition-colors">
-                        <td className="p-4 font-mono text-xs">{p.time}</td>
-                        <td className="p-4 font-bold text-black">{p.description}</td>
-                        <td className="p-4">{p.items}</td>
-                        <td className="p-4 font-mono">{p.amountChange}</td>
-                      </tr>
-                    ))}
-                    {(!selectedOrderData.progress || selectedOrderData.progress.length === 0) && (
+                {/* Desktop Table */}
+                <div className="hidden md:block overflow-x-auto">
+                  <table className="w-full text-left text-sm">
+                    <thead className="bg-zinc-50 border-b border-zinc-200 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
                       <tr>
-                        <td colSpan={4} className="p-8 text-center text-zinc-500 text-xs">暂无进程记录</td>
+                        <th className="p-4">操作时间</th>
+                        <th className="p-4">进程说明</th>
+                        <th className="p-4">涉及商品</th>
+                        <th className="p-4">金额变动</th>
                       </tr>
-                    )}
-                  </tbody>
-                </table>
-                <div className="p-4 bg-zinc-50 border-t border-zinc-200 flex gap-4 items-center">
+                    </thead>
+                    <tbody className="bg-white divide-y divide-zinc-100 text-zinc-800">
+                      {selectedOrderData.progress?.map((p: any) => (
+                        <tr key={p.id} className="hover:bg-zinc-50 transition-colors">
+                          <td className="p-4 font-mono text-xs">{p.time}</td>
+                          <td className="p-4 font-bold text-black">{p.description}</td>
+                          <td className="p-4">{p.items}</td>
+                          <td className="p-4 font-mono">{p.amountChange}</td>
+                        </tr>
+                      ))}
+                      {(!selectedOrderData.progress || selectedOrderData.progress.length === 0) && (
+                        <tr>
+                          <td colSpan={4} className="p-8 text-center text-zinc-500 text-xs">暂无进程记录</td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Mobile Stacked List */}
+                <div className="md:hidden flex flex-col divide-y divide-zinc-100 bg-white">
+                  {selectedOrderData.progress?.map((p: any) => (
+                    <div key={p.id} className="p-4 flex flex-col gap-2">
+                      <div className="flex justify-between items-start">
+                        <div className="font-bold text-sm text-black">{p.description}</div>
+                        <div className="font-mono text-[10px] text-zinc-400">{p.time}</div>
+                      </div>
+                      <div className="flex justify-between items-end mt-1">
+                        <div className="text-xs text-zinc-500">
+                          <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block mb-0.5">涉及商品</span>
+                          {p.items}
+                        </div>
+                        <div className="text-right">
+                          <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block mb-0.5">金额变动</span>
+                          <span className="font-mono text-xs font-bold">{p.amountChange}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  {(!selectedOrderData.progress || selectedOrderData.progress.length === 0) && (
+                    <div className="p-8 text-center text-zinc-500 text-xs">暂无进程记录</div>
+                  )}
+                </div>
+
+                <div className="p-4 bg-zinc-50 border-t border-zinc-200 flex flex-col md:flex-row gap-4 md:items-center">
                   <input 
                     type="text" 
                     placeholder="手动添加进程说明 (如: 线下退款)" 
                     value={newProgressDesc}
                     onChange={(e) => setNewProgressDesc(e.target.value)}
-                    className="flex-1 bg-white border border-zinc-200 px-3 py-2 text-xs text-black focus:border-black outline-none"
+                    className="flex-1 w-full bg-white border border-zinc-200 px-3 py-2 text-xs text-black focus:border-black outline-none"
                   />
-                  <input 
-                    type="text" 
-                    placeholder="金额变动 (如: -¥1,000)" 
-                    value={newProgressAmount}
-                    onChange={(e) => setNewProgressAmount(e.target.value)}
-                    className="w-48 bg-white border border-zinc-200 px-3 py-2 text-xs text-black focus:border-black outline-none"
-                  />
-                  <button 
-                    onClick={handleAddManualProgress}
-                    disabled={!newProgressDesc}
-                    className="bg-black text-white px-4 py-2 text-xs font-bold hover:bg-zinc-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    添加记录
-                  </button>
+                  <div className="flex gap-4 w-full md:w-auto">
+                    <input 
+                      type="text" 
+                      placeholder="金额变动 (如: -¥1,000)" 
+                      value={newProgressAmount}
+                      onChange={(e) => setNewProgressAmount(e.target.value)}
+                      className="w-full md:w-48 bg-white border border-zinc-200 px-3 py-2 text-xs text-black focus:border-black outline-none"
+                    />
+                    <button 
+                      onClick={handleAddManualProgress}
+                      disabled={!newProgressDesc}
+                      className="bg-black text-white px-4 py-2 text-xs font-bold hover:bg-zinc-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shrink-0 whitespace-nowrap"
+                    >
+                      添加记录
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>

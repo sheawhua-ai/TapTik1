@@ -56,11 +56,11 @@ export function CampaignManagement() {
           </div>
           <div className="w-full md:w-auto overflow-x-auto pb-1 md:pb-0 hide-scrollbar">
             <div className="text-[9px] font-bold text-zinc-400 uppercase tracking-widest mb-1.5">活动状态</div>
-            <div className="flex whitespace-nowrap">
-              <button className="bg-black text-white text-xs font-bold px-4 py-2 border border-black shrink-0">全部</button>
-              <button className="bg-white text-zinc-600 hover:text-black text-xs font-bold px-4 py-2 border-y border-r border-zinc-200 hover:border-black transition-colors shrink-0">活动中</button>
-              <button className="bg-white text-zinc-600 hover:text-black text-xs font-bold px-4 py-2 border-y border-r border-zinc-200 hover:border-black transition-colors shrink-0">待开始</button>
-              <button className="bg-white text-zinc-600 hover:text-black text-xs font-bold px-4 py-2 border-y border-r border-zinc-200 hover:border-black transition-colors shrink-0">已结束</button>
+            <div className="flex">
+              <button className="bg-black text-white text-xs font-bold px-4 py-2 border border-black shrink-0 whitespace-nowrap">全部</button>
+              <button className="bg-white text-zinc-600 hover:text-black text-xs font-bold px-4 py-2 border-y border-r border-zinc-200 hover:border-black transition-colors shrink-0 whitespace-nowrap">活动中</button>
+              <button className="bg-white text-zinc-600 hover:text-black text-xs font-bold px-4 py-2 border-y border-r border-zinc-200 hover:border-black transition-colors shrink-0 whitespace-nowrap">待开始</button>
+              <button className="bg-white text-zinc-600 hover:text-black text-xs font-bold px-4 py-2 border-y border-r border-zinc-200 hover:border-black transition-colors shrink-0 whitespace-nowrap">已结束</button>
             </div>
           </div>
           <button 
@@ -74,109 +74,118 @@ export function CampaignManagement() {
       </div>
 
       <div className="bg-white border border-zinc-200 shadow-sm flex flex-col overflow-hidden">
-        <div className="overflow-x-auto w-full">
-          <div className="min-w-[800px]">
-            <div className="grid grid-cols-12 gap-4 px-4 md:px-8 py-4 border-b border-zinc-200 bg-zinc-50 text-[10px] font-bold text-zinc-500 uppercase tracking-widest items-center">
-              <div className="col-span-6 flex items-center gap-4">
-                <input type="checkbox" className="accent-black" onChange={handleToggleSelectAll} checked={selectedCampaignIds.length === 2} />
-                <span>货单详情 (ID / 名称 / 仓库)</span>
-              </div>
-              <div className="col-span-3">进展情况</div>
-              <div className="col-span-3 text-right">操作</div>
-            </div>
-
-          <div className="min-w-[800px]">
-            {/* Item 1 */}
-            <div className="grid grid-cols-12 gap-4 px-4 md:px-8 py-6 border-b border-zinc-200 items-center hover:bg-zinc-50 transition-colors">
-              <div className="col-span-6 pr-8 flex items-start gap-4">
-                <input 
-                  type="checkbox" 
-                  className="accent-black mt-1.5" 
-                  checked={selectedCampaignIds.includes('M-092-2024')}
-                  onChange={() => handleToggleSelect('M-092-2024')}
-                />
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">M-092-2024</span>
-                <Copy size={14} className="text-zinc-300 cursor-pointer hover:text-black" />
-              </div>
-              <h3 className="text-lg font-black tracking-tight leading-tight mb-2">2024 秋季高奢皮具专场：LVMH 联名系列全球分发计划</h3>
-              <div className="flex items-center gap-1 text-[10px] font-bold text-zinc-500 uppercase">
-                <Warehouse size={14} />
-                欧洲仓 (MILAN CENTER)
-              </div>
-            </div>
+        {/* Desktop Header */}
+        <div className="hidden md:grid grid-cols-12 gap-4 px-4 md:px-8 py-4 border-b border-zinc-200 bg-zinc-50 text-[10px] font-bold text-zinc-500 uppercase tracking-widest items-center">
+          <div className="col-span-6 flex items-center gap-4">
+            <input type="checkbox" className="accent-black" onChange={handleToggleSelectAll} checked={selectedCampaignIds.length === 2} />
+            <span>货单详情 (ID / 名称 / 仓库)</span>
           </div>
-          <div className="col-span-3 pr-8">
-            <div className="flex justify-between items-end mb-1">
-              <span className="text-xs font-bold">完成度: 100%</span>
-              <span className="text-[10px] text-zinc-400">1,248 / 1,400 件</span>
-            </div>
-            <div className="w-full h-1 bg-zinc-100 mb-3">
-              <div className="h-full bg-black w-full"></div>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-xs font-black text-red-600">剩余：12 小时</span>
-              <span className="text-[9px] text-zinc-400 uppercase tracking-widest">截止: 2024-11-20</span>
-            </div>
-          </div>
-          <div className="col-span-3 flex justify-end items-center gap-3">
-            <button className="bg-zinc-100 text-zinc-600 text-[10px] font-bold uppercase tracking-widest px-4 py-2 hover:bg-zinc-200 transition-colors">生成采购单</button>
-            <button className="bg-zinc-100 text-zinc-600 text-[10px] font-bold uppercase tracking-widest px-4 py-2 hover:bg-zinc-200 transition-colors">提前结束</button>
-            <button 
-              onClick={() => setSelectedCampaign('M-092-2024')}
-              className="w-8 h-8 border border-zinc-200 flex items-center justify-center hover:border-black transition-colors shrink-0"
-            >
-              <ChevronRight size={18} />
-            </button>
-          </div>
+          <div className="col-span-3">进展情况</div>
+          <div className="col-span-3 text-right">操作</div>
         </div>
 
-        {/* Item 2 */}
-        <div className="grid grid-cols-12 gap-4 px-4 md:px-8 py-6 border-b border-zinc-200 items-center hover:bg-zinc-50 transition-colors">
-          <div className="col-span-6 pr-8 flex items-start gap-4">
-            <input 
-              type="checkbox" 
-              className="accent-black mt-1.5" 
-              checked={selectedCampaignIds.includes('M-093-2024')}
-              onChange={() => handleToggleSelect('M-093-2024')}
-            />
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">M-093-2024</span>
-                <Copy size={14} className="text-zinc-300 cursor-pointer hover:text-black" />
-              </div>
-              <h3 className="text-lg font-black tracking-tight leading-tight mb-2">瑞士钟表：限量典藏系列 (Geneva Heritage) 二期入库审核</h3>
-              <div className="flex items-center gap-1 text-[10px] font-bold text-zinc-500 uppercase">
-                <Warehouse size={14} />
-                亚洲仓 (HONG KONG HUB)
-              </div>
-            </div>
-          </div>
-          <div className="col-span-3 pr-8">
-            <div className="flex justify-between items-end mb-1">
-              <span className="text-xs font-bold">完成度: 45%</span>
-              <span className="text-[10px] text-zinc-400">225 / 500 件</span>
-            </div>
-            <div className="w-full h-1 bg-zinc-100 mb-3">
-              <div className="h-full bg-black w-[45%]"></div>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-xs font-black">剩余：3天 8小时</span>
-              <span className="text-[9px] text-zinc-400 uppercase tracking-widest">截止: 2024-11-23</span>
-            </div>
-          </div>
-          <div className="col-span-3 flex justify-end items-center gap-3">
-            <button className="bg-zinc-100 text-zinc-600 text-[10px] font-bold uppercase tracking-widest px-4 py-2 hover:bg-zinc-200 transition-colors">生成采购单</button>
-            <button className="bg-zinc-100 text-zinc-600 text-[10px] font-bold uppercase tracking-widest px-4 py-2 hover:bg-zinc-200 transition-colors">提前结束</button>
-            <button 
-              onClick={() => setSelectedCampaign('M-093-2024')}
-              className="w-8 h-8 border border-zinc-200 flex items-center justify-center hover:border-black transition-colors shrink-0"
-            >
-              <ChevronRight size={18} />
-            </button>
-          </div>
+        {/* Mobile Header */}
+        <div className="md:hidden flex items-center gap-2 px-4 py-3 border-b border-zinc-200 bg-zinc-50 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
+          <input type="checkbox" className="accent-black" onChange={handleToggleSelectAll} checked={selectedCampaignIds.length === 2} />
+          <span>全选当前货单</span>
         </div>
+
+        <div className="flex flex-col divide-y divide-zinc-200">
+          {/* Item 1 */}
+          <div className="flex flex-col md:grid md:grid-cols-12 gap-4 px-4 md:px-8 py-6 items-start md:items-center hover:bg-zinc-50 transition-colors">
+            <div className="md:col-span-6 md:pr-8 flex items-start gap-4 w-full">
+              <input 
+                type="checkbox" 
+                className="accent-black mt-1.5" 
+                checked={selectedCampaignIds.includes('M-092-2024')}
+                onChange={() => handleToggleSelect('M-092-2024')}
+              />
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">M-092-2024</span>
+                  <Copy size={14} className="text-zinc-300 cursor-pointer hover:text-black" />
+                </div>
+                <h3 className="text-sm md:text-lg font-black tracking-tight leading-tight mb-2">2024 秋季高奢皮具专场：LVMH 联名系列全球分发计划</h3>
+                <div className="flex items-center gap-1 text-[10px] font-bold text-zinc-500 uppercase">
+                  <Warehouse size={14} />
+                  欧洲仓 (MILAN CENTER)
+                </div>
+              </div>
+            </div>
+            
+            <div className="md:col-span-3 md:pr-8 w-full pl-8 md:pl-0 mt-2 md:mt-0">
+              <div className="flex justify-between items-end mb-1">
+                <span className="text-xs font-bold">完成度: 100%</span>
+                <span className="text-[10px] text-zinc-400">1,248 / 1,400 件</span>
+              </div>
+              <div className="w-full h-1 bg-zinc-100 mb-3">
+                <div className="h-full bg-black w-full"></div>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-xs font-black text-red-600">剩余：12 小时</span>
+                <span className="text-[9px] text-zinc-400 uppercase tracking-widest">截止: 2024-11-20</span>
+              </div>
+            </div>
+
+            <div className="md:col-span-3 flex justify-end md:justify-end items-center gap-2 w-full pl-8 md:pl-0 mt-4 md:mt-0">
+              <button className="flex-1 md:flex-none border border-zinc-200 bg-white text-zinc-600 text-[10px] font-bold uppercase tracking-widest px-3 py-2 hover:bg-zinc-50 transition-colors whitespace-nowrap text-center">生成采购单</button>
+              <button className="flex-1 md:flex-none border border-zinc-200 bg-white text-zinc-600 text-[10px] font-bold uppercase tracking-widest px-3 py-2 hover:bg-zinc-50 transition-colors whitespace-nowrap text-center">提前结束</button>
+              <button 
+                onClick={() => setSelectedCampaign('M-092-2024')}
+                className="w-8 h-8 md:w-8 md:h-8 border border-zinc-200 flex items-center justify-center hover:border-black transition-colors shrink-0 bg-white"
+              >
+                <ChevronRight size={18} />
+              </button>
+            </div>
+          </div>
+
+          {/* Item 2 */}
+          <div className="flex flex-col md:grid md:grid-cols-12 gap-4 px-4 md:px-8 py-6 items-start md:items-center hover:bg-zinc-50 transition-colors">
+            <div className="md:col-span-6 md:pr-8 flex items-start gap-4 w-full">
+              <input 
+                type="checkbox" 
+                className="accent-black mt-1.5" 
+                checked={selectedCampaignIds.includes('M-093-2024')}
+                onChange={() => handleToggleSelect('M-093-2024')}
+              />
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">M-093-2024</span>
+                  <Copy size={14} className="text-zinc-300 cursor-pointer hover:text-black" />
+                </div>
+                <h3 className="text-sm md:text-lg font-black tracking-tight leading-tight mb-2">瑞士钟表：限量典藏系列 (Geneva Heritage) 二期入库审核</h3>
+                <div className="flex items-center gap-1 text-[10px] font-bold text-zinc-500 uppercase">
+                  <Warehouse size={14} />
+                  亚洲仓 (HONG KONG HUB)
+                </div>
+              </div>
+            </div>
+            
+            <div className="md:col-span-3 md:pr-8 w-full pl-8 md:pl-0 mt-2 md:mt-0">
+              <div className="flex justify-between items-end mb-1">
+                <span className="text-xs font-bold">完成度: 45%</span>
+                <span className="text-[10px] text-zinc-400">225 / 500 件</span>
+              </div>
+              <div className="w-full h-1 bg-zinc-100 mb-3">
+                <div className="h-full bg-black w-[45%]"></div>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-xs font-black">剩余：3天 8小时</span>
+                <span className="text-[9px] text-zinc-400 uppercase tracking-widest">截止: 2024-11-23</span>
+              </div>
+            </div>
+
+            <div className="md:col-span-3 flex justify-end md:justify-end items-center gap-2 w-full pl-8 md:pl-0 mt-4 md:mt-0">
+              <button className="flex-1 md:flex-none border border-zinc-200 bg-white text-zinc-600 text-[10px] font-bold uppercase tracking-widest px-3 py-2 hover:bg-zinc-50 transition-colors whitespace-nowrap text-center">生成采购单</button>
+              <button className="flex-1 md:flex-none border border-zinc-200 bg-white text-zinc-600 text-[10px] font-bold uppercase tracking-widest px-3 py-2 hover:bg-zinc-50 transition-colors whitespace-nowrap text-center">提前结束</button>
+              <button 
+                onClick={() => setSelectedCampaign('M-093-2024')}
+                className="w-8 h-8 md:w-8 md:h-8 border border-zinc-200 flex items-center justify-center hover:border-black transition-colors shrink-0 bg-white"
+              >
+                <ChevronRight size={18} />
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
