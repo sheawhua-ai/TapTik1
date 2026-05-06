@@ -764,16 +764,20 @@ export function FinanceAudit() {
                               ))}
                             </div>
                           ) : (
-                            <div className="flex flex-col items-center justify-center py-6 text-xs text-zinc-500 bg-white border border-dashed border-zinc-300 gap-3">
+                            <div className="text-center py-6 text-xs text-zinc-500 bg-white border border-dashed border-zinc-300 gap-3">
                               <span>暂无待核销的水单记录</span>
-                              <button 
-                                onClick={() => setViewingSlip({ slipId: `manual-${Date.now()}`, orderId: order.orderId, isManual: true })}
-                                className="text-xs font-bold bg-black text-white px-4 py-2 hover:bg-zinc-800 transition-colors cursor-pointer"
-                              >
-                                手动无水单核销
-                              </button>
                             </div>
                           )}
+
+                          <div className="mt-4 flex flex-col items-center justify-center py-4 bg-zinc-50 border border-zinc-200 border-dashed">
+                            <span className="text-xs text-zinc-500 mb-2">或进行差额补缴/线下收款</span>
+                            <button 
+                              onClick={() => setViewingSlip({ slipId: `manual-${Date.now()}`, orderId: order.orderId, isManual: true })}
+                              className="text-xs font-bold bg-black text-white px-6 py-2 hover:bg-zinc-800 transition-colors cursor-pointer"
+                            >
+                              补充其它核销金额
+                            </button>
+                          </div>
                         </div>
                       )}
                     </div>

@@ -121,34 +121,6 @@ export function ManifestOrderManagement() {
   const [pickupPerson, setPickupPerson] = useState('');
   const [pickupContact, setPickupContact] = useState('');
   
-  const handleConfirmDeposit = () => {
-    if (!selectedOrder) return;
-    const now = new Date().toISOString().replace('T', ' ').slice(0, 16);
-    setOrders(orders.map(order => {
-      if (order.id === selectedOrder) {
-        const updatedItems = order.items.map(item => 
-          selectedItems.includes(item.id) ? { ...item, status: 'pending_confirmation', statusLabel: '待确认' } : item
-        );
-        const newProgress = {
-          id: `p-${Date.now()}`,
-          time: now,
-          description: '定金确认',
-          items: `已选 (${selectedItems.length}件)`,
-          amountChange: `+¥${order.depositAmount.toLocaleString()}`
-        };
-        return {
-          ...order,
-          status: 'pending_confirmation',
-          statusLabel: '待确认',
-          items: updatedItems,
-          progress: [...(order.progress || []), newProgress]
-        };
-      }
-      return order;
-    }));
-    setSelectedItems([]);
-  };
-
   const handleConfirmStock = () => {
     if (!selectedOrder) return;
     const now = new Date().toISOString().replace('T', ' ').slice(0, 16);
@@ -221,36 +193,6 @@ export function ManifestOrderManagement() {
           status: allRefund ? 'pending_refund' : (allResolved ? 'pending_final_payment' : 'pending_confirmation'), 
           statusLabel: allRefund ? '待退款' : (allResolved ? '尾款待付' : '部分待确认'), 
           finalAmount: newFinalAmount,
-          items: updatedItems,
-          progress: [...(order.progress || []), newProgress]
-        };
-      }
-      return order;
-    }));
-    setSelectedItems([]);
-  };
-
-  const handleConfirmFinalPayment = () => {
-    if (!selectedOrder) return;
-    const now = new Date().toISOString().replace('T', ' ').slice(0, 16);
-    setOrders(orders.map(order => {
-      if (order.id === selectedOrder) {
-        const updatedItems = order.items.map(item => 
-          item.status === 'confirmed' ? { ...item, status: 'pending_shipment', statusLabel: '待发货' } : item
-        );
-        
-        const newProgress = {
-          id: `p-${Date.now()}`,
-          time: now,
-          description: '尾款支付确认',
-          items: '全部',
-          amountChange: `+¥${order.finalAmount.toLocaleString()}`
-        };
-
-        return { 
-          ...order, 
-          status: 'pending_shipment', 
-          statusLabel: '待发货', 
           items: updatedItems,
           progress: [...(order.progress || []), newProgress]
         };
@@ -822,14 +764,10 @@ export function ManifestOrderManagement() {
             <div className="text-xs text-zinc-500 w-full md:w-auto">已选 {selectedItems.length} 件商品</div>
             <div className="flex flex-col md:flex-row gap-3 w-full md:w-auto">
               {selectedOrderData.status === 'pending_deposit' && (
-                <button 
-                  disabled={selectedItems.length === 0}
-                  onClick={handleConfirmDeposit}
-                  className="w-full md:w-auto bg-black text-white px-6 py-2 text-xs font-bold uppercase tracking-widest hover:bg-zinc-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                >
-                  <CheckCircle size={14} />
-                  确认已付定金
-                </button>
+                <div className="w-full md:w-auto px-6 py-2 text-xs font-bold text-zinc-500 bg-zinc-200 cursor-not-allowed flex items-center justify-center gap-2">
+                  <span className="animate-pulse w-2 h-2 rounded-full bg-zinc-400"></span>
+                  等待财务核销流水定金
+                </div>
               )}
               {selectedOrderData.status === 'pending_confirmation' && (
                 <>
@@ -850,13 +788,10 @@ export function ManifestOrderManagement() {
                 </>
               )}
               {selectedOrderData.status === 'pending_final_payment' && (
-                <button 
-                  onClick={handleConfirmFinalPayment}
-                  className="w-full md:w-auto bg-black text-white px-6 py-2 text-xs font-bold uppercase tracking-widest hover:bg-zinc-800 transition-colors flex items-center justify-center gap-2"
-                >
-                  <CheckCircle size={14} />
-                  确认已付尾款
-                </button>
+                <div className="w-full md:w-auto px-6 py-2 text-xs font-bold text-zinc-500 bg-zinc-200 cursor-not-allowed flex items-center justify-center gap-2">
+                   <span className="animate-pulse w-2 h-2 rounded-full bg-zinc-400"></span>
+                   等待财务核销流水尾款
+                </div>
               )}
               {selectedOrderData.status === 'pending_shipment' && (
                 <button 
