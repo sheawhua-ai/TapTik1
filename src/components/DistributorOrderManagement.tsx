@@ -8,6 +8,7 @@ const INITIAL_ORDERS = [
     buyerName: '周八', buyerPhone: '136****5555', buyerType: 'C端买家', deliveryMethod: '快递发货', warehouse: '香港直邮仓', 
     shippingMode: 'transit', supplierName: '欧洲表行', distributorName: '潮流买手A', shippingAddress: '上海市黄浦区...',
     totalPrice: 65000, totalCostPrice: 60000, status: 'pending_payment', statusLabel: '待付款',
+    paymentType: 'full', paidAmount: 0,
     image: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=100&q=80',
     items: [{ id: 'item-new', name: 'Chanel Classic Flap', sku: 'CH-CF-BLK', supplier: '欧洲表行', count: 1, price: 65000, status: 'pending_payment', statusLabel: '待付款' }],
     progress: [
@@ -19,10 +20,23 @@ const INITIAL_ORDERS = [
     buyerName: '王五', buyerPhone: '138****1234', buyerType: 'C端买家', deliveryMethod: '快递发货', warehouse: '深圳保税仓', 
     shippingMode: 'transit', supplierName: '欧洲表行', distributorName: '轻奢尚品B', shippingAddress: '北京市朝阳区建国路...',
     totalPrice: 285000, totalCostPrice: 260000, status: 'pending_confirmation', statusLabel: '待供货商确认',
+    paymentType: 'full', paidAmount: 285000,
     image: 'https://images.unsplash.com/photo-1523170335258-f5ed11844a49?auto=format&fit=crop&w=100&q=80',
     items: [{ id: 'item-2', name: 'Rolex Daytona', sku: '116500LN', supplier: '欧洲表行', count: 1, price: 285000, status: 'pending_confirmation', statusLabel: '待供货商确认' }],
     progress: [
-      { id: 'p1', time: '2024-08-15 10:30', description: '买家付款成功', items: '全部 (1件)', amountChange: '+¥285,000' }
+      { id: 'p1', time: '2024-08-15 10:30', description: '买家全款付款成功', items: '全部 (1件)', amountChange: '+¥285,000' }
+    ]
+  },
+  {
+    id: 'DIST-2024-0815-A3', type: 'distribution', date: '2024-08-15 11:20', brand: 'Patek Philippe', productName: 'Nautilus 5711', spuCount: 1, itemCount: 1,
+    buyerName: '李总', buyerPhone: '139****9999', buyerType: 'C端买家', deliveryMethod: '快递发货', warehouse: '香港直邮仓', 
+    shippingMode: 'transit', supplierName: '瑞士名表', distributorName: '高端定制D', shippingAddress: '上海市静安区...',
+    totalPrice: 950000, totalCostPrice: 880000, status: 'pending_confirmation', statusLabel: '待供货商确认',
+    paymentType: 'deposit', paidAmount: 150000,
+    image: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=100&q=80',
+    items: [{ id: 'item-3', name: 'Nautilus 5711', sku: 'PP-5711', supplier: '瑞士名表', count: 1, price: 950000, status: 'pending_confirmation', statusLabel: '待供货商确认' }],
+    progress: [
+      { id: 'p1', time: '2024-08-15 11:30', description: '买家支付定金成功', items: '全部 (1件)', amountChange: '+¥150,000' }
     ]
   },
   {
@@ -30,10 +44,11 @@ const INITIAL_ORDERS = [
     buyerName: '林八', buyerPhone: '135****7890', buyerType: 'C端买家', deliveryMethod: '快递发货', warehouse: '深圳保税仓', 
     shippingMode: 'dropship', supplierName: '米兰精品', distributorName: '潮流买手A', shippingAddress: '广州市天河区...',
     totalPrice: 18500, totalCostPrice: 16000, status: 'pending_shipment', statusLabel: '待发货',
+    paymentType: 'full', paidAmount: 18500,
     image: 'https://images.unsplash.com/photo-1584916201218-f4242ceb4809?auto=format&fit=crop&w=100&q=80',
     items: [{ id: 'item-5', name: 'Gucci Marmont', sku: 'G-MM-BLK', supplier: '米兰精品', count: 1, price: 18500, status: 'pending_shipment', statusLabel: '待发货' }],
     progress: [
-      { id: 'p1', time: '2024-08-14 14:30', description: '买家付款成功', items: '全部 (1件)', amountChange: '+¥18,500' },
+      { id: 'p1', time: '2024-08-14 14:30', description: '买家全款付款成功', items: '全部 (1件)', amountChange: '+¥18,500' },
       { id: 'p2', time: '2024-08-14 16:00', description: '供货商确认有货', items: 'Gucci Marmont', amountChange: '-' }
     ]
   },
@@ -42,13 +57,14 @@ const INITIAL_ORDERS = [
     buyerName: '吴九', buyerPhone: '139****1234', buyerType: 'C端买家', deliveryMethod: '快递发货', warehouse: '香港直邮仓', 
     shippingMode: 'transit', supplierName: '欧洲表行', distributorName: '潮流买手A', shippingAddress: '北京市海淀区...',
     totalPrice: 24500, totalCostPrice: 22000, status: 'supplier_shipped', statusLabel: '上游已发货 (待入库)',
+    paymentType: 'full', paidAmount: 24500,
     image: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=100&q=80',
     items: [{ id: 'item-dior', name: 'Dior Saddle', sku: 'D-SDL-BLK', supplier: '欧洲表行', count: 1, price: 24500, status: 'supplier_shipped', statusLabel: '上游已发货 (待入库)' }],
     shipments: [
       { id: 'PKG-UP-001', type: 'upstream', company: 'FedEx国际', trackingNumber: 'FX9988776655', contents: 'Dior Saddle (1件)' }
     ],
     progress: [
-      { id: 'p1', time: '2024-08-14 16:25', description: '买家付款成功', items: '全部 (1件)', amountChange: '+¥24,500' },
+      { id: 'p1', time: '2024-08-14 16:25', description: '买家全款付款成功', items: '全部 (1件)', amountChange: '+¥24,500' },
       { id: 'p2', time: '2024-08-15 09:00', description: '供货商已发货(段一)', items: '全部 (1件)', amountChange: '-' }
     ]
   },
@@ -57,6 +73,7 @@ const INITIAL_ORDERS = [
     buyerName: '赵六', buyerPhone: '139****5678', buyerType: 'C端买家', deliveryMethod: '快递发货', warehouse: '香港直邮仓', 
     shippingMode: 'transit', supplierName: '欧洲表行', distributorName: '时尚优选C', shippingAddress: '上海市浦东新区...',
     totalPrice: 15200, totalCostPrice: 14000, status: 'pending_refund', statusLabel: '待退款',
+    paymentType: 'full', paidAmount: 15200,
     image: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=100&q=80',
     items: [{ id: 'item-6', name: 'Prada Cleo', sku: 'P-CLEO-WHT', supplier: '欧洲表行', count: 1, price: 15200, status: 'pending_refund', statusLabel: '待退款' }],
     progress: [
@@ -69,6 +86,7 @@ const INITIAL_ORDERS = [
     buyerName: '李七', buyerPhone: '137****1111', buyerType: 'C端买家', deliveryMethod: '快递发货', warehouse: '上海中转仓', 
     shippingMode: 'transit', supplierName: '巴黎代购A', distributorName: '轻奢尚品B', shippingAddress: '浙江省杭州市西湖区...',
     totalPrice: 155000, totalCostPrice: 140000, status: 'shipped', statusLabel: '已发货',
+    paymentType: 'full', paidAmount: 155000,
     image: 'https://images.unsplash.com/photo-1584916201218-f4242ceb4809?auto=format&fit=crop&w=100&q=80',
     items: [
       { id: 'item-7', name: 'Hermes Birkin 30', sku: 'H-BK30-BLK', supplier: '巴黎代购A', count: 1, price: 120000, status: 'shipped', statusLabel: '已发货' },
@@ -99,6 +117,11 @@ export function DistributorOrderManagement() {
 
   const [isEditingPrice, setIsEditingPrice] = useState(false);
   const [tempPrice, setTempPrice] = useState('');
+
+  // After-sales state
+  const [isAfterSalesModalOpen, setIsAfterSalesModalOpen] = useState(false);
+  const [afterSalesDecision, setAfterSalesDecision] = useState<'refund' | 'exchange' | 'reject' | null>(null);
+  const [afterSalesReason, setAfterSalesReason] = useState('');
 
   const handleUpdatePrice = () => {
     if (!selectedOrder) return;
@@ -419,7 +442,18 @@ export function DistributorOrderManagement() {
                 </div>
                 <div className="flex justify-between items-center pt-2 border-t border-zinc-200 mt-2">
                   <span className="text-sm font-bold">已付金额</span>
-                  <span className="text-lg font-black">¥ {selectedOrderData.status === 'pending_payment' ? '0.00' : `${selectedOrderData.totalPrice.toLocaleString()}.00`}</span>
+                  <div className="text-right">
+                    <span className="text-lg font-black">
+                      ¥ {selectedOrderData.status === 'pending_payment' 
+                        ? '0.00' 
+                        : (selectedOrderData.paidAmount ? selectedOrderData.paidAmount.toLocaleString() : selectedOrderData.totalPrice.toLocaleString()) + '.00'}
+                    </span>
+                    {selectedOrderData.status !== 'pending_payment' && (
+                      <div className="text-xs text-zinc-500 font-bold">
+                        ({selectedOrderData.paymentType === 'deposit' ? '定金' : '全款'})
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {selectedOrderData.status === 'pending_payment' && (
@@ -707,10 +741,128 @@ export function DistributorOrderManagement() {
                     修改订单金额
                   </button>
                 ) : (
-                  <button className="w-full md:w-auto bg-white border border-zinc-200 text-black px-6 py-2 text-xs font-bold uppercase tracking-widest hover:border-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-                    申请退款
+                  <button 
+                    onClick={() => setIsAfterSalesModalOpen(true)}
+                    className="w-full md:w-auto bg-white border border-zinc-200 text-black px-6 py-2 text-xs font-bold uppercase tracking-widest hover:border-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    售后处理
                   </button>
                 )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* After Sales Modal */}
+      {isAfterSalesModalOpen && selectedOrderData && (
+        <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setIsAfterSalesModalOpen(false)}></div>
+          <div className="relative w-full max-w-lg bg-white shadow-2xl flex flex-col rounded-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-100 bg-zinc-50">
+              <h2 className="text-lg font-black uppercase tracking-tight">售后处理 (销售端)</h2>
+              <button onClick={() => setIsAfterSalesModalOpen(false)} className="text-zinc-400 hover:text-black transition-colors"><X size={20} /></button>
+            </div>
+            
+            <div className="p-6">
+              <div className="bg-orange-50 border border-orange-100 p-4 mb-6">
+                <div className="text-xs font-bold text-orange-800 mb-1">顾客申请售后</div>
+                <div className="text-xs text-orange-700">顾客发起售后申请。系统判定可进行退换货操作。请审核并决定售后类型。</div>
+              </div>
+
+              <div className="mb-6">
+                <label className="block text-xs font-bold text-zinc-500 mb-3">处理决定</label>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  <button 
+                    onClick={() => setAfterSalesDecision('refund')}
+                    className={`border p-3 text-center flex flex-col items-center justify-center gap-2 transition-colors ${afterSalesDecision === 'refund' ? 'border-black border-2 bg-zinc-50' : 'border-zinc-200 hover:border-black'}`}
+                  >
+                    <span className="text-sm font-bold">同意退货退款</span>
+                    <span className="text-[10px] text-zinc-500">顾客寄回, 仓库验货, 中台退款</span>
+                  </button>
+                  <button 
+                    onClick={() => setAfterSalesDecision('exchange')}
+                    className={`border p-3 text-center flex flex-col items-center justify-center gap-2 transition-colors ${afterSalesDecision === 'exchange' ? 'border-black border-2 bg-zinc-50' : 'border-zinc-200 hover:border-black'}`}
+                  >
+                    <span className="text-sm font-bold">同意换货</span>
+                    <span className="text-[10px] text-zinc-500">顾客寄回, 仓库验货并发出新货</span>
+                  </button>
+                  <button 
+                    onClick={() => setAfterSalesDecision('reject')}
+                    className={`border p-3 text-center flex flex-col items-center justify-center gap-2 transition-colors ${afterSalesDecision === 'reject' ? 'border-red-600 border-2 bg-red-50' : 'border-zinc-200 hover:border-red-500'}`}
+                  >
+                    <span className="text-sm font-bold">驳回申请</span>
+                    <span className="text-[10px] text-zinc-500">拒绝此次售后请求</span>
+                  </button>
+                </div>
+              </div>
+
+              {afterSalesDecision === 'reject' && (
+                <div className="mb-6">
+                  <label className="block text-xs font-bold text-red-600 mb-2">驳回原因 (必填)</label>
+                  <textarea 
+                    value={afterSalesReason}
+                    onChange={(e) => setAfterSalesReason(e.target.value)}
+                    placeholder="请输入驳回顾客售后申请的详细原因..."
+                    className="w-full bg-white border border-red-200 px-4 py-3 text-sm text-black focus:border-red-500 outline-none h-24 resize-none"
+                  ></textarea>
+                </div>
+              )}
+
+              {(afterSalesDecision === 'refund' || afterSalesDecision === 'exchange') && (
+                <div className="mb-6">
+                  <label className="block text-xs font-bold text-zinc-500 mb-2">处理备注 (内部可见)</label>
+                  <textarea 
+                    value={afterSalesReason}
+                    onChange={(e) => setAfterSalesReason(e.target.value)}
+                    placeholder="选填备注..."
+                    className="w-full bg-white border border-zinc-200 px-4 py-3 text-sm text-black focus:border-black outline-none h-24 resize-none"
+                  ></textarea>
+                </div>
+              )}
+
+              <div className="flex justify-end gap-3 pt-4 border-t border-zinc-100">
+                <button 
+                  onClick={() => setIsAfterSalesModalOpen(false)}
+                  className="px-6 py-3 text-xs font-bold text-zinc-500 hover:text-black transition-colors"
+                >
+                  取消
+                </button>
+                <button 
+                  disabled={!afterSalesDecision || (afterSalesDecision === 'reject' && !afterSalesReason)}
+                  onClick={() => {
+                    if (!selectedOrderData || !afterSalesDecision) return;
+                    
+                    const actionText = afterSalesDecision === 'refund' ? '同意退货退款' : afterSalesDecision === 'exchange' ? '同意换货' : '驳回售后申请';
+                    const newProgress = {
+                      id: `p${Date.now()}`,
+                      time: new Date().toLocaleString('zh-CN', { hour12: false }),
+                      description: `销售端处理售后: ${actionText}`,
+                      items: '相关商品',
+                      amountChange: '-'
+                    };
+
+                    const updatedOrders = orders.map(o => {
+                      if (o.id === selectedOrderData.id) {
+                        return {
+                          ...o,
+                          status: afterSalesDecision === 'reject' ? o.status : 'refunded', // Simple state update for demo
+                          statusLabel: afterSalesDecision === 'refund' ? '退款中' : afterSalesDecision === 'exchange' ? '换货处理中' : o.statusLabel,
+                          progress: [newProgress, ...(o.progress || [])]
+                        };
+                      }
+                      return o;
+                    });
+
+                    setOrders(updatedOrders);
+                    setIsAfterSalesModalOpen(false);
+                    setAfterSalesDecision(null);
+                    setAfterSalesReason('');
+                  }}
+                  className="bg-black text-white px-8 py-3 text-xs font-bold uppercase tracking-widest hover:bg-zinc-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  确认处理
+                </button>
               </div>
             </div>
           </div>

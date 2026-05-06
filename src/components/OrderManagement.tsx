@@ -109,6 +109,10 @@ export function OrderManagement() {
   const [filterDistributor, setFilterDistributor] = useState<string | null>(null);
   const [filterDelivery, setFilterDelivery] = useState<string | null>(null);
   const [filterWarehouse, setFilterWarehouse] = useState<string | null>(null);
+
+  const [isAfterSalesModalOpen, setIsAfterSalesModalOpen] = useState(false);
+  const [afterSalesDecision, setAfterSalesDecision] = useState<'refund' | 'exchange' | 'reject' | null>(null);
+  const [afterSalesReason, setAfterSalesReason] = useState('');
   
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [isShipModalOpen, setIsShipModalOpen] = useState(false);
@@ -170,7 +174,7 @@ export function OrderManagement() {
       const parts = [];
       if (order.items.some((i: any) => i.status === 'pending_shipment')) parts.push('部分待发货');
       if (order.items.some((i: any) => i.status === 'shipped')) parts.push('部分已发货');
-      if (order.items.some((i: any) => i.status === 'pending_refund')) parts.push('部分待退款');
+      if (order.items.some((i: any) => i.status === 'after_sales')) parts.push('部分待退款');
       
       return parts.join(' / ') || order.statusLabel;
     }
@@ -183,12 +187,12 @@ export function OrderManagement() {
         if (currentTab === 'pending_confirmation') return '部分待确认';
         if (currentTab === 'pending_shipment') return '部分待发货';
         if (currentTab === 'shipped') return '部分已发货';
-        if (currentTab === 'pending_refund') return '部分待退款';
+        if (currentTab === 'after_sales') return '部分待退款';
       } else {
         if (currentTab === 'pending_confirmation') return '待确认';
         if (currentTab === 'pending_shipment') return '待发货';
         if (currentTab === 'shipped') return '已发货';
-        if (currentTab === 'pending_refund') return '待退款';
+        if (currentTab === 'after_sales') return '售后处理';
       }
     }
     
@@ -201,8 +205,8 @@ export function OrderManagement() {
     setOrders(orders.map(order => {
       if (order.id === selectedOrder) {
         const updatedItems = order.items.map(item => {
-          if (selectedItems.includes(item.id) && item.status !== 'pending_refund' && item.status !== 'refunded') {
-            return { ...item, status: 'pending_refund', statusLabel: '待退款' };
+          if (selectedItems.includes(item.id) && item.status !== 'after_sales' && item.status !== 'refunded') {
+            return { ...item, status: 'after_sales', statusLabel: '售后处理' };
           }
           return item;
         });
@@ -210,7 +214,7 @@ export function OrderManagement() {
         const newProgress = {
           id: `p-${Date.now()}`,
           time: now,
-          description: '申请退款',
+          description: '申请售后',
           items: `已选 (${selectedItems.length}件)`,
           amountChange: '-'
         };
@@ -344,7 +348,7 @@ export function OrderManagement() {
       const isPartial = selectedItems.length < order.items.length;
       
       if (isPartial) {
-        const refundedItems = order.items.filter(i => selectedItems.includes(i.id)).map(i => ({ ...i, status: 'refunded', statusLabel: '已退款' }));
+        const refundedItems = order.items.filter(i => selectedItems.includes(i.id)).map(i => ({ ...i, status: 'refunded', statusLabel: '售后已完成' }));
         const remainingItems = order.items.filter(i => !selectedItems.includes(i.id));
         
         const refundedTotal = refundedItems.reduce((sum, i) => sum + i.price * i.count, 0);
@@ -358,9 +362,9 @@ export function OrderManagement() {
           items: refundedItems,
           totalPrice: refundedTotal,
           status: 'closed',
-          statusLabel: '已退款',
+          statusLabel: '售后已完成',
           progress: [
-            { id: `p-${Date.now()}-1`, time: now, description: '子订单生成并已退款', items: `共 ${refundedItems.length} 件`, amountChange: `-¥${refundedTotal.toLocaleString()}` }
+            { id: `p-${Date.now()}-1`, time: now, description: '子订单生成并售后已完成', items: `共 ${refundedItems.length} 件`, amountChange: `-¥${refundedTotal.toLocaleString()}` }
           ]
         };
         
@@ -383,7 +387,7 @@ export function OrderManagement() {
         const updatedItems = order.items.map(item => {
           if (selectedItems.includes(item.id)) {
             refundAmount += item.price * item.count;
-            return { ...item, status: 'refunded', statusLabel: '已退款' };
+            return { ...item, status: 'refunded', statusLabel: '售后已完成' };
           }
           return item;
         });
@@ -399,7 +403,7 @@ export function OrderManagement() {
           items: updatedItems, 
           totalPrice: newTotalPrice,
           status: 'closed',
-          statusLabel: '已退款',
+          statusLabel: '售后已完成',
           progress: [...(order.progress || []), newProgress]
         };
         return newOrders;
@@ -416,7 +420,7 @@ export function OrderManagement() {
     let matchesTab = false;
     if (activeTab === 'all') {
       matchesTab = true;
-    } else if (['pending_confirmation', 'pending_shipment', 'shipped', 'pending_refund'].includes(activeTab)) {
+    } else if (['pending_confirmation', 'pending_shipment', 'shipped', 'after_sales'].includes(activeTab)) {
       matchesTab = order.items.some((item: any) => item.status === activeTab);
     } else {
       matchesTab = order.status === activeTab;
@@ -457,7 +461,7 @@ export function OrderManagement() {
           <button onClick={() => setActiveTab('pending_confirmation')} className={`pb-3 text-xs font-bold transition-colors ${activeTab === 'pending_confirmation' ? 'text-black border-b-2 border-black' : 'text-zinc-500 hover:text-black'}`}>待确认</button>
           <button onClick={() => setActiveTab('pending_shipment')} className={`pb-3 text-xs font-bold transition-colors ${activeTab === 'pending_shipment' ? 'text-black border-b-2 border-black' : 'text-zinc-500 hover:text-black'}`}>待发货</button>
           <button onClick={() => setActiveTab('shipped')} className={`pb-3 text-xs font-bold transition-colors ${activeTab === 'shipped' ? 'text-black border-b-2 border-black' : 'text-zinc-500 hover:text-black'}`}>已发货</button>
-          <button onClick={() => setActiveTab('pending_refund')} className={`pb-3 text-xs font-bold transition-colors ${activeTab === 'pending_refund' ? 'text-black border-b-2 border-black' : 'text-zinc-500 hover:text-black'}`}>待退款</button>
+          <button onClick={() => setActiveTab('after_sales')} className={`pb-3 text-xs font-bold transition-colors ${activeTab === 'after_sales' ? 'text-black border-b-2 border-black' : 'text-zinc-500 hover:text-black'}`}>售后处理</button>
           <button onClick={() => setActiveTab('completed')} className={`pb-3 text-xs font-bold transition-colors ${activeTab === 'completed' ? 'text-black border-b-2 border-black' : 'text-zinc-500 hover:text-black'}`}>已完成</button>
           <button onClick={() => setActiveTab('closed')} className={`pb-3 text-xs font-bold transition-colors ${activeTab === 'closed' ? 'text-black border-b-2 border-black' : 'text-zinc-500 hover:text-black'}`}>已关闭</button>
           <button onClick={() => setActiveTab('downloads')} className={`pb-3 text-xs font-bold transition-colors ml-auto ${activeTab === 'downloads' ? 'text-black border-b-2 border-black' : 'text-zinc-500 hover:text-black'}`}>下载列表</button>
@@ -504,7 +508,7 @@ export function OrderManagement() {
           </div>
         )}
 
-        {activeTab === 'pending_refund' && (
+        {activeTab === 'after_sales' && (
           <div className="flex justify-between items-center bg-zinc-50 border border-zinc-200 p-4 mb-6">
             <div className="text-sm font-bold">批量处理</div>
             <div className="flex gap-3">
@@ -643,7 +647,7 @@ export function OrderManagement() {
                       getOrderOverallStatusLabel(order, activeTab).includes('部分') ? 'bg-yellow-100 text-yellow-800' :
                       order.items.every((i: any) => i.status === 'pending_confirmation') ? 'bg-orange-100 text-orange-800' :
                       order.items.every((i: any) => i.status === 'pending_shipment') ? 'bg-black text-white' :
-                      order.items.every((i: any) => i.status === 'pending_refund') ? 'bg-red-100 text-red-800' :
+                      order.items.every((i: any) => i.status === 'after_sales') ? 'bg-red-100 text-red-800' :
                       order.status === 'pending_payment' ? 'bg-red-100 text-red-800' :
                       'bg-zinc-100 text-zinc-800'
                     }`}>
@@ -760,7 +764,7 @@ export function OrderManagement() {
                     getOrderOverallStatusLabel(selectedOrderData, activeTab).includes('部分') ? 'bg-yellow-100 text-yellow-800' :
                     selectedOrderData.items.every((i: any) => i.status === 'pending_confirmation') ? 'bg-orange-100 text-orange-800' :
                     selectedOrderData.items.every((i: any) => i.status === 'pending_shipment') ? 'bg-black text-white' :
-                    selectedOrderData.items.every((i: any) => i.status === 'pending_refund') ? 'bg-red-100 text-red-800' :
+                    selectedOrderData.items.every((i: any) => i.status === 'after_sales') ? 'bg-red-100 text-red-800' :
                     selectedOrderData.status === 'pending_payment' ? 'bg-red-100 text-red-800' :
                     'bg-zinc-100 text-zinc-800'
                   }`}>{getOrderOverallStatusLabel(selectedOrderData, activeTab)}</span>
@@ -1084,17 +1088,16 @@ export function OrderManagement() {
                 const showConfirmStockBtn = activeTab === 'pending_confirmation' || (activeTab === 'all' && selectedOrderData.items.some((i: any) => i.status === 'pending_confirmation'));
                 const canConfirmStock = selectedItems.length > 0 && selectedItemsData.every((i: any) => i.status === 'pending_confirmation');
 
-                const showProcessRefundBtn = activeTab === 'pending_refund' || (activeTab === 'all' && selectedOrderData.items.some((i: any) => i.status === 'pending_refund'));
-                const canProcessRefund = selectedItems.length > 0 && selectedItemsData.every((i: any) => i.status === 'pending_refund');
+                const showProcessRefundBtn = activeTab === 'after_sales' || (activeTab === 'all' && selectedOrderData.items.some((i: any) => i.status === 'after_sales'));
+                const canProcessRefund = selectedItems.length > 0 && selectedItemsData.every((i: any) => i.status === 'after_sales');
 
                 const showRefundBtn = ['pending_shipment', 'shipped', 'completed'].includes(activeTab) || 
                                       (activeTab === 'all' && selectedOrderData.items.some((i: any) => ['pending_shipment', 'shipped', 'completed'].includes(i.status)));
                 const canRefund = selectedItems.length > 0 && selectedItemsData.every((i: any) => ['pending_shipment', 'shipped', 'completed'].includes(i.status));
                 
-                let refundLabel = '同意退款';
+                let refundLabel = '申请售后';
 
                 const showLogisticsBtn = activeTab === 'shipped' || (activeTab === 'all' && selectedOrderData.items.some((i: any) => i.status === 'shipped'));
-                const showAfterSalesBtn = activeTab === 'completed' || (activeTab === 'all' && selectedOrderData.items.some((i: any) => i.status === 'completed'));
 
                 return (
                   <>
@@ -1138,11 +1141,11 @@ export function OrderManagement() {
 
                     {showProcessRefundBtn && (
                       <button 
-                        onClick={handleProcessRefund} 
+                        onClick={() => setIsAfterSalesModalOpen(true)} 
                         disabled={!canProcessRefund} 
                         className="bg-black text-white px-6 py-3 text-xs font-bold hover:bg-zinc-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        确认退款
+                        售后审批
                       </button>
                     )}
 
@@ -1164,15 +1167,6 @@ export function OrderManagement() {
                       >
                         <Truck size={14} />
                         查看物流
-                      </button>
-                    )}
-
-                    {showAfterSalesBtn && (
-                      <button 
-                        disabled={selectedItems.length === 0} 
-                        className="bg-white border border-zinc-200 text-black px-6 py-3 text-xs font-bold hover:border-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        售后处理
                       </button>
                     )}
                   </>
@@ -1231,6 +1225,127 @@ export function OrderManagement() {
                   className="bg-black text-white px-6 py-2 text-sm font-bold hover:bg-zinc-800 transition-colors disabled:opacity-50"
                 >
                   确认发货
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* After Sales Modal */}
+      {isAfterSalesModalOpen && selectedOrderData && (
+        <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setIsAfterSalesModalOpen(false)}></div>
+          <div className="relative w-full max-w-lg bg-white shadow-2xl flex flex-col rounded-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-100 bg-zinc-50">
+              <h2 className="text-lg font-black uppercase tracking-tight">售后审批 (销售审核)</h2>
+              <button onClick={() => setIsAfterSalesModalOpen(false)} className="text-zinc-400 hover:text-black transition-colors"><X size={20} /></button>
+            </div>
+            
+            <div className="p-6">
+              <div className="bg-orange-50 border border-orange-100 p-4 mb-6">
+                <div className="text-xs font-bold text-orange-800 mb-1">售后流程第一环：销售审核</div>
+                <div className="text-xs text-orange-700">顾客发起售后申请。系统判定可进行退换货操作。请审批决定退款、换货或驳回。通过后将进入【仓库验货】环节。</div>
+              </div>
+
+              <div className="mb-6">
+                <label className="block text-xs font-bold text-zinc-500 mb-3">审核处理</label>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  <button 
+                    onClick={() => setAfterSalesDecision('refund')}
+                    className={`border p-3 text-center flex flex-col items-center justify-center gap-2 transition-colors ${afterSalesDecision === 'refund' ? 'border-black border-2 bg-zinc-50' : 'border-zinc-200 hover:border-black'}`}
+                  >
+                    <span className="text-sm font-bold">同意退货转退款</span>
+                    <span className="text-[10px] text-zinc-500">顾客寄回, 仓库验货, 中台执行退款</span>
+                  </button>
+                  <button 
+                    onClick={() => setAfterSalesDecision('exchange')}
+                    className={`border p-3 text-center flex flex-col items-center justify-center gap-2 transition-colors ${afterSalesDecision === 'exchange' ? 'border-black border-2 bg-zinc-50' : 'border-zinc-200 hover:border-black'}`}
+                  >
+                    <span className="text-sm font-bold">同意退货转换货</span>
+                    <span className="text-[10px] text-zinc-500">顾客寄回, 仓库验货并发出新货</span>
+                  </button>
+                  <button 
+                    onClick={() => setAfterSalesDecision('reject')}
+                    className={`border p-3 text-center flex flex-col items-center justify-center gap-2 transition-colors ${afterSalesDecision === 'reject' ? 'border-red-600 border-2 bg-red-50' : 'border-zinc-200 hover:border-red-500'}`}
+                  >
+                    <span className="text-sm font-bold">直接驳回申请</span>
+                    <span className="text-[10px] text-zinc-500">终止流程，拒绝客户该次售后请求</span>
+                  </button>
+                </div>
+              </div>
+
+              {afterSalesDecision === 'reject' && (
+                <div className="mb-6">
+                  <label className="block text-xs font-bold text-red-600 mb-2">驳回原因 (必填)</label>
+                  <textarea 
+                    value={afterSalesReason}
+                    onChange={(e) => setAfterSalesReason(e.target.value)}
+                    placeholder="请输入驳回售后申请的具体原因，将展示给终端顾客..."
+                    className="w-full bg-white border border-red-200 px-4 py-3 text-sm text-black focus:border-red-500 outline-none h-24 resize-none"
+                  ></textarea>
+                </div>
+              )}
+
+              {(afterSalesDecision === 'refund' || afterSalesDecision === 'exchange') && (
+                <div className="mb-6">
+                  <label className="block text-xs font-bold text-zinc-500 mb-2">审批备注 (选填，仅内网可见)</label>
+                  <textarea 
+                    value={afterSalesReason}
+                    onChange={(e) => setAfterSalesReason(e.target.value)}
+                    placeholder="录入审批意见..."
+                    className="w-full bg-white border border-zinc-200 px-4 py-3 text-sm text-black focus:border-black outline-none h-24 resize-none"
+                  ></textarea>
+                </div>
+              )}
+
+              <div className="flex justify-end gap-3 pt-4 border-t border-zinc-100">
+                <button 
+                  onClick={() => setIsAfterSalesModalOpen(false)}
+                  className="px-6 py-3 text-xs font-bold text-zinc-500 hover:text-black transition-colors"
+                >
+                  取消
+                </button>
+                <button 
+                  disabled={!afterSalesDecision || (afterSalesDecision === 'reject' && !afterSalesReason)}
+                  onClick={() => {
+                    const now = new Date().toISOString().replace('T', ' ').slice(0, 16);
+                    setOrders(prevOrders => {
+                      const orderIndex = prevOrders.findIndex(o => o.id === selectedOrderData.id);
+                      if (orderIndex === -1) return prevOrders;
+                      const order = prevOrders[orderIndex];
+
+                      const actionText = afterSalesDecision === 'refund' ? '同意退货转退款' : afterSalesDecision === 'exchange' ? '同意退货转换货' : '驳回申请';
+                      const newProgress = { id: `p-${Date.now()}`, time: now, description: `销售审核完毕: ${actionText}`, items: `已选 (${selectedItems.length}件)`, amountChange: '-' };
+
+                      const updatedItems = order.items.map(item => {
+                        if (selectedItems.includes(item.id)) {
+                          // In a real app we'd map to 'warehouse_inspect', 'refunded' etc based on the action,
+                          // For demo, we just mark as closed indicating the flow moved forward
+                          return { ...item, status: 'closed', statusLabel: afterSalesDecision === 'reject' ? '售后已驳回' : (afterSalesDecision === 'refund' ? '待退款 (中台操作)' : '待发换货 (操作)') };
+                        }
+                        return item;
+                      });
+
+                      const newOrders = [...prevOrders];
+                      newOrders[orderIndex] = {
+                        ...order,
+                        items: updatedItems,
+                        status: updatedItems.every(i => i.status === 'closed') ? 'closed' : order.status,
+                        statusLabel: afterSalesDecision === 'reject' ? '已驳回' : '进入售后处理环节中',
+                        progress: [...(order.progress || []), newProgress]
+                      };
+                      return newOrders;
+                    });
+                    setIsAfterSalesModalOpen(false);
+                    setAfterSalesDecision(null);
+                    setAfterSalesReason('');
+                    setSelectedItems([]);
+                    setSelectedOrder(null);
+                  }}
+                  className="bg-black text-white px-8 py-3 text-xs font-bold uppercase tracking-widest hover:bg-zinc-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  确认审批执行
                 </button>
               </div>
             </div>

@@ -130,7 +130,7 @@ export function FinanceAudit() {
   
   const [ordersData, setOrdersData] = useState(MOCK_ORDERS);
   const [inputAmounts, setInputAmounts] = useState<Record<string, string>>({});
-  const [viewingSlip, setViewingSlip] = useState<{url: string, slipId: string, orderId: string} | null>(null);
+  const [viewingSlip, setViewingSlip] = useState<{url?: string, slipId: string, orderId: string, isManual?: boolean} | null>(null);
   
   // Date Range State
   const [dateRange, setDateRange] = useState<{start: string | null, end: string | null}>({ start: "2024-05-01", end: "2024-05-05" });
@@ -764,8 +764,14 @@ export function FinanceAudit() {
                               ))}
                             </div>
                           ) : (
-                            <div className="text-center py-6 text-xs text-zinc-500 bg-white border border-dashed border-zinc-300">
-                              暂无待核销的水单记录
+                            <div className="flex flex-col items-center justify-center py-6 text-xs text-zinc-500 bg-white border border-dashed border-zinc-300 gap-3">
+                              <span>暂无待核销的水单记录</span>
+                              <button 
+                                onClick={() => setViewingSlip({ slipId: `manual-${Date.now()}`, orderId: order.orderId, isManual: true })}
+                                className="text-xs font-bold bg-black text-white px-4 py-2 hover:bg-zinc-800 transition-colors cursor-pointer"
+                              >
+                                手动无水单核销
+                              </button>
                             </div>
                           )}
                         </div>
@@ -796,8 +802,15 @@ export function FinanceAudit() {
             
             <div className="flex flex-col md:flex-row h-[600px]">
               {/* Image Preview */}
-              <div className="flex-1 bg-zinc-100 p-6 flex items-center justify-center overflow-hidden">
-                <img src={viewingSlip.url} alt="Bank Slip" className="max-w-full max-h-full object-contain shadow-md" />
+              <div className="flex-1 bg-zinc-100 p-6 flex flex-col items-center justify-center overflow-hidden">
+                {viewingSlip.url ? (
+                  <img src={viewingSlip.url} alt="Bank Slip" className="max-w-full max-h-full object-contain shadow-md" />
+                ) : (
+                  <div className="text-zinc-400 flex flex-col items-center justify-center gap-4">
+                    <ImageIcon size={48} className="opacity-20" />
+                    <span className="text-sm font-bold">顾客暂未上传水单图片截图</span>
+                  </div>
+                )}
               </div>
               
               {/* Action Panel */}
