@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Plus, X, AlertCircle, ChevronDown, Search } from "lucide-react";
+import { Plus, X, AlertCircle, ChevronDown, Search, ChevronRight } from "lucide-react";
 import { MultiSelectDropdown } from "./MultiSelectDropdown";
 import { CategoryMultiSelectDropdown } from "./CategoryMultiSelectDropdown";
 import { CATEGORY_HIERARCHY, ALL_BRANDS } from "../lib/constants";
@@ -12,7 +12,11 @@ export function MarkupStrategy() {
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [priceTailRule, setPriceTailRule] = useState('none');
-  const [isSelfOperatedPriority, setIsSelfOperatedPriority] = useState(true);
+  
+  // Follow merchant preferences
+  const [followMerchant1, setFollowMerchant1] = useState('m1');
+  const [followMerchant2, setFollowMerchant2] = useState('');
+  const [followMerchant3, setFollowMerchant3] = useState('');
 
   const markupValue = Number(markupRate) || 0;
   const isSaveDisabled = !strategyName || !markupRate;
@@ -50,6 +54,88 @@ export function MarkupStrategy() {
           <Plus size={16} />
           新增策略
         </button>
+      </div>
+
+      <div className="bg-white border border-zinc-200 shadow-sm p-6 mb-6">
+        <h2 className="text-sm font-black uppercase tracking-widest mb-4">全局定价优先级与跟随商家策略</h2>
+        <div className="flex flex-col md:flex-row gap-4 md:gap-6 mb-6">
+          <div className="flex-1 bg-zinc-50 border border-zinc-200 p-4">
+            <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-2">优先级 1</div>
+            <div className="text-sm font-bold">单品特例价格</div>
+            <div className="text-[10px] text-zinc-500 mt-1">在「我的选品」中为特定SPU设置的固定展现价。</div>
+          </div>
+          <div className="hidden md:flex items-center text-zinc-300">
+            <ChevronRight size={20} />
+          </div>
+          <div className="flex-1 bg-zinc-50 border border-zinc-200 p-4 border-l-4 border-l-black">
+            <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-2">优先级 2</div>
+            <div className="text-sm font-bold">跟随指定商家零售价</div>
+            <div className="text-[10px] text-zinc-500 mt-1">若配置了跟随商家，将优先读取该商家的指导零售价。</div>
+          </div>
+          <div className="hidden md:flex items-center text-zinc-300">
+            <ChevronRight size={20} />
+          </div>
+          <div className="flex-1 bg-zinc-50 border border-zinc-200 p-4">
+            <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-2">优先级 3</div>
+            <div className="text-sm font-bold">加价策略计算</div>
+            <div className="text-[10px] text-zinc-500 mt-1">若前置策略均未命中，按下方配置的顺加策略与尾数计算。</div>
+          </div>
+        </div>
+
+        <div className="border-t border-zinc-100 pt-6">
+          <h3 className="text-xs font-bold mb-3">配置跟随商家顺序 (优先级递减)</h3>
+          <div className="flex flex-col md:flex-row gap-3 md:gap-4 items-center">
+            <div className="flex items-center gap-2 w-full md:w-auto">
+              <span className="text-[10px] font-bold text-zinc-500 w-3">1.</span>
+              <select 
+                value={followMerchant1}
+                onChange={e => setFollowMerchant1(e.target.value)}
+                className="border border-zinc-200 px-3 py-2 text-sm focus:border-black focus:ring-0 outline-none w-full md:w-48 bg-white"
+              >
+                <option value="">未选择 (跳过)</option>
+                {merchants.map(m => (
+                  <option key={m.value} value={m.value}>{m.label}</option>
+                ))}
+              </select>
+            </div>
+            <span className="text-zinc-300 hidden md:inline"><ChevronRight size={16} /></span>
+            <div className="flex items-center gap-2 w-full md:w-auto">
+              <span className="text-[10px] font-bold text-zinc-500 w-3">2.</span>
+              <select 
+                value={followMerchant2}
+                onChange={e => setFollowMerchant2(e.target.value)}
+                className="border border-zinc-200 px-3 py-2 text-sm focus:border-black focus:ring-0 outline-none w-full md:w-48 bg-white"
+              >
+                <option value="">未选择 (跳过)</option>
+                {merchants.map(m => (
+                  <option key={m.value} value={m.value}>{m.label}</option>
+                ))}
+              </select>
+            </div>
+            <span className="text-zinc-300 hidden md:inline"><ChevronRight size={16} /></span>
+            <div className="flex items-center gap-2 w-full md:w-auto">
+              <span className="text-[10px] font-bold text-zinc-500 w-3">3.</span>
+              <select 
+                value={followMerchant3}
+                onChange={e => setFollowMerchant3(e.target.value)}
+                className="border border-zinc-200 px-3 py-2 text-sm focus:border-black focus:ring-0 outline-none w-full md:w-48 bg-white"
+              >
+                <option value="">未选择 (跳过)</option>
+                {merchants.map(m => (
+                  <option key={m.value} value={m.value}>{m.label}</option>
+                ))}
+              </select>
+            </div>
+            <div className="flex-1 hidden md:block">
+              <button className="bg-black text-white px-4 py-2 text-xs font-bold hover:bg-zinc-800 transition-colors h-[38px] w-full md:w-auto">保存排序</button>
+            </div>
+          </div>
+          <button className="md:hidden mt-4 bg-black text-white px-4 py-2 text-xs font-bold hover:bg-zinc-800 transition-colors w-full">保存排序</button>
+          
+          <div className="text-[10px] text-zinc-500 mt-4 leading-relaxed bg-zinc-50 p-3">
+            <span className="font-bold">计价逻辑说明：</span> 在前端展现商品价格时，系统将依序检查上述选择的商家是否在同一SKU上提供了<span className="text-black font-bold">「零售指导价」</span>。如果优先级1的商家有配置零售价，则直接采用该金额作为分销最终价；否则继续检查优先级2，依此类推。若选择的商家均无零售价，则进入优先级3，使用下方的加价规则和尾数策略进行计算。
+          </div>
+        </div>
       </div>
 
       <div className="bg-white border border-zinc-200 shadow-sm">
