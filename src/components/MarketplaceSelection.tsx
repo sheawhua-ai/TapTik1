@@ -28,14 +28,22 @@ export function MarketplaceSelection() {
   const [markupRate, setMarkupRate] = useState('');
   const [selectedStrategyBrands, setSelectedStrategyBrands] = useState<string[]>([]);
   const [selectedStrategyCategories, setSelectedStrategyCategories] = useState<string[]>([]);
+  const [strategyPriceTailRule, setStrategyPriceTailRule] = useState('none');
   
   const markupValue = Number(markupRate) || 0;
   const isSaveDisabled = !strategyName || !markupRate;
 
   const supplyPrice = 100;
-  const sellingPrice = markupValue ? (supplyPrice * (1 + markupValue / 100)).toFixed(2) : '0.00';
+  let calculatedSellingPrice = supplyPrice * (1 + markupValue / 100);
+  if (strategyPriceTailRule === '9') {
+    calculatedSellingPrice = Math.floor(calculatedSellingPrice / 10) * 10 + 9;
+  } else if (strategyPriceTailRule === '99') {
+    calculatedSellingPrice = Math.floor(calculatedSellingPrice / 100) * 100 + 99;
+  }
+  
+  const sellingPrice = markupValue ? calculatedSellingPrice.toFixed(2) : '0.00';
   const profit = markupValue ? (Number(sellingPrice) - supplyPrice).toFixed(2) : '0.00';
-  const calculatedGrossMargin = markupValue ? ((markupValue / (100 + markupValue)) * 100).toFixed(2) : '0.00';
+  const calculatedGrossMargin = markupValue && Number(sellingPrice) > 0 ? ((Number(profit) / Number(sellingPrice)) * 100).toFixed(2) : '0.00';
 
   return (
     <div className="max-w-7xl mx-auto">
@@ -400,17 +408,24 @@ export function MarketplaceSelection() {
                     return c;
                   }).join(', ') : '全部分类'}</span>
                 </div>
-                <div className="text-[10px] text-zinc-400 mt-2">您可以在下方手动修改适用的品牌和分类</div>
+                <div className="text-[10px] text-zinc-400 mt-2">您可以在下方手动修改适用范围</div>
+              </div>
+
+              <div className="grid grid-cols-1 gap-4">
+                <MultiSelectDropdown 
+                  label="适用商家 (留空则适用全部)" 
+                  options={[
+                    { value: 'm1', label: 'Global Luxury Hub' },
+                    { value: 'm2', label: 'Euro Boutique' },
+                    { value: 'm3', label: 'Tokyo Select' }
+                  ]} 
+                  selected={[]} 
+                  onChange={() => {}} 
+                  placeholder="全部商家" 
+                />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <MultiSelectDropdown 
-                  label="适用品牌 (可选)" 
-                  options={ALL_BRANDS} 
-                  selected={selectedStrategyBrands} 
-                  onChange={setSelectedStrategyBrands} 
-                  placeholder="全部品牌" 
-                />
                 <CategoryMultiSelectDropdown 
                   label="适用分类 (可选)" 
                   options={CATEGORY_HIERARCHY} 
@@ -418,26 +433,55 @@ export function MarketplaceSelection() {
                   onChange={setSelectedStrategyCategories} 
                   placeholder="选择分类" 
                 />
+                <MultiSelectDropdown 
+                  label="适用品牌 (可选)" 
+                  options={ALL_BRANDS} 
+                  selected={selectedStrategyBrands} 
+                  onChange={setSelectedStrategyBrands} 
+                  placeholder="全部品牌" 
+                />
               </div>
 
               <div className="border-t border-zinc-100 pt-6">
-                <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-2">顺加加价率 (%)</label>
-                <div className="flex items-center gap-2 mb-3">
-                  <input 
-                    type="number" 
-                    placeholder="例如: 25" 
-                    value={markupRate}
-                    onChange={(e) => setMarkupRate(e.target.value)}
-                    className="w-full md:w-32 border border-zinc-200 px-3 py-2 text-sm focus:border-black focus:ring-0 outline-none" 
-                  />
-                  <span className="text-sm font-bold">%</span>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+                  <div>
+                    <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-2">顺加加价率 (%)</label>
+                    <div className="flex items-center gap-2">
+                      <input 
+                        type="number" 
+                        placeholder="例如: 25" 
+                        value={markupRate}
+                        onChange={(e) => setMarkupRate(e.target.value)}
+                        className="w-full border border-zinc-200 px-3 py-2 text-sm focus:border-black focus:ring-0 outline-none" 
+                      />
+                      <span className="text-sm font-bold">%</span>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-2">展现价尾数规则</label>
+                    <div className="relative">
+                      <select 
+                        value={strategyPriceTailRule}
+                        onChange={(e) => setStrategyPriceTailRule(e.target.value)}
+                        className="w-full border border-zinc-200 px-3 py-2 text-sm focus:border-black focus:ring-0 outline-none appearance-none bg-white"
+                      >
+                        <option value="none">不处理 (精确到分)</option>
+                        <option value="9">固定以 9 结尾</option>
+                        <option value="99">固定以 99 结尾</option>
+                      </select>
+                      <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none" />
+                    </div>
+                  </div>
                 </div>
                 
                 {markupRate && (
                   <div className="bg-zinc-50 p-4 border border-zinc-200 text-xs md:text-sm">
                     <div className="text-zinc-500 mb-2">示例: 假设集市供货价为 ¥100</div>
                     <div className="font-mono mb-1">
-                      分销零售价 = 供货价 × (1 + 顺加加价率) = <span className="font-bold text-black">¥{sellingPrice}</span>
+                      分销零售价计算 = ¥100 × (1 + {markupRate}%) = ¥{(100 * (1 + markupValue / 100)).toFixed(2)}
+                    </div>
+                    <div className="font-mono mb-1 mt-2">
+                      最终展现价 = <span className="font-bold text-black">¥{sellingPrice}</span> <span className="text-[10px] text-zinc-400 ml-1">(不考虑尾数规则情况)</span>
                     </div>
                     <div className="font-mono mb-1">
                       预计利润 = 分销零售价 - 供货价 = <span className="font-bold text-emerald-600">¥{profit}</span>

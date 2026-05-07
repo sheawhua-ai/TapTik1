@@ -139,7 +139,7 @@ export function ProductManagement() {
 
       <div className="bg-white border border-zinc-200 shadow-sm">
         <div className="hidden md:grid grid-cols-12 gap-4 px-6 py-4 border-b border-zinc-200 bg-zinc-50 text-[10px] font-bold text-zinc-500 uppercase tracking-widest items-center">
-          <div className="col-span-4 flex items-center gap-2">
+          <div className="col-span-3 flex items-center gap-2">
             <input 
               type="checkbox" 
               className="accent-black w-4 h-4 mr-2" 
@@ -157,9 +157,10 @@ export function ProductManagement() {
           </div>
           <div className="col-span-1 text-right">品牌原价</div>
           <div className="col-span-2 text-center">规格与仓库</div>
-          <div className="col-span-1 text-center">当前库存</div>
           <div className="col-span-1 text-right">零售价</div>
-          <div className="col-span-1 text-right">批发供货价</div>
+          <div className="col-span-1 text-center">零售库存</div>
+          <div className="col-span-1 text-right">批发价</div>
+          <div className="col-span-1 text-center">批发库存</div>
           <div className="col-span-2 text-center">操作</div>
         </div>
 
@@ -168,7 +169,7 @@ export function ProductManagement() {
             {/* Row 1 */}
             <div className="border-b border-zinc-200 group">
               <div className="grid grid-cols-1 md:grid-cols-12 gap-4 px-4 md:px-6 py-4 md:py-6 items-start md:items-center hover:bg-zinc-50 transition-colors">
-                <div className="md:col-span-4 flex items-start md:items-center gap-4">
+                <div className="md:col-span-3 flex items-start md:items-center gap-4">
                   <div className="w-20 h-20 md:w-16 md:h-16 shrink-0 bg-zinc-100 flex items-center justify-center p-2">
                     <img src="https://images.unsplash.com/photo-1523170335258-f5ed11844a49?auto=format&fit=crop&w=200&q=80" alt="Rolex" className="w-full h-full object-contain mix-blend-multiply grayscale group-hover:grayscale-0 transition-all" />
                   </div>
@@ -189,8 +190,20 @@ export function ProductManagement() {
                     <span className="text-sm font-bold text-zinc-400">¥85,000</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-xs text-zinc-500">库存</span>
+                    <span className="text-xs text-zinc-500">零售价</span>
+                    <span className="text-sm font-bold text-zinc-300">—</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-zinc-500">零售库存</span>
                     <span className="font-black text-lg">15</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-zinc-500">批发价</span>
+                    <span className="text-sm font-bold text-zinc-300">—</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-zinc-500">批发库存</span>
+                    <span className="font-black text-lg text-blue-600">10</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-xs text-zinc-500">规格/仓库</span>
@@ -206,11 +219,14 @@ export function ProductManagement() {
                   <div className="text-xs font-bold">40mm, 41mm</div>
                   <div className="text-[10px] text-zinc-500">香港直邮仓, 伦敦海外仓</div>
                 </div>
+                <div className="hidden md:block col-span-1 text-right text-sm font-bold text-zinc-300">—</div>
                 <div className="hidden md:block col-span-1 text-center font-black text-lg">
                   15
                 </div>
                 <div className="hidden md:block col-span-1 text-right text-sm font-bold text-zinc-300">—</div>
-                <div className="hidden md:block col-span-1 text-right text-sm font-bold text-zinc-300">—</div>
+                <div className="hidden md:block col-span-1 text-center font-black text-lg text-blue-600">
+                  10
+                </div>
                 
                 <div className="mt-2 md:mt-0 md:col-span-2 flex justify-end md:justify-center items-center gap-3 pt-4 md:pt-0 border-t border-zinc-100 md:border-none w-full md:w-auto">
                   <button className="flex-1 md:flex-none text-xs font-bold text-zinc-600 hover:text-black transition-colors px-4 py-2 border border-zinc-200 md:border-none md:p-0 bg-white md:bg-transparent" onClick={() => setEditingSpu('rolex')}>编辑</button>
@@ -222,7 +238,7 @@ export function ProductManagement() {
             {/* Row 2 */}
             <div className="border-b border-zinc-200 group">
               <div className="grid grid-cols-1 md:grid-cols-12 gap-4 px-4 md:px-6 py-4 md:py-6 items-start md:items-center hover:bg-zinc-50 transition-colors">
-                <div className="md:col-span-4 flex items-start md:items-center gap-4">
+                <div className="md:col-span-3 flex items-start md:items-center gap-4">
                   <div className="w-20 h-20 md:w-16 md:h-16 shrink-0 bg-zinc-100 flex items-center justify-center p-2">
                     <img src="https://images.unsplash.com/photo-1603252109303-2751441dd157?auto=format&fit=crop&w=200&q=80" alt="Burberry" className="w-full h-full object-contain mix-blend-multiply grayscale group-hover:grayscale-0 transition-all" />
                   </div>
@@ -243,8 +259,20 @@ export function ProductManagement() {
                     <span className="text-sm font-bold text-zinc-400">¥5,900</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-xs text-zinc-500">库存</span>
+                    <span className="text-xs text-zinc-500">零售价</span>
+                    <span className="text-sm font-bold text-zinc-300">—</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-zinc-500">零售库存</span>
                     <span className="font-black text-lg">137</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-zinc-500">批发价</span>
+                    <span className="text-sm font-bold text-zinc-300">—</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-zinc-500">批发库存</span>
+                    <span className="font-black text-lg text-blue-600">85</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-xs text-zinc-500">规格/仓库</span>
@@ -260,11 +288,14 @@ export function ProductManagement() {
                   <div className="text-xs font-bold">S码, M码, L码</div>
                   <div className="text-[10px] text-zinc-500">深圳保税仓, 杭州国内仓</div>
                 </div>
+                <div className="hidden md:block col-span-1 text-right text-sm font-bold text-zinc-300">—</div>
                 <div className="hidden md:block col-span-1 text-center font-black text-lg">
                   137
                 </div>
                 <div className="hidden md:block col-span-1 text-right text-sm font-bold text-zinc-300">—</div>
-                <div className="hidden md:block col-span-1 text-right text-sm font-bold text-zinc-300">—</div>
+                <div className="hidden md:block col-span-1 text-center font-black text-lg text-blue-600">
+                  85
+                </div>
                 
                 <div className="mt-2 md:mt-0 md:col-span-2 flex justify-end md:justify-center items-center gap-3 pt-4 md:pt-0 border-t border-zinc-100 md:border-none w-full md:w-auto">
                   <button className="flex-1 md:flex-none text-xs font-bold text-zinc-600 hover:text-black transition-colors px-4 py-2 border border-zinc-200 md:border-none md:p-0 bg-white md:bg-transparent" onClick={() => setEditingSpu('burberry')}>编辑</button>
@@ -278,7 +309,7 @@ export function ProductManagement() {
         {activeListTab === 'in_warehouse' && (
           <div className="border-b border-zinc-200 group">
             <div className="grid grid-cols-1 md:grid-cols-12 gap-4 px-4 md:px-6 py-4 md:py-6 items-start md:items-center hover:bg-zinc-50 transition-colors">
-              <div className="md:col-span-4 flex items-start md:items-center gap-4">
+              <div className="md:col-span-3 flex items-start md:items-center gap-4">
                 <input 
                   type="checkbox" 
                   className="accent-black w-4 h-4 mt-2 md:mt-0 shrink-0" 
@@ -307,8 +338,20 @@ export function ProductManagement() {
                   <span className="text-sm font-bold text-zinc-400">¥13,500</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-xs text-zinc-500">库存</span>
+                  <span className="text-xs text-zinc-500">零售价</span>
+                  <span className="text-sm font-bold text-zinc-300">—</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-xs text-zinc-500">零售库存</span>
                   <span className="font-black text-lg">24</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-xs text-zinc-500">批发价</span>
+                  <span className="text-sm font-bold text-zinc-300">—</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-xs text-zinc-500">批发库存</span>
+                  <span className="font-black text-lg text-blue-600">12</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-xs text-zinc-500">规格/仓库</span>
@@ -324,11 +367,14 @@ export function ProductManagement() {
                 <div className="text-xs font-bold">均码</div>
                 <div className="text-[10px] text-zinc-500">香港直邮仓</div>
               </div>
+              <div className="hidden md:block col-span-1 text-right text-sm font-bold text-zinc-300">—</div>
               <div className="hidden md:block col-span-1 text-center font-black text-lg">
                 24
               </div>
               <div className="hidden md:block col-span-1 text-right text-sm font-bold text-zinc-300">—</div>
-              <div className="hidden md:block col-span-1 text-right text-sm font-bold text-zinc-300">—</div>
+              <div className="hidden md:block col-span-1 text-center font-black text-lg text-blue-600">
+                12
+              </div>
               <div className="mt-2 md:mt-0 md:col-span-2 flex justify-end md:justify-center items-center gap-3 pt-4 md:pt-0 border-t border-zinc-100 md:border-none w-full md:w-auto ml-8 md:ml-0">
                 <button className="flex-1 md:flex-none text-xs font-bold text-blue-600 hover:text-blue-800 transition-colors px-4 py-2 border border-blue-200 bg-blue-50 md:bg-transparent md:border-none md:p-0" onClick={() => setIsBatchApplyModalOpen(true)}>申请映射</button>
                 <button className="flex-1 md:flex-none text-xs font-bold text-red-600 hover:text-red-700 transition-colors px-4 py-2 border border-red-100 bg-red-50 md:bg-transparent md:border-none md:p-0">删除</button>
@@ -340,7 +386,7 @@ export function ProductManagement() {
         {activeListTab === 'delisted' && (
           <div className="group">
             <div className="grid grid-cols-1 md:grid-cols-12 gap-4 px-4 md:px-6 py-4 md:py-6 items-start md:items-center hover:bg-zinc-50 transition-colors">
-              <div className="md:col-span-4 flex items-start md:items-center gap-4">
+              <div className="md:col-span-3 flex items-start md:items-center gap-4">
                 <div className="w-20 h-20 md:w-16 md:h-16 shrink-0 bg-zinc-100 flex items-center justify-center p-2 opacity-50">
                   <img src="https://images.unsplash.com/photo-1548171915-e76a3a41117b?auto=format&fit=crop&w=200&q=80" alt="Patek" className="w-full h-full object-contain mix-blend-multiply grayscale transition-all" />
                 </div>
@@ -360,7 +406,19 @@ export function ProductManagement() {
                   <span className="text-sm font-bold text-zinc-400">¥280,000</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-xs text-zinc-500">库存</span>
+                  <span className="text-xs text-zinc-500">零售价</span>
+                  <span className="text-sm font-bold text-zinc-300 line-through">¥1,250,000</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-xs text-zinc-500">零售库存</span>
+                  <span className="font-black text-lg text-red-500">0</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-xs text-zinc-500">批发价</span>
+                  <span className="text-sm font-bold text-zinc-300 line-through">¥1,180,000</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-xs text-zinc-500">批发库存</span>
                   <span className="font-black text-lg text-red-500">0</span>
                 </div>
               </div>
@@ -370,11 +428,14 @@ export function ProductManagement() {
                 <div className="text-xs font-bold text-zinc-400 line-through">均码</div>
                 <div className="text-[10px] text-zinc-400 line-through">欧洲仓 (EU)</div>
               </div>
+              <div className="hidden md:block col-span-1 text-right text-sm font-bold text-zinc-300 line-through">¥1,250,000</div>
               <div className="hidden md:block col-span-1 text-center font-black text-lg text-red-500">
                 0
               </div>
-              <div className="hidden md:block col-span-1 text-right text-sm font-bold text-zinc-300 line-through">¥1,250,000</div>
               <div className="hidden md:block col-span-1 text-right text-sm font-bold text-zinc-300 line-through">¥1,180,000</div>
+              <div className="hidden md:block col-span-1 text-center font-black text-lg text-red-500">
+                0
+              </div>
               <div className="mt-2 md:mt-0 md:col-span-2 flex justify-end md:justify-center items-center gap-3 pt-4 md:pt-0 border-t border-zinc-100 md:border-none w-full md:w-auto">
                 <button className="flex-1 md:flex-none text-xs font-bold text-zinc-600 hover:text-black transition-colors px-4 py-2 border border-zinc-200 md:border-none md:p-0 bg-white md:bg-transparent" onClick={() => setEditingSpu('patek')}>编辑</button>
                 <button className="flex-1 md:flex-none text-xs font-bold text-red-600 hover:text-red-700 transition-colors px-4 py-2 border border-red-100 bg-red-50 md:bg-transparent md:border-none md:p-0">删除</button>
@@ -562,15 +623,19 @@ export function ProductManagement() {
 
                 <div className="bg-white border border-zinc-200 p-4 mb-4 flex items-end gap-4 shadow-sm">
                   <div className="flex-1">
-                    <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1.5">批量修改供货价</label>
-                    <input type="number" placeholder="输入金额" className="w-full border border-zinc-200 px-3 py-2 text-xs font-bold focus:border-black focus:ring-0 outline-none" />
-                  </div>
-                  <div className="flex-1">
                     <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1.5">批量修改零售价</label>
                     <input type="number" placeholder="输入金额" className="w-full border border-zinc-200 px-3 py-2 text-xs font-bold focus:border-black focus:ring-0 outline-none" />
                   </div>
                   <div className="flex-1">
-                    <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1.5">批量修改库存</label>
+                    <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1.5">批量修改零售库存</label>
+                    <input type="number" placeholder="输入数量" className="w-full border border-zinc-200 px-3 py-2 text-xs font-bold focus:border-black focus:ring-0 outline-none" />
+                  </div>
+                  <div className="flex-1">
+                    <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1.5">批量修改批发价</label>
+                    <input type="number" placeholder="输入金额" className="w-full border border-zinc-200 px-3 py-2 text-xs font-bold focus:border-black focus:ring-0 outline-none" />
+                  </div>
+                  <div className="flex-1">
+                    <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1.5">批量修改批发库存</label>
                     <input type="number" placeholder="输入数量" className="w-full border border-zinc-200 px-3 py-2 text-xs font-bold focus:border-black focus:ring-0 outline-none" />
                   </div>
                   <button className="bg-black text-white px-4 py-2 text-xs font-bold hover:bg-zinc-800 transition-colors h-[34px]">应用批量修改</button>
@@ -583,9 +648,10 @@ export function ProductManagement() {
                         <th className="p-4 font-bold">规格 (尺码)</th>
                         <th className="p-4 font-bold">所在仓库</th>
                         <th className="p-4 font-bold">条码 (Barcode)</th>
-                        <th className="p-4 font-bold text-right">批发供货价</th>
                         <th className="p-4 font-bold text-right">零售价</th>
-                        <th className="p-4 font-bold text-right">库存</th>
+                        <th className="p-4 font-bold text-right">零售库存</th>
+                        <th className="p-4 font-bold text-right">批发价</th>
+                        <th className="p-4 font-bold text-right">批发库存</th>
                       </tr>
                     </thead>
                     <tbody className="text-sm">
@@ -596,18 +662,20 @@ export function ProductManagement() {
                             <td className="p-4 font-bold text-zinc-800">S码</td>
                             <td className="p-4"><span className="bg-emerald-50 text-emerald-600 border border-emerald-100 px-2 py-1 text-[10px] font-bold uppercase tracking-wider">深圳保税仓</span></td>
                             <td className="p-4"><input type="text" defaultValue="5045621098711" className="w-full border border-zinc-200 px-2 py-1.5 text-xs font-mono focus:border-black focus:ring-0 outline-none" /></td>
-                            <td className="p-4"><input type="number" defaultValue={3100} className="w-24 ml-auto border border-zinc-200 px-2 py-1.5 text-xs font-bold text-right focus:border-black focus:ring-0 outline-none" /></td>
                             <td className="p-4"><input type="number" defaultValue={3500} className="w-24 ml-auto border border-zinc-200 px-2 py-1.5 text-xs font-bold text-right focus:border-black focus:ring-0 outline-none" /></td>
                             <td className="p-4"><input type="number" defaultValue={8} className="w-20 ml-auto border border-zinc-200 px-2 py-1.5 text-xs font-bold text-right focus:border-black focus:ring-0 outline-none" /></td>
+                            <td className="p-4"><input type="number" defaultValue={3100} className="w-24 ml-auto border border-zinc-200 px-2 py-1.5 text-xs font-bold text-right focus:border-black focus:ring-0 outline-none" /></td>
+                            <td className="p-4"><input type="number" defaultValue={5} className="w-20 ml-auto border border-zinc-200 px-2 py-1.5 text-xs font-bold text-right focus:border-black focus:ring-0 outline-none text-blue-600" /></td>
                           </tr>
                           {/* SKU 2 - Shenzhen */}
                           <tr className="border-b border-zinc-100 hover:bg-zinc-50 transition-colors">
                             <td className="p-4 font-bold text-zinc-800">M码</td>
                             <td className="p-4"><span className="bg-emerald-50 text-emerald-600 border border-emerald-100 px-2 py-1 text-[10px] font-bold uppercase tracking-wider">深圳保税仓</span></td>
                             <td className="p-4"><input type="text" defaultValue="5045621098712" className="w-full border border-zinc-200 px-2 py-1.5 text-xs font-mono focus:border-black focus:ring-0 outline-none" /></td>
-                            <td className="p-4"><input type="number" defaultValue={3100} className="w-24 ml-auto border border-zinc-200 px-2 py-1.5 text-xs font-bold text-right focus:border-black focus:ring-0 outline-none" /></td>
                             <td className="p-4"><input type="number" defaultValue={3500} className="w-24 ml-auto border border-zinc-200 px-2 py-1.5 text-xs font-bold text-right focus:border-black focus:ring-0 outline-none" /></td>
                             <td className="p-4"><input type="number" defaultValue={12} className="w-20 ml-auto border border-zinc-200 px-2 py-1.5 text-xs font-bold text-right focus:border-black focus:ring-0 outline-none" /></td>
+                            <td className="p-4"><input type="number" defaultValue={3100} className="w-24 ml-auto border border-zinc-200 px-2 py-1.5 text-xs font-bold text-right focus:border-black focus:ring-0 outline-none" /></td>
+                            <td className="p-4"><input type="number" defaultValue={10} className="w-20 ml-auto border border-zinc-200 px-2 py-1.5 text-xs font-bold text-right focus:border-black focus:ring-0 outline-none text-blue-600" /></td>
                           </tr>
                           {/* SKU 3 - Hangzhou */}
                           <tr className="border-b border-zinc-100 hover:bg-zinc-50 transition-colors">
@@ -617,13 +685,14 @@ export function ProductManagement() {
                             <td className="p-4">
                               <div className="flex items-center border border-zinc-200 bg-white px-2 py-1.5 w-28 ml-auto">
                                 <span className="text-xs text-zinc-400 mr-1">¥</span>
-                                <input type="number" defaultValue={3200} className="w-full text-xs font-bold outline-none text-right" />
+                                <input type="number" defaultValue={3600} className="w-full text-xs font-bold outline-none text-right" />
                               </div>
                             </td>
+                            <td className="p-4"><input type="number" defaultValue={0} className="w-20 ml-auto border border-zinc-200 px-2 py-1.5 text-xs font-bold text-right focus:border-black focus:ring-0 outline-none text-red-500" /></td>
                             <td className="p-4">
                               <div className="flex items-center border border-zinc-200 bg-white px-2 py-1.5 w-28 ml-auto">
                                 <span className="text-xs text-zinc-400 mr-1">¥</span>
-                                <input type="number" defaultValue={3600} className="w-full text-xs font-bold outline-none text-right" />
+                                <input type="number" defaultValue={3200} className="w-full text-xs font-bold outline-none text-right" />
                               </div>
                             </td>
                             <td className="p-4"><input type="number" defaultValue={0} className="w-20 ml-auto border border-zinc-200 px-2 py-1.5 text-xs font-bold text-right focus:border-black focus:ring-0 outline-none text-red-500" /></td>
@@ -640,21 +709,22 @@ export function ProductManagement() {
                               <div className="flex flex-col items-end">
                                 <div className="flex items-center border border-zinc-200 bg-white px-2 py-1.5 w-28">
                                   <span className="text-xs text-zinc-400 mr-1">HK$</span>
-                                  <input type="number" defaultValue={3000} className="w-full text-xs font-bold outline-none text-right" />
-                                </div>
-                                <div className="text-[10px] text-zinc-400 mt-1">约 ¥2,800</div>
-                              </div>
-                            </td>
-                            <td className="p-4">
-                              <div className="flex flex-col items-end">
-                                <div className="flex items-center border border-zinc-200 bg-white px-2 py-1.5 w-28">
-                                  <span className="text-xs text-zinc-400 mr-1">HK$</span>
                                   <input type="number" defaultValue={3450} className="w-full text-xs font-bold outline-none text-right" />
                                 </div>
                                 <div className="text-[10px] text-zinc-400 mt-1">约 ¥3,200</div>
                               </div>
                             </td>
                             <td className="p-4"><input type="number" defaultValue={25} className="w-20 ml-auto border border-zinc-200 px-2 py-1.5 text-xs font-bold text-right focus:border-black focus:ring-0 outline-none" /></td>
+                            <td className="p-4">
+                              <div className="flex flex-col items-end">
+                                <div className="flex items-center border border-zinc-200 bg-white px-2 py-1.5 w-28">
+                                  <span className="text-xs text-zinc-400 mr-1">HK$</span>
+                                  <input type="number" defaultValue={3000} className="w-full text-xs font-bold outline-none text-right" />
+                                </div>
+                                <div className="text-[10px] text-zinc-400 mt-1">约 ¥2,800</div>
+                              </div>
+                            </td>
+                            <td className="p-4"><input type="number" defaultValue={15} className="w-20 ml-auto border border-zinc-200 px-2 py-1.5 text-xs font-bold text-right focus:border-black focus:ring-0 outline-none text-blue-600" /></td>
                           </tr>
                           {/* SKU 2 - HK */}
                           <tr className="border-b border-zinc-100 hover:bg-zinc-50 transition-colors">
@@ -665,21 +735,22 @@ export function ProductManagement() {
                               <div className="flex flex-col items-end">
                                 <div className="flex items-center border border-zinc-200 bg-white px-2 py-1.5 w-28">
                                   <span className="text-xs text-zinc-400 mr-1">HK$</span>
-                                  <input type="number" defaultValue={3000} className="w-full text-xs font-bold outline-none text-right" />
-                                </div>
-                                <div className="text-[10px] text-zinc-400 mt-1">约 ¥2,800</div>
-                              </div>
-                            </td>
-                            <td className="p-4">
-                              <div className="flex flex-col items-end">
-                                <div className="flex items-center border border-zinc-200 bg-white px-2 py-1.5 w-28">
-                                  <span className="text-xs text-zinc-400 mr-1">HK$</span>
                                   <input type="number" defaultValue={3450} className="w-full text-xs font-bold outline-none text-right" />
                                 </div>
                                 <div className="text-[10px] text-zinc-400 mt-1">约 ¥3,200</div>
                               </div>
                             </td>
                             <td className="p-4"><input type="number" defaultValue={45} className="w-20 ml-auto border border-zinc-200 px-2 py-1.5 text-xs font-bold text-right focus:border-black focus:ring-0 outline-none" /></td>
+                            <td className="p-4">
+                              <div className="flex flex-col items-end">
+                                <div className="flex items-center border border-zinc-200 bg-white px-2 py-1.5 w-28">
+                                  <span className="text-xs text-zinc-400 mr-1">HK$</span>
+                                  <input type="number" defaultValue={3000} className="w-full text-xs font-bold outline-none text-right" />
+                                </div>
+                                <div className="text-[10px] text-zinc-400 mt-1">约 ¥2,800</div>
+                              </div>
+                            </td>
+                            <td className="p-4"><input type="number" defaultValue={30} className="w-20 ml-auto border border-zinc-200 px-2 py-1.5 text-xs font-bold text-right focus:border-black focus:ring-0 outline-none text-blue-600" /></td>
                           </tr>
                           {/* SKU 3 - London */}
                           <tr className="border-b border-zinc-100 hover:bg-zinc-50 transition-colors">
@@ -690,21 +761,22 @@ export function ProductManagement() {
                               <div className="flex flex-col items-end">
                                 <div className="flex items-center border border-zinc-200 bg-white px-2 py-1.5 w-28">
                                   <span className="text-xs text-zinc-400 mr-1">HK$</span>
-                                  <input type="number" defaultValue={2700} className="w-full text-xs font-bold outline-none text-right" />
-                                </div>
-                                <div className="text-[10px] text-zinc-400 mt-1">约 ¥2,500</div>
-                              </div>
-                            </td>
-                            <td className="p-4">
-                              <div className="flex flex-col items-end">
-                                <div className="flex items-center border border-zinc-200 bg-white px-2 py-1.5 w-28">
-                                  <span className="text-xs text-zinc-400 mr-1">HK$</span>
                                   <input type="number" defaultValue={3100} className="w-full text-xs font-bold outline-none text-right" />
                                 </div>
                                 <div className="text-[10px] text-zinc-400 mt-1">约 ¥2,900</div>
                               </div>
                             </td>
                             <td className="p-4"><input type="number" defaultValue={80} className="w-20 ml-auto border border-zinc-200 px-2 py-1.5 text-xs font-bold text-right focus:border-black focus:ring-0 outline-none" /></td>
+                            <td className="p-4">
+                              <div className="flex flex-col items-end">
+                                <div className="flex items-center border border-zinc-200 bg-white px-2 py-1.5 w-28">
+                                  <span className="text-xs text-zinc-400 mr-1">HK$</span>
+                                  <input type="number" defaultValue={2700} className="w-full text-xs font-bold outline-none text-right" />
+                                </div>
+                                <div className="text-[10px] text-zinc-400 mt-1">约 ¥2,500</div>
+                              </div>
+                            </td>
+                            <td className="p-4"><input type="number" defaultValue={50} className="w-20 ml-auto border border-zinc-200 px-2 py-1.5 text-xs font-bold text-right focus:border-black focus:ring-0 outline-none text-blue-600" /></td>
                           </tr>
                         </>
                       )}

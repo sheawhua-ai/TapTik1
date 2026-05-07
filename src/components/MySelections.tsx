@@ -11,6 +11,10 @@ export function MySelections() {
   const [filterBrands, setFilterBrands] = useState<string[]>([]);
   const [filterCategories, setFilterCategories] = useState<string[]>([]);
 
+  const [isSpecialRuleEnabled, setIsSpecialRuleEnabled] = useState(false);
+  const [fixedPrice, setFixedPrice] = useState('');
+  const [profitRedline, setProfitRedline] = useState('');
+
   return (
     <div className="max-w-7xl mx-auto">
       <div className="flex flex-col md:flex-row justify-between md:items-end mb-6 md:mb-8 gap-4">
@@ -196,17 +200,66 @@ export function MySelections() {
 
               {/* Strategy Info Section */}
               <div className="p-4 md:p-8 border-b border-zinc-100 bg-white">
-                <h3 className="text-xs md:text-sm font-black uppercase tracking-widest mb-4 md:mb-6">价格策略</h3>
+                <h3 className="text-xs md:text-sm font-black uppercase tracking-widest mb-4 md:mb-6">全局/商家价格策略</h3>
                 <div className="grid grid-cols-2 gap-4 md:gap-6">
                   <div className="bg-zinc-50 p-4 border border-zinc-200">
-                    <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1">当前策略</div>
-                    <div className="text-sm font-bold">顺加加价</div>
+                    <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1">当前命中策略</div>
+                    <div className="text-sm font-bold truncate">默认全局加价 (STR-DEFAULT)</div>
                   </div>
                   <div className="bg-zinc-50 p-4 border border-zinc-200">
-                    <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1">加价率</div>
-                    <div className="text-sm font-bold text-emerald-600">18.3%</div>
+                    <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1">加价规则</div>
+                    <div className="text-sm font-bold text-emerald-600">顺加加价 18.3% <span className="text-zinc-400 font-normal ml-2">/ 尾数 9 结尾</span></div>
                   </div>
                 </div>
+              </div>
+
+              {/* Special Pricing & Protection Section */}
+              <div className="p-4 md:p-8 border-b border-zinc-100 bg-white">
+                <div className="flex items-center justify-between mb-4 md:mb-6">
+                  <h3 className="text-xs md:text-sm font-black uppercase tracking-widest">单品特殊定价与红线保护</h3>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] md:text-xs font-bold text-zinc-500">启用特殊规则</span>
+                    <label className="relative flex items-center cursor-pointer">
+                      <input type="checkbox" className="sr-only peer" checked={isSpecialRuleEnabled} onChange={(e) => setIsSpecialRuleEnabled(e.target.checked)} />
+                      <div className="w-9 h-5 bg-zinc-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-black"></div>
+                    </label>
+                  </div>
+                </div>
+                
+                {isSpecialRuleEnabled ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 animate-in fade-in slide-in-from-top-2 duration-300">
+                    <div>
+                      <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-2">固定展现价 (¥)</label>
+                      <input 
+                        type="number" 
+                        value={fixedPrice}
+                        onChange={(e) => setFixedPrice(e.target.value)}
+                        placeholder="覆盖当前策略的自动计算价格" 
+                        className="w-full border border-zinc-200 px-3 py-2 text-sm font-bold focus:border-black focus:ring-0 outline-none" 
+                      />
+                      <p className="mt-1.5 text-[10px] text-zinc-500">此价格将优先于全局或商家加价策略进行展现。</p>
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-2">毛利红线 (¥)</label>
+                      <div className="flex relative">
+                        <input 
+                          type="number" 
+                          value={profitRedline}
+                          onChange={(e) => setProfitRedline(e.target.value)}
+                          placeholder="例如：2000" 
+                          className="w-full border border-zinc-200 border-r-0 px-3 py-2 text-sm font-bold focus:border-black focus:ring-0 outline-none" 
+                        />
+                        <button className="bg-black text-white px-4 text-xs font-bold whitespace-nowrap">应用保护</button>
+                      </div>
+                      <p className="mt-1.5 text-[10px] text-red-500 font-bold">若集市供货价上涨导致单件毛利低于此金额，该商品将自动下架。</p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="bg-zinc-50 p-6 border border-zinc-200 text-center flex flex-col items-center justify-center">
+                    <p className="text-xs text-zinc-500 font-bold mb-1">当前未开启单品特殊定价</p>
+                    <p className="text-[10px] text-zinc-400">商品分销价格将由【默认全局加价 (STR-DEFAULT)】策略自动计算得出。</p>
+                  </div>
+                )}
               </div>
 
               {/* SKU Info Section */}

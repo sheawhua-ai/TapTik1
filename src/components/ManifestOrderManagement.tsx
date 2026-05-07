@@ -399,39 +399,9 @@ export function ManifestOrderManagement() {
           </div>
         )}
 
-        {activeTab === 'pending_final_payment' && (
-          <div className="bg-white border border-zinc-200 p-4 mb-6 flex justify-between items-center shadow-sm">
-            <div className="text-sm font-bold">批量处理</div>
-            <div className="flex gap-3">
-              <button 
-                onClick={handleDownloadConfirmation}
-                disabled={selectedOrders.length === 0}
-                className="bg-black text-white px-6 py-2 text-xs font-bold hover:bg-zinc-800 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <FileText size={14} />
-                下载客户确认单
-              </button>
-            </div>
-          </div>
-        )}
-
         <div className="bg-white border border-zinc-200 shadow-sm">
           <div className="hidden md:grid grid-cols-12 gap-4 px-6 py-4 border-b border-zinc-200 bg-zinc-50 text-[10px] font-bold text-zinc-500 uppercase tracking-widest items-center">
             <div className="col-span-3 flex items-center gap-3">
-              {activeTab === 'pending_final_payment' && (
-                <input 
-                  type="checkbox" 
-                  className="accent-black w-3.5 h-3.5"
-                  checked={filteredOrders.length > 0 && selectedOrders.length === filteredOrders.length}
-                  onChange={(e) => {
-                    if (e.target.checked) {
-                      setSelectedOrders(filteredOrders.map(o => o.id));
-                    } else {
-                      setSelectedOrders([]);
-                    }
-                  }}
-                />
-              )}
               商品详情
             </div>
             <div className="col-span-2">买家</div>
@@ -444,20 +414,6 @@ export function ManifestOrderManagement() {
           {filteredOrders.map(order => (
             <div key={order.id} className="border-b border-zinc-200 hover:border-black transition-colors bg-white mb-4 shadow-sm">
               <div className="bg-zinc-50 px-4 md:px-6 py-3 border-b border-zinc-200 flex items-center gap-4">
-                {activeTab === 'pending_final_payment' && (
-                  <input 
-                    type="checkbox" 
-                    className="accent-black w-3.5 h-3.5"
-                    checked={selectedOrders.includes(order.id)}
-                    onChange={(e) => {
-                      if (e.target.checked) {
-                        setSelectedOrders([...selectedOrders, order.id]);
-                      } else {
-                        setSelectedOrders(selectedOrders.filter(id => id !== order.id));
-                      }
-                    }}
-                  />
-                )}
                 <span className="font-bold text-xs">{order.id}</span>
                 <span className="text-[10px] text-zinc-500">{order.date}</span>
               </div>
@@ -642,20 +598,22 @@ export function ManifestOrderManagement() {
                   <table className="w-full text-left text-sm min-w-[700px]">
                     <thead className="bg-zinc-50 border-b border-zinc-200 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
                       <tr>
-                        <th className="p-4 w-10">
-                          <input 
-                            type="checkbox" 
-                            className="accent-black" 
-                            onChange={(e) => {
-                              if (e.target.checked) {
-                                setSelectedItems(selectedOrderData.items.map((i: any) => i.id));
-                              } else {
-                                setSelectedItems([]);
-                              }
-                            }}
-                            checked={selectedItems.length === selectedOrderData.items.length && selectedOrderData.items.length > 0}
-                          />
-                        </th>
+                        {selectedOrderData.status !== 'pending_deposit' && selectedOrderData.status !== 'pending_final_payment' && (
+                          <th className="p-4 w-10">
+                            <input 
+                              type="checkbox" 
+                              className="accent-black" 
+                              onChange={(e) => {
+                                if (e.target.checked) {
+                                  setSelectedItems(selectedOrderData.items.map((i: any) => i.id));
+                                } else {
+                                  setSelectedItems([]);
+                                }
+                              }}
+                              checked={selectedItems.length === selectedOrderData.items.length && selectedOrderData.items.length > 0}
+                            />
+                          </th>
+                        )}
                         <th className="p-4">商品</th>
                         <th className="p-4 text-right">数量</th>
                         <th className="p-4 text-right">单价</th>
@@ -665,20 +623,22 @@ export function ManifestOrderManagement() {
                     <tbody className="divide-y divide-zinc-100">
                       {selectedOrderData.items.map((item: any) => (
                         <tr key={item.id} className="hover:bg-zinc-50">
-                          <td className="p-4">
-                            <input 
-                              type="checkbox" 
-                              className="accent-black" 
-                              checked={selectedItems.includes(item.id)} 
-                              onChange={(e) => {
-                                if (e.target.checked) {
-                                  setSelectedItems([...selectedItems, item.id]);
-                                } else {
-                                  setSelectedItems(selectedItems.filter(id => id !== item.id));
-                                }
-                              }} 
-                            />
-                          </td>
+                          {selectedOrderData.status !== 'pending_deposit' && selectedOrderData.status !== 'pending_final_payment' && (
+                            <td className="p-4">
+                              <input 
+                                type="checkbox" 
+                                className="accent-black" 
+                                checked={selectedItems.includes(item.id)} 
+                                onChange={(e) => {
+                                  if (e.target.checked) {
+                                    setSelectedItems([...selectedItems, item.id]);
+                                  } else {
+                                    setSelectedItems(selectedItems.filter(id => id !== item.id));
+                                  }
+                                }} 
+                              />
+                            </td>
+                          )}
                           <td className="p-4">
                             <div className="font-bold text-xs">{item.name}</div>
                             <div className="text-[10px] text-zinc-400">SKU: {item.sku}</div>
@@ -761,7 +721,11 @@ export function ManifestOrderManagement() {
           </div>
 
           <div className="p-4 md:p-6 border-t border-zinc-200 bg-zinc-50 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] md:shadow-none">
-            <div className="text-xs text-zinc-500 w-full md:w-auto">已选 {selectedItems.length} 件商品</div>
+            {selectedOrderData.status !== 'pending_deposit' && selectedOrderData.status !== 'pending_final_payment' ? (
+              <div className="text-xs text-zinc-500 w-full md:w-auto">已选 {selectedItems.length} 件商品</div>
+            ) : (
+              <div></div>
+            )}
             <div className="flex flex-col md:flex-row gap-3 w-full md:w-auto">
               {selectedOrderData.status === 'pending_deposit' && (
                 <div className="w-full md:w-auto px-6 py-2 text-xs font-bold text-zinc-500 bg-zinc-200 cursor-not-allowed flex items-center justify-center gap-2">
