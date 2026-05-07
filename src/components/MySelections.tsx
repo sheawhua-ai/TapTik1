@@ -11,6 +11,13 @@ export function MySelections() {
   const [filterBrands, setFilterBrands] = useState<string[]>([]);
   const [filterCategories, setFilterCategories] = useState<string[]>([]);
 
+  const [filterMerchants, setFilterMerchants] = useState<string[]>([]);
+  const merchants = [
+    { value: 'm1', label: 'Global Luxury Hub (m1)' },
+    { value: 'm2', label: 'Euro Boutique (m2)' },
+    { value: 'm3', label: 'Tokyo Select (m3)' },
+  ];
+
   const [isSpecialRuleEnabled, setIsSpecialRuleEnabled] = useState(false);
   const [fixedPrice, setFixedPrice] = useState('');
   const [profitRedline, setProfitRedline] = useState('');
@@ -34,8 +41,16 @@ export function MySelections() {
             className="w-full border border-zinc-200 pl-10 pr-4 py-2 text-sm focus:border-black focus:ring-0 outline-none bg-white" 
           />
         </div>
-        <div className="grid grid-cols-2 md:flex gap-4">
-          <div className="w-full md:w-40">
+        <div className="grid grid-cols-2 lg:flex gap-4">
+          <div className="w-full lg:w-40">
+            <MultiSelectDropdown 
+              options={merchants} 
+              selected={filterMerchants} 
+              onChange={setFilterMerchants} 
+              placeholder="全部商家" 
+            />
+          </div>
+          <div className="w-full lg:w-40">
             <MultiSelectDropdown 
               options={ALL_BRANDS} 
               selected={filterBrands} 
@@ -43,7 +58,7 @@ export function MySelections() {
               placeholder="全部品牌" 
             />
           </div>
-          <div className="w-full md:w-48">
+          <div className="w-full lg:w-48 col-span-2 lg:col-span-1">
             <CategoryMultiSelectDropdown 
               options={CATEGORY_HIERARCHY} 
               selected={filterCategories} 
@@ -301,7 +316,7 @@ export function MySelections() {
                           <tr className="border-b border-zinc-100 hover:bg-zinc-50 transition-colors">
                             <td className="p-4 font-bold text-zinc-800">默认</td>
                             <td className="p-4"><span className="bg-emerald-50 text-emerald-600 border border-emerald-100 px-2 py-1 text-[10px] font-bold uppercase tracking-wider">中国大陆</span></td>
-                            <td className="p-4 text-xs">Global Luxury Hub - 1567</td>
+                            <td className="p-4 text-xs">Global Luxury Hub (m1) - 1567</td>
                             <td className="p-4 text-right font-bold text-zinc-500">¥145,000.00</td>
                             <td className="p-4 text-right font-bold text-emerald-600">¥168,000.00</td>
                             <td className="p-4 text-right">

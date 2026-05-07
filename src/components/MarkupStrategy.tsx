@@ -18,6 +18,12 @@ export function MarkupStrategy() {
   const [followMerchant2, setFollowMerchant2] = useState('');
   const [followMerchant3, setFollowMerchant3] = useState('');
 
+  // Filter states
+  const [filterSearch, setFilterSearch] = useState('');
+  const [filterMerchants, setFilterMerchants] = useState<string[]>([]);
+  const [filterBrands, setFilterBrands] = useState<string[]>([]);
+  const [filterCategories, setFilterCategories] = useState<string[]>([]);
+
   const markupValue = Number(markupRate) || 0;
   const isSaveDisabled = !strategyName || !markupRate;
 
@@ -25,8 +31,8 @@ export function MarkupStrategy() {
   let calculatedSellingPrice = supplyPrice * (1 + markupValue / 100);
   if (priceTailRule === '9') {
     calculatedSellingPrice = Math.floor(calculatedSellingPrice / 10) * 10 + 9;
-  } else if (priceTailRule === '99') {
-    calculatedSellingPrice = Math.floor(calculatedSellingPrice / 100) * 100 + 99;
+  } else if (priceTailRule === '0') {
+    calculatedSellingPrice = Math.floor(calculatedSellingPrice / 10) * 10;
   }
   
   const sellingPrice = markupValue ? calculatedSellingPrice.toFixed(2) : '0.00';
@@ -34,9 +40,9 @@ export function MarkupStrategy() {
   const calculatedGrossMargin = markupValue && Number(sellingPrice) > 0 ? ((Number(profit) / Number(sellingPrice)) * 100).toFixed(2) : '0.00';
 
   const merchants = [
-    { value: 'm1', label: 'Global Luxury Hub' },
-    { value: 'm2', label: 'Euro Boutique' },
-    { value: 'm3', label: 'Tokyo Select' },
+    { value: 'm1', label: 'Global Luxury Hub (m1)' },
+    { value: 'm2', label: 'Euro Boutique (m2)' },
+    { value: 'm3', label: 'Tokyo Select (m3)' },
   ];
 
   return (
@@ -135,6 +141,53 @@ export function MarkupStrategy() {
           <div className="text-[10px] text-zinc-500 mt-4 leading-relaxed bg-zinc-50 p-3">
             <span className="font-bold">计价逻辑说明：</span> 在前端展现商品价格时，系统将依序检查上述选择的商家是否在同一SKU上提供了<span className="text-black font-bold">「零售指导价」</span>。如果优先级1的商家有配置零售价，则直接采用该金额作为分销最终价；否则继续检查优先级2，依此类推。若选择的商家均无零售价，则进入优先级3，使用下方的加价规则和尾数策略进行计算。
           </div>
+        </div>
+      </div>
+
+      <div className="flex flex-col md:flex-row gap-4 mb-6">
+        <div className="w-full md:flex-1 relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" size={16} />
+          <input 
+            type="text" 
+            placeholder="搜索策略名称、ID..." 
+            value={filterSearch}
+            onChange={(e) => setFilterSearch(e.target.value)}
+            className="w-full border border-zinc-200 pl-10 pr-4 py-2 text-sm focus:border-black focus:ring-0 outline-none bg-white" 
+          />
+        </div>
+        <div className="grid grid-cols-2 lg:flex gap-4">
+          <div className="w-full lg:w-40">
+            <MultiSelectDropdown 
+              options={merchants} 
+              selected={filterMerchants} 
+              onChange={setFilterMerchants} 
+              placeholder="全部商家" 
+            />
+          </div>
+          <div className="w-full lg:w-40">
+            <MultiSelectDropdown 
+              options={ALL_BRANDS} 
+              selected={filterBrands} 
+              onChange={setFilterBrands} 
+              placeholder="全部品牌" 
+            />
+          </div>
+          <div className="w-full lg:w-48 col-span-2 lg:col-span-1">
+            <CategoryMultiSelectDropdown 
+              options={CATEGORY_HIERARCHY} 
+              selected={filterCategories} 
+              onChange={setFilterCategories} 
+              placeholder="全部分类" 
+            />
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <button className="border border-zinc-200 px-6 py-2 text-sm font-bold hover:bg-zinc-50 transition-colors bg-white">
+            重置
+          </button>
+          <button className="bg-black text-white px-6 py-2 text-sm font-bold hover:bg-zinc-800 transition-colors">
+            筛选
+          </button>
         </div>
       </div>
 
@@ -280,7 +333,7 @@ export function MarkupStrategy() {
                       >
                         <option value="none">不处理 (精确到分)</option>
                         <option value="9">固定以 9 结尾</option>
-                        <option value="99">固定以 99 结尾</option>
+                        <option value="0">固定以 0 结尾</option>
                       </select>
                       <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none" />
                     </div>
@@ -295,7 +348,7 @@ export function MarkupStrategy() {
                     </div>
                     {priceTailRule !== 'none' && (
                       <div className="font-mono mb-1">
-                        尾数处理 ({priceTailRule === '9' ? '结尾 9' : '结尾 99'}) = <span className="font-bold text-black">¥{sellingPrice}</span>
+                        尾数处理 ({priceTailRule === '9' ? '结尾 9' : '结尾 0'}) = <span className="font-bold text-black">¥{sellingPrice}</span>
                       </div>
                     )}
                     <div className="font-mono mb-1 mt-2">

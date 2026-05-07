@@ -16,6 +16,13 @@ export function MarketplaceSelection() {
 
   const [filterBrands, setFilterBrands] = useState<string[]>([]);
   const [filterCategories, setFilterCategories] = useState<string[]>([]);
+  const [filterMerchants, setFilterMerchants] = useState<string[]>([]);
+  
+  const merchants = [
+    { value: 'm1', label: 'Global Luxury Hub (m1)' },
+    { value: 'm2', label: 'Euro Boutique (m2)' },
+    { value: 'm3', label: 'Tokyo Select (m3)' },
+  ];
 
   const toggleBrand = (brand: string) => {
     setSelectedBrands(prev => 
@@ -37,8 +44,8 @@ export function MarketplaceSelection() {
   let calculatedSellingPrice = supplyPrice * (1 + markupValue / 100);
   if (strategyPriceTailRule === '9') {
     calculatedSellingPrice = Math.floor(calculatedSellingPrice / 10) * 10 + 9;
-  } else if (strategyPriceTailRule === '99') {
-    calculatedSellingPrice = Math.floor(calculatedSellingPrice / 100) * 100 + 99;
+  } else if (strategyPriceTailRule === '0') {
+    calculatedSellingPrice = Math.floor(calculatedSellingPrice / 10) * 10;
   }
   
   const sellingPrice = markupValue ? calculatedSellingPrice.toFixed(2) : '0.00';
@@ -70,8 +77,16 @@ export function MarketplaceSelection() {
             className="w-full border border-zinc-200 pl-10 pr-4 py-2 text-sm focus:border-black focus:ring-0 outline-none bg-white" 
           />
         </div>
-        <div className="grid grid-cols-2 md:flex gap-4">
-          <div className="w-full md:w-40">
+        <div className="grid grid-cols-2 lg:flex gap-4">
+          <div className="w-full lg:w-40">
+            <MultiSelectDropdown 
+              options={merchants} 
+              selected={filterMerchants} 
+              onChange={setFilterMerchants} 
+              placeholder="全部商家" 
+            />
+          </div>
+          <div className="w-full lg:w-40">
             <MultiSelectDropdown 
               options={ALL_BRANDS} 
               selected={filterBrands} 
@@ -79,7 +94,7 @@ export function MarketplaceSelection() {
               placeholder="全部品牌" 
             />
           </div>
-          <div className="w-full md:w-48">
+          <div className="w-full lg:w-48 col-span-2 lg:col-span-1">
             <CategoryMultiSelectDropdown 
               options={CATEGORY_HIERARCHY} 
               selected={filterCategories} 
@@ -283,7 +298,7 @@ export function MarketplaceSelection() {
                       <tr className="border-b border-zinc-100 hover:bg-zinc-50 transition-colors">
                         <td className="p-4 font-bold text-zinc-800" rowSpan={3}>M码</td>
                         <td className="p-4"><span className="bg-emerald-50 text-emerald-600 border border-emerald-100 px-2 py-1 text-[10px] font-bold uppercase tracking-wider">保税仓</span></td>
-                        <td className="p-4 text-xs">Global Luxury Hub - 1567</td>
+                        <td className="p-4 text-xs">Global Luxury Hub (m1) - 1567</td>
                         <td className="p-4 text-right font-bold text-emerald-600">¥1,180.00</td>
                         <td className="p-4 text-right text-zinc-500">¥1,399.00</td>
                         <td className="p-4 text-right font-bold">1</td>
@@ -414,11 +429,7 @@ export function MarketplaceSelection() {
               <div className="grid grid-cols-1 gap-4">
                 <MultiSelectDropdown 
                   label="适用商家 (留空则适用全部)" 
-                  options={[
-                    { value: 'm1', label: 'Global Luxury Hub' },
-                    { value: 'm2', label: 'Euro Boutique' },
-                    { value: 'm3', label: 'Tokyo Select' }
-                  ]} 
+                  options={merchants} 
                   selected={[]} 
                   onChange={() => {}} 
                   placeholder="全部商家" 
@@ -467,7 +478,7 @@ export function MarketplaceSelection() {
                       >
                         <option value="none">不处理 (精确到分)</option>
                         <option value="9">固定以 9 结尾</option>
-                        <option value="99">固定以 99 结尾</option>
+                        <option value="0">固定以 0 结尾</option>
                       </select>
                       <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none" />
                     </div>
