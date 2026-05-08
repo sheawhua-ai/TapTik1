@@ -19,9 +19,9 @@ export function MarketplaceSelection() {
   const [filterMerchants, setFilterMerchants] = useState<string[]>([]);
   
   const merchants = [
-    { value: 'm1', label: 'Global Luxury Hub (m1)' },
-    { value: 'm2', label: 'Euro Boutique (m2)' },
-    { value: 'm3', label: 'Tokyo Select (m3)' },
+    { value: '1567', label: 'UNIBUY (1567)' },
+    { value: '14746', label: '002 (14746)' },
+    { value: '1795', label: 'HANNAH (1795)' },
   ];
 
   const toggleBrand = (brand: string) => {
@@ -298,7 +298,7 @@ export function MarketplaceSelection() {
                       <tr className="border-b border-zinc-100 hover:bg-zinc-50 transition-colors">
                         <td className="p-4 font-bold text-zinc-800" rowSpan={3}>M码</td>
                         <td className="p-4"><span className="bg-emerald-50 text-emerald-600 border border-emerald-100 px-2 py-1 text-[10px] font-bold uppercase tracking-wider">保税仓</span></td>
-                        <td className="p-4 text-xs">Global Luxury Hub (m1) - 1567</td>
+                        <td className="p-4 text-xs">UNIBUY (1567)</td>
                         <td className="p-4 text-right font-bold text-emerald-600">¥1,180.00</td>
                         <td className="p-4 text-right text-zinc-500">¥1,399.00</td>
                         <td className="p-4 text-right font-bold">1</td>
@@ -312,7 +312,7 @@ export function MarketplaceSelection() {
                       </tr>
                       <tr className="border-b border-zinc-100 hover:bg-zinc-50 transition-colors">
                         <td className="p-4"><span className="bg-purple-50 text-purple-600 border border-purple-100 px-2 py-1 text-[10px] font-bold uppercase tracking-wider">欧洲</span></td>
-                        <td className="p-4 text-xs">Euro Boutique - 2891</td>
+                        <td className="p-4 text-xs">002 (14746)</td>
                         <td className="p-4 text-right font-bold text-emerald-600">¥1,100.00</td>
                         <td className="p-4 text-right text-zinc-500">¥1,399.00</td>
                         <td className="p-4 text-right font-bold">12</td>
@@ -476,7 +476,7 @@ export function MarketplaceSelection() {
                         onChange={(e) => setStrategyPriceTailRule(e.target.value)}
                         className="w-full border border-zinc-200 px-3 py-2 text-sm focus:border-black focus:ring-0 outline-none appearance-none bg-white"
                       >
-                        <option value="none">不处理 (精确到分)</option>
+                        <option value="none">不处理 (精确到元)</option>
                         <option value="9">固定以 9 结尾</option>
                         <option value="0">固定以 0 结尾</option>
                       </select>

@@ -13,9 +13,9 @@ export function MySelections() {
 
   const [filterMerchants, setFilterMerchants] = useState<string[]>([]);
   const merchants = [
-    { value: 'm1', label: 'Global Luxury Hub (m1)' },
-    { value: 'm2', label: 'Euro Boutique (m2)' },
-    { value: 'm3', label: 'Tokyo Select (m3)' },
+    { value: '1567', label: 'UNIBUY (1567)' },
+    { value: '14746', label: '002 (14746)' },
+    { value: '1795', label: 'HANNAH (1795)' },
   ];
 
   const [isSpecialRuleEnabled, setIsSpecialRuleEnabled] = useState(false);
@@ -316,7 +316,7 @@ export function MySelections() {
                           <tr className="border-b border-zinc-100 hover:bg-zinc-50 transition-colors">
                             <td className="p-4 font-bold text-zinc-800">默认</td>
                             <td className="p-4"><span className="bg-emerald-50 text-emerald-600 border border-emerald-100 px-2 py-1 text-[10px] font-bold uppercase tracking-wider">中国大陆</span></td>
-                            <td className="p-4 text-xs">Global Luxury Hub (m1) - 1567</td>
+                            <td className="p-4 text-xs">UNIBUY (1567)</td>
                             <td className="p-4 text-right font-bold text-zinc-500">¥145,000.00</td>
                             <td className="p-4 text-right font-bold text-emerald-600">¥168,000.00</td>
                             <td className="p-4 text-right">
@@ -336,7 +336,7 @@ export function MySelections() {
                                 <span className="bg-purple-50 text-purple-600 border border-purple-100 px-2 py-1 text-[10px] font-bold uppercase tracking-wider">保税仓</span>
                               </div>
                             </td>
-                            <td className="p-4 text-xs">Euro Boutique - 2891</td>
+                            <td className="p-4 text-xs">002 (14746)</td>
                             <td className="p-4 text-right">
                               <div className="font-bold text-zinc-500">HK$155,000.00</div>
                               <div className="text-[10px] text-zinc-400 mt-1">约 ¥142,000 (含税)</div>

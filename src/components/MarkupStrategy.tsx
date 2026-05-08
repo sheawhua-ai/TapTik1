@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Plus, X, AlertCircle, ChevronDown, Search, ChevronRight } from "lucide-react";
 import { MultiSelectDropdown } from "./MultiSelectDropdown";
 import { CategoryMultiSelectDropdown } from "./CategoryMultiSelectDropdown";
+import { SearchableCombobox } from "./SearchableCombobox";
 import { CATEGORY_HIERARCHY, ALL_BRANDS } from "../lib/constants";
 
 export function MarkupStrategy() {
@@ -14,7 +15,7 @@ export function MarkupStrategy() {
   const [priceTailRule, setPriceTailRule] = useState('none');
   
   // Follow merchant preferences
-  const [followMerchant1, setFollowMerchant1] = useState('m1');
+  const [followMerchant1, setFollowMerchant1] = useState('1567');
   const [followMerchant2, setFollowMerchant2] = useState('');
   const [followMerchant3, setFollowMerchant3] = useState('');
 
@@ -40,9 +41,9 @@ export function MarkupStrategy() {
   const calculatedGrossMargin = markupValue && Number(sellingPrice) > 0 ? ((Number(profit) / Number(sellingPrice)) * 100).toFixed(2) : '0.00';
 
   const merchants = [
-    { value: 'm1', label: 'Global Luxury Hub (m1)' },
-    { value: 'm2', label: 'Euro Boutique (m2)' },
-    { value: 'm3', label: 'Tokyo Select (m3)' },
+    { value: '1567', label: 'UNIBUY (1567)' },
+    { value: '14746', label: '002 (14746)' },
+    { value: '1795', label: 'HANNAH (1795)' },
   ];
 
   return (
@@ -93,44 +94,32 @@ export function MarkupStrategy() {
           <div className="flex flex-col md:flex-row gap-3 md:gap-4 items-center">
             <div className="flex items-center gap-2 w-full md:w-auto">
               <span className="text-[10px] font-bold text-zinc-500 w-3">1.</span>
-              <select 
+              <SearchableCombobox
+                options={merchants}
                 value={followMerchant1}
-                onChange={e => setFollowMerchant1(e.target.value)}
-                className="border border-zinc-200 px-3 py-2 text-sm focus:border-black focus:ring-0 outline-none w-full md:w-48 bg-white"
-              >
-                <option value="">未选择 (跳过)</option>
-                {merchants.map(m => (
-                  <option key={m.value} value={m.value}>{m.label}</option>
-                ))}
-              </select>
+                onChange={setFollowMerchant1}
+                className="w-full md:w-48"
+              />
             </div>
             <span className="text-zinc-300 hidden md:inline"><ChevronRight size={16} /></span>
             <div className="flex items-center gap-2 w-full md:w-auto">
               <span className="text-[10px] font-bold text-zinc-500 w-3">2.</span>
-              <select 
+              <SearchableCombobox
+                options={merchants}
                 value={followMerchant2}
-                onChange={e => setFollowMerchant2(e.target.value)}
-                className="border border-zinc-200 px-3 py-2 text-sm focus:border-black focus:ring-0 outline-none w-full md:w-48 bg-white"
-              >
-                <option value="">未选择 (跳过)</option>
-                {merchants.map(m => (
-                  <option key={m.value} value={m.value}>{m.label}</option>
-                ))}
-              </select>
+                onChange={setFollowMerchant2}
+                className="w-full md:w-48"
+              />
             </div>
             <span className="text-zinc-300 hidden md:inline"><ChevronRight size={16} /></span>
             <div className="flex items-center gap-2 w-full md:w-auto">
               <span className="text-[10px] font-bold text-zinc-500 w-3">3.</span>
-              <select 
+              <SearchableCombobox
+                options={merchants}
                 value={followMerchant3}
-                onChange={e => setFollowMerchant3(e.target.value)}
-                className="border border-zinc-200 px-3 py-2 text-sm focus:border-black focus:ring-0 outline-none w-full md:w-48 bg-white"
-              >
-                <option value="">未选择 (跳过)</option>
-                {merchants.map(m => (
-                  <option key={m.value} value={m.value}>{m.label}</option>
-                ))}
-              </select>
+                onChange={setFollowMerchant3}
+                className="w-full md:w-48"
+              />
             </div>
             <div className="flex-1 hidden md:block">
               <button className="bg-black text-white px-4 py-2 text-xs font-bold hover:bg-zinc-800 transition-colors h-[38px] w-full md:w-auto">保存排序</button>
@@ -241,7 +230,7 @@ export function MarkupStrategy() {
             </div>
           </div>
           <div className="md:col-span-4 flex flex-wrap gap-1">
-            <span className="bg-blue-50 text-blue-600 px-2 py-1 text-[10px] font-bold">Euro Boutique</span>
+            <span className="bg-blue-50 text-blue-600 px-2 py-1 text-[10px] font-bold">002 (14746)</span>
             <span className="bg-orange-50 text-orange-600 px-2 py-1 text-[10px] font-bold">腕表</span>
             <span className="bg-zinc-100 text-zinc-600 px-2 py-1 text-[10px] font-bold">Rolex</span>
           </div>
@@ -331,7 +320,7 @@ export function MarkupStrategy() {
                         onChange={(e) => setPriceTailRule(e.target.value)}
                         className="w-full border border-zinc-200 px-3 py-2 text-sm focus:border-black focus:ring-0 outline-none appearance-none bg-white"
                       >
-                        <option value="none">不处理 (精确到分)</option>
+                        <option value="none">不处理 (精确到元)</option>
                         <option value="9">固定以 9 结尾</option>
                         <option value="0">固定以 0 结尾</option>
                       </select>

@@ -142,9 +142,17 @@ export function FinanceAudit() {
   const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'partial' | 'completed'>('all');
 
   // Withdrawal Settings State
-  const [autoWithdrawRule, setAutoWithdrawRule] = useState<'t7_signoff_or_confirm' | 't1_track'>('t7_signoff_or_confirm');
-  const [withdrawRuleLocked, setWithdrawRuleLocked] = useState(false);
-  const [withdrawRuleLockedUntil, setWithdrawRuleLockedUntil] = useState("");
+  const [activeAccountTab, setActiveAccountTab] = useState<'domestic' | 'international'>('domestic');
+  const [domesticSettlementMode, setDomesticSettlementMode] = useState<'t7' | 't1'>('t7');
+  const [lastModeChangeDate, setLastModeChangeDate] = useState<string | null>(null);
+  const [activeDetailModal, setActiveDetailModal] = useState<'margin' | 'frozen' | 'settled' | null>(null);
+  
+  const [settlementSearch, setSettlementSearch] = useState('');
+  const [settlementStatus, setSettlementStatus] = useState('all');
+  const [selectedSettlementOrderId, setSelectedSettlementOrderId] = useState<string | null>(null);
+
+  const [activeFlowTab, setActiveFlowTab] = useState<'order' | 'margin'>('order');
+  const [showRechargeModal, setShowRechargeModal] = useState(false);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -426,187 +434,519 @@ export function FinanceAudit() {
       </div>
       </>
       ) : (
-        <div className="space-y-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
+          {/* Account Sub-Tabs */}
+          <div className="flex gap-6 border-b border-zinc-200">
+            <button 
+              onClick={() => setActiveAccountTab('domestic')}
+              className={`pb-3 text-sm font-bold transition-colors ${activeAccountTab === 'domestic' ? 'text-black border-b-2 border-black' : 'text-zinc-500 hover:text-black'}`}
+            >
+              国内账户
+            </button>
+            <button 
+              onClick={() => setActiveAccountTab('international')}
+              className={`pb-3 text-sm font-bold transition-colors ${activeAccountTab === 'international' ? 'text-black border-b-2 border-black' : 'text-zinc-500 hover:text-black'}`}
+            >
+              国际账户
+            </button>
+          </div>
+
+          {activeAccountTab === 'international' ? (
+            <div className="bg-white border border-zinc-200 p-6 shadow-sm">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-sm font-black uppercase tracking-widest">国际账户结算规则</h2>
+              </div>
+              <div className="flex flex-col md:flex-row gap-4">
+                <div className="bg-zinc-50 p-4 border border-zinc-200 flex-1">
+                  <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1">当前结算周期</div>
+                  <div className="text-lg font-bold">自动结算</div>
+                  <div className="text-xs text-zinc-500 mt-1">按周期自动计算可提现金额并结算</div>
+                </div>
+                <div className="bg-zinc-50 p-4 border border-zinc-200 flex-1">
+                  <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1">交易手续费</div>
+                  <div className="text-lg font-bold text-orange-600">1.5%</div>
+                  <div className="text-xs text-zinc-500 mt-1">国际账户固定费率</div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="bg-white border border-zinc-200 p-6 shadow-sm">
+              <div className="flex flex-col mb-4">
+                <h2 className="text-sm font-black uppercase tracking-widest mb-2">国内账户结算规则</h2>
+                <div className="text-xs text-zinc-500">
+                  开启或关闭极速结算，修改每月限 1 次。设置的规则将于<span className="font-bold text-black border-b border-black md:mx-1">次日</span>针对新产生的订单生效。
+                </div>
+              </div>
+              
+              <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between bg-zinc-50 p-4 border border-zinc-200 mb-4">
+                <div>
+                  <div className="font-bold mb-1 flex items-center gap-2">
+                    开启极速结算 (T+1)
+                    {domesticSettlementMode === 't1' && <span className="text-[10px] bg-green-100 text-green-800 px-2 py-0.5 rounded-sm">开启中</span>}
+                  </div>
+                  <div className="text-xs text-zinc-500">
+                    默认 T+7 结算 (收货后+7天, 费率0.6%)。开启极速结算后，订单<span className="font-bold">揽收后+1天</span>即可结算，费率为 1.0%。
+                  </div>
+                </div>
+                <div className="shrink-0">
+                  <label className="relative flex items-center cursor-pointer">
+                    <input 
+                      type="checkbox" 
+                      className="sr-only peer" 
+                      checked={domesticSettlementMode === 't1'}
+                      onChange={(e) => {
+                        const newMode = e.target.checked ? 't1' : 't7';
+                        setDomesticSettlementMode(newMode);
+                        const today = new Date();
+                        setLastModeChangeDate(`${today.getFullYear()}-${String(today.getMonth()+1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`);
+                      }}
+                    />
+                    <div className="w-11 h-6 bg-zinc-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-black"></div>
+                  </label>
+                </div>
+              </div>
+
+              {lastModeChangeDate && (
+                <div className="text-[10px] text-zinc-400 mb-4 flex items-center gap-1">
+                  上次修改日期: {lastModeChangeDate}。本自然月内不可再次修改。
+                </div>
+              )}
+
+              <div className="flex flex-col md:flex-row gap-4">
+                <div className="bg-zinc-50 p-4 border border-zinc-200 flex-1 transition-all">
+                  <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1">当前结算周期</div>
+                  <div className="text-lg font-bold">{domesticSettlementMode === 't1' ? 'T+1' : 'T+7'}</div>
+                  <div className="text-xs text-zinc-500 mt-1">
+                    {domesticSettlementMode === 't1' ? '揽收后 +1 天自动结算' : '收货后 +7 天自动结算'}
+                  </div>
+                </div>
+                <div className="bg-zinc-50 p-4 border border-zinc-200 flex-1 transition-all">
+                  <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1">当前交易手续费</div>
+                  <div className="text-lg font-bold text-orange-600">{domesticSettlementMode === 't1' ? '1.0%' : '0.6%'}</div>
+                  <div className="text-xs text-zinc-500 mt-1">从结算款中扣除</div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div className={`grid grid-cols-1 ${activeAccountTab === 'international' ? 'md:grid-cols-3' : 'md:grid-cols-2'} gap-4 md:gap-6`}>
+            {activeAccountTab === 'international' && (
+              <div className="bg-white border border-zinc-200 p-6 flex flex-col">
+                <div className="flex justify-between items-start mb-2">
+                  <div className="text-sm font-bold text-zinc-500">保证金账户</div>
+                  <button 
+                    onClick={() => setActiveDetailModal('margin')}
+                    className="text-xs text-blue-600 hover:underline"
+                  >
+                    查看明细
+                  </button>
+                </div>
+                <div className="text-2xl md:text-3xl font-black mb-2">¥ 25,000.00</div>
+                <div className="text-xs text-zinc-400 mt-auto">用于支付B2B结算，运费和税费结算</div>
+              </div>
+            )}
             <div className="bg-white border border-zinc-200 p-6 flex flex-col">
-              <div className="text-sm font-bold text-zinc-500 mb-2">服务账户余额</div>
-              <div className="text-2xl md:text-3xl font-black mb-2">¥ 12,500.00</div>
-              <div className="text-xs text-zinc-400 mt-auto">用于扣除税费、运费等服务开支</div>
+              <div className="flex justify-between items-start mb-2">
+                <div className="text-sm font-bold text-zinc-500">冻结中资金</div>
+                <button 
+                  onClick={() => setActiveDetailModal('frozen')}
+                  className="text-xs text-blue-600 hover:underline"
+                >
+                  查看明细
+                </button>
+              </div>
+              <div className="text-2xl md:text-3xl font-black text-orange-600 mb-4">¥ {activeAccountTab === 'domestic' ? '12,500.00' : '85,000.00'}</div>
+              <div className="grid grid-cols-2 gap-4 mt-auto p-3 bg-zinc-50 border border-zinc-100">
+                <div>
+                  <div className="text-[10px] text-zinc-500 mb-1">冻结货款</div>
+                  <div className="font-bold">¥ {activeAccountTab === 'domestic' ? '10,000.00' : '70,000.00'}</div>
+                </div>
+                <div>
+                  <div className="text-[10px] text-zinc-500 mb-1">冻结佣金</div>
+                  <div className="font-bold">¥ {activeAccountTab === 'domestic' ? '2,500.00' : '15,000.00'}</div>
+                </div>
+              </div>
             </div>
             <div className="bg-white border border-zinc-200 p-6 flex flex-col">
-              <div className="text-sm font-bold text-zinc-500 mb-2">分账余额账户</div>
-              <div className="text-2xl md:text-3xl font-black text-orange-600 mb-2">-¥ 3,200.00</div>
-              <div className="text-xs text-zinc-400 mt-auto">用于代扣税运及向上游支付货款（可为负数）</div>
-            </div>
-            <div className="bg-white border border-zinc-200 p-6 flex flex-col">
-              <div className="text-sm font-bold text-zinc-500 mb-2">累计订单总流水</div>
-              <div className="text-2xl md:text-3xl font-black text-zinc-400 mb-2">¥ 1,250,000.00</div>
-              <a href="#" className="text-sm text-blue-600 hover:underline mt-auto pt-2">导出流水账单</a>
+              <div className="flex justify-between items-start mb-2">
+                <div className="text-sm font-bold text-zinc-500">已结算资金 (本月)</div>
+                <button 
+                  onClick={() => setActiveDetailModal('settled')}
+                  className="text-xs text-blue-600 hover:underline"
+                >
+                  查看明细
+                </button>
+              </div>
+              <div className="text-2xl md:text-3xl font-black text-green-600 mb-4">¥ {activeAccountTab === 'domestic' ? '43,200.00' : '285,000.00'}</div>
+              <div className="grid grid-cols-2 gap-4 mt-auto p-3 bg-zinc-50 border border-zinc-100">
+                <div>
+                  <div className="text-[10px] text-zinc-500 mb-1">结算货款</div>
+                  <div className="font-bold">¥ {activeAccountTab === 'domestic' ? '35,000.00' : '240,000.00'}</div>
+                </div>
+                <div>
+                  <div className="text-[10px] text-zinc-500 mb-1">结算佣金</div>
+                  <div className="font-bold">¥ {activeAccountTab === 'domestic' ? '8,200.00' : '45,000.00'}</div>
+                </div>
+              </div>
             </div>
           </div>
 
           {/* 流水明细块 */}
           <div className="space-y-6">
-            {/* 订单流水 */}
-            <div className="bg-white border border-zinc-200 shadow-sm">
-              <div className="p-4 border-b border-zinc-200 bg-zinc-50 flex items-center justify-between">
-                <h2 className="text-sm font-black uppercase tracking-tight flex items-center gap-2">
-                  <Banknote size={18} />
-                  订单流水
-                </h2>
-                <div className="text-xs text-zinc-500">展示货品金额及扣除的手续费明细</div>
-              </div>
-              <div className="p-0 overflow-x-auto">
-                <table className="w-full text-left text-sm min-w-[700px]">
-                  <thead className="bg-zinc-50/50 text-xs text-zinc-500 uppercase">
-                    <tr>
-                      <th className="px-6 py-3 font-bold border-b border-zinc-200">流水号/时间</th>
-                      <th className="px-6 py-3 font-bold border-b border-zinc-200">关联单号</th>
-                      <th className="px-6 py-3 font-bold border-b border-zinc-200 text-right">商品付款金额</th>
-                      <th className="px-6 py-3 font-bold border-b border-zinc-200 text-right text-orange-600">扣除交易手续费</th>
-                      <th className="px-6 py-3 font-bold border-b border-zinc-200 text-right text-green-600">商家实际入账</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr className="hover:bg-zinc-50 border-b border-zinc-100">
-                      <td className="px-6 py-4">
-                        <div className="font-mono text-xs">TRX-20240502-01</div>
-                        <div className="text-xs text-zinc-400">2024-05-02 10:15</div>
-                      </td>
-                      <td className="px-6 py-4 text-blue-600 hover:underline cursor-pointer">O-DEP-88902</td>
-                      <td className="px-6 py-4 text-right font-bold">¥ 2,000.00</td>
-                      <td className="px-6 py-4 text-right text-orange-600">- ¥ 12.00</td>
-                      <td className="px-6 py-4 text-right text-green-600 font-bold">+ ¥ 1,988.00</td>
-                    </tr>
-                    <tr className="hover:bg-zinc-50 border-b border-zinc-100">
-                      <td className="px-6 py-4">
-                        <div className="font-mono text-xs">TRX-20240502-02</div>
-                        <div className="text-xs text-zinc-400">2024-05-02 11:30</div>
-                      </td>
-                      <td className="px-6 py-4 text-blue-600 hover:underline cursor-pointer">O-FUL-77234</td>
-                      <td className="px-6 py-4 text-right font-bold">¥ 28,900.00</td>
-                      <td className="px-6 py-4 text-right text-orange-600">- ¥ 173.40</td>
-                      <td className="px-6 py-4 text-right text-green-600 font-bold">+ ¥ 28,726.60</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+            
+            {/* 流水 Tab 切换 */}
+            <div className="flex gap-6 border-b border-zinc-200">
+              <button 
+                onClick={() => setActiveFlowTab('order')} 
+                className={`pb-3 text-sm font-bold transition-colors ${activeFlowTab === 'order' ? 'text-black border-b-2 border-black' : 'text-zinc-500 hover:text-black'}`}
+              >
+                订单结算流水
+              </button>
+              {activeAccountTab === 'international' && (
+                <button 
+                  onClick={() => setActiveFlowTab('margin')} 
+                  className={`pb-3 text-sm font-bold transition-colors ${activeFlowTab === 'margin' ? 'text-black border-b-2 border-black' : 'text-zinc-500 hover:text-black'}`}
+                >
+                  保证金流水
+                </button>
+              )}
             </div>
 
-            {/* 服务账户流水 */}
-            <div className="bg-white border border-zinc-200 shadow-sm">
-              <div className="p-4 border-b border-zinc-200 bg-zinc-50 flex items-center justify-between">
-                <h2 className="text-sm font-black uppercase tracking-tight flex items-center gap-2">
-                  <CreditCard size={18} />
-                  服务账户流水
-                </h2>
-                <div className="text-xs text-zinc-500">展示充值金额以及税费、运费扣除明细</div>
-              </div>
-              <div className="p-0 overflow-x-auto">
-                <table className="w-full text-left text-sm min-w-[700px]">
-                  <thead className="bg-zinc-50/50 text-xs text-zinc-500 uppercase">
-                    <tr>
-                      <th className="px-6 py-3 font-bold border-b border-zinc-200">流水号/时间</th>
-                      <th className="px-6 py-3 font-bold border-b border-zinc-200">交易类型</th>
-                      <th className="px-6 py-3 font-bold border-b border-zinc-200">关联单号</th>
-                      <th className="px-6 py-3 font-bold border-b border-zinc-200 text-right">金额变动</th>
-                      <th className="px-6 py-3 font-bold border-b border-zinc-200 text-right">账户余额</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr className="hover:bg-zinc-50 border-b border-zinc-100">
-                      <td className="px-6 py-4">
-                        <div className="font-mono text-xs">SRV-20240502-01</div>
-                        <div className="text-xs text-zinc-400">2024-05-02 09:00</div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className="px-2 py-1 bg-green-100 text-green-800 text-[10px] font-bold">在线充值</span>
-                      </td>
-                      <td className="px-6 py-4 text-zinc-400">-</td>
-                      <td className="px-6 py-4 text-right text-green-600 font-bold">+ ¥ 5,000.00</td>
-                      <td className="px-6 py-4 text-right font-bold">¥ 12,500.00</td>
-                    </tr>
-                    <tr className="hover:bg-zinc-50 border-b border-zinc-100">
-                      <td className="px-6 py-4">
-                        <div className="font-mono text-xs">SRV-20240501-88</div>
-                        <div className="text-xs text-zinc-400">2024-05-01 16:45</div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className="px-2 py-1 bg-orange-100 text-orange-800 text-[10px] font-bold">扣除税费及运费</span>
-                      </td>
-                      <td className="px-6 py-4 text-blue-600 hover:underline cursor-pointer">O-FUL-88902</td>
-                      <td className="px-6 py-4 text-right text-orange-600 font-bold">- ¥ 650.00</td>
-                      <td className="px-6 py-4 text-right font-bold">¥ 7,500.00</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
+            {activeFlowTab === 'order' && (
+              <div className="space-y-6 animate-in fade-in duration-300">
+                {/* 结算流水筛选 */}
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div className="flex gap-4 items-center">
+                    <input 
+                      type="text" 
+                      placeholder="搜索订单号..." 
+                      value={settlementSearch}
+                      onChange={e => setSettlementSearch(e.target.value)}
+                      className="border border-zinc-200 px-3 py-2 text-sm focus:border-black focus:ring-0 outline-none w-full md:w-64"
+                    />
+                    <select 
+                      value={settlementStatus}
+                      onChange={e => setSettlementStatus(e.target.value)}
+                      className="border border-zinc-200 px-3 py-2 text-sm focus:border-black focus:ring-0 outline-none bg-white w-full md:w-auto"
+                    >
+                      <option value="all">全部结算状态</option>
+                      <option value="frozen">冻结中</option>
+                      <option value="settled">已结算</option>
+                      <option value="refunding">退款中</option>
+                      <option value="refunded">已退款</option>
+                    </select>
+                  </div>
+                  <div className="relative w-full md:w-auto" ref={calendarRef}>
+                    <button 
+                      onClick={() => setShowCalendar(!showCalendar)}
+                      className="flex items-center gap-2 bg-white border border-zinc-200 px-4 py-2 hover:border-black transition-colors min-w-[260px] w-full md:w-auto overflow-hidden text-ellipsis whitespace-nowrap text-left"
+                    >
+                      <CalendarIcon size={18} className="text-zinc-400 shrink-0" />
+                      <span className="text-sm font-bold">
+                        {dateRange.start ? dateRange.start : '选择开始日期'} 
+                        {' 至 '} 
+                        {dateRange.end ? dateRange.end : (dateRange.start ? '选择结束日期' : '选择结束日期')}
+                      </span>
+                    </button>
+                    {/* Reusing showCalendar dropdown */}
+                    {showCalendar && (
+                      <div className="absolute top-full right-0 mt-2 bg-white border border-zinc-200 shadow-xl p-4 z-20 w-72">
+                        <div className="flex items-center justify-between mb-4">
+                          <button 
+                            onClick={() => setCalendarMonth(new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() - 1))}
+                            className="p-1 hover:bg-zinc-100 rounded"
+                          >
+                            <ChevronLeft size={16} />
+                          </button>
+                          <div className="font-bold text-sm">
+                            {calendarMonth.getFullYear()}年 {calendarMonth.getMonth() + 1}月
+                          </div>
+                          <button 
+                            onClick={() => setCalendarMonth(new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() + 1))}
+                            className="p-1 hover:bg-zinc-100 rounded"
+                          >
+                            <ChevronRight size={16} />
+                          </button>
+                        </div>
+                        <div className="grid grid-cols-7 gap-1 text-center mb-2">
+                          {['日', '一', '二', '三', '四', '五', '六'].map(d => (
+                            <div key={d} className="text-[10px] font-bold text-zinc-400">{d}</div>
+                          ))}
+                        </div>
+                        <div className="grid grid-cols-7 gap-1">
+                          {Array.from({length: new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() + 1, 0).getDate()}).map((_, i) => {
+                            const dateStr = `${calendarMonth.getFullYear()}-${String(calendarMonth.getMonth() + 1).padStart(2, '0')}-${String(i + 1).padStart(2, '0')}`;
+                            const isSelected = dateRange.start === dateStr || dateRange.end === dateStr;
+                            const isBetween = dateRange.start && dateRange.end && dateStr > dateRange.start && dateStr < dateRange.end;
+                            return (
+                              <button 
+                                key={i} 
+                                onClick={() => {
+                                  if (!dateRange.start || (dateRange.start && dateRange.end)) {
+                                    setDateRange({start: dateStr, end: null});
+                                  } else if (dateStr >= dateRange.start) {
+                                    setDateRange({start: dateRange.start, end: dateStr});
+                                    setShowCalendar(false);
+                                  } else {
+                                    setDateRange({start: dateStr, end: dateRange.start});
+                                    setShowCalendar(false);
+                                  }
+                                }}
+                                className={`p-2 text-xs text-center hover:bg-zinc-100 rounded ${isSelected ? 'bg-black text-white hover:bg-zinc-800' : ''} ${isBetween ? 'bg-zinc-100' : ''}`}
+                              >
+                                {i + 1}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
 
-            {/* 分账余额账户 */}
-            <div className="bg-white border border-zinc-200 shadow-sm">
-              <div className="p-4 border-b border-zinc-200 bg-zinc-50 flex items-center justify-between">
-                <h2 className="text-sm font-black uppercase tracking-tight flex items-center gap-2">
-                  <Package size={18} />
-                  分账余额账户
-                </h2>
-                <div className="text-xs text-zinc-500">用于展示代扣税运、向上游支付货款流水（可为负数）</div>
+                {/* 订单流水 */}
+                <div className="bg-white border border-zinc-200 shadow-sm">
+                  <div className="p-4 border-b border-zinc-200 bg-zinc-50 flex items-center justify-between">
+                    <h2 className="text-sm font-black uppercase tracking-tight flex items-center gap-2">
+                      <Banknote size={18} />
+                      订单结算流水
+                    </h2>
+                    <div className="text-xs text-zinc-500">展示最近结算及手续费扣除记录</div>
+                  </div>
+                  <div className="p-0 overflow-x-auto">
+                    <table className="w-full text-left text-sm min-w-[700px]">
+                      <thead className="bg-zinc-50/50 text-xs text-zinc-500 uppercase">
+                        <tr>
+                          <th className="px-6 py-3 font-bold border-b border-zinc-200">订单号/时间</th>
+                          <th className="px-6 py-3 font-bold border-b border-zinc-200">结算状态</th>
+                          <th className="px-6 py-3 font-bold border-b border-zinc-200 text-right">结算货款</th>
+                          <th className="px-6 py-3 font-bold border-b border-zinc-200 text-right">结算佣金</th>
+                          <th className="px-6 py-3 font-bold border-b border-zinc-200 text-right text-orange-600">手续费</th>
+                          <th className="px-6 py-3 font-bold border-b border-zinc-200 text-right text-green-600">实际入账</th>
+                          <th className="px-6 py-3 font-bold border-b border-zinc-200 text-center">操作</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {activeAccountTab === 'international' ? (
+                          <>
+                            <tr className="hover:bg-zinc-50 border-b border-zinc-100">
+                              <td className="px-6 py-4">
+                                <div className="font-mono text-xs text-blue-600 hover:underline cursor-pointer" onClick={() => setSelectedSettlementOrderId('O-DEP-88902')}>O-DEP-88902</div>
+                                <div className="text-xs text-zinc-400">2024-05-02 10:15</div>
+                              </td>
+                              <td className="px-6 py-4">
+                                <span className="bg-emerald-50 text-emerald-600 border border-emerald-100 px-2 py-1 text-[10px] font-bold">已结算</span>
+                              </td>
+                              <td className="px-6 py-4 text-right">¥ 8,000.00</td>
+                              <td className="px-6 py-4 text-right">¥ 2,000.00</td>
+                              <td className="px-6 py-4 text-right text-orange-600">- ¥ 150.00</td>
+                              <td className="px-6 py-4 text-right text-green-600 font-bold">+ ¥ 9,850.00</td>
+                              <td className="px-6 py-4 text-center">
+                                <button onClick={() => setSelectedSettlementOrderId('O-DEP-88902')} className="text-blue-600 hover:underline text-xs">查看详情</button>
+                              </td>
+                            </tr>
+                            <tr className="hover:bg-zinc-50 border-b border-zinc-100">
+                              <td className="px-6 py-4">
+                                <div className="font-mono text-xs text-blue-600 hover:underline cursor-pointer" onClick={() => setSelectedSettlementOrderId('O-FUL-77234')}>O-FUL-77234</div>
+                                <div className="text-xs text-zinc-400">2024-05-02 11:30</div>
+                              </td>
+                              <td className="px-6 py-4">
+                                <span className="bg-orange-50 text-orange-600 border border-orange-100 px-2 py-1 text-[10px] font-bold">冻结中</span>
+                              </td>
+                              <td className="px-6 py-4 text-right">¥ 40,000.00</td>
+                              <td className="px-6 py-4 text-right">¥ 10,000.00</td>
+                              <td className="px-6 py-4 text-right text-orange-600">- ¥ 750.00</td>
+                              <td className="px-6 py-4 text-right text-green-600 font-bold">+ ¥ 49,250.00</td>
+                              <td className="px-6 py-4 text-center">
+                                <button onClick={() => setSelectedSettlementOrderId('O-FUL-77234')} className="text-blue-600 hover:underline text-xs">查看详情</button>
+                              </td>
+                            </tr>
+                          </>
+                        ) : (
+                          <>
+                            <tr className="hover:bg-zinc-50 border-b border-zinc-100">
+                              <td className="px-6 py-4">
+                                <div className="font-mono text-xs text-blue-600 hover:underline cursor-pointer" onClick={() => setSelectedSettlementOrderId('O-DEP-88902')}>O-DEP-88902</div>
+                                <div className="text-xs text-zinc-400">2024-05-02 10:15</div>
+                              </td>
+                              <td className="px-6 py-4">
+                                <span className="bg-emerald-50 text-emerald-600 border border-emerald-100 px-2 py-1 text-[10px] font-bold">已结算</span>
+                              </td>
+                              <td className="px-6 py-4 text-right">¥ 1,500.00</td>
+                              <td className="px-6 py-4 text-right">¥ 500.00</td>
+                              <td className="px-6 py-4 text-right text-orange-600">- ¥ {domesticSettlementMode === 't1' ? '20.00' : '12.00'}</td>
+                              <td className="px-6 py-4 text-right text-green-600 font-bold">+ ¥ {domesticSettlementMode === 't1' ? '1,980.00' : '1,988.00'}</td>
+                              <td className="px-6 py-4 text-center">
+                                <button onClick={() => setSelectedSettlementOrderId('O-DEP-88902')} className="text-blue-600 hover:underline text-xs">查看详情</button>
+                              </td>
+                            </tr>
+                            <tr className="hover:bg-zinc-50 border-b border-zinc-100">
+                              <td className="px-6 py-4">
+                                <div className="font-mono text-xs text-blue-600 hover:underline cursor-pointer" onClick={() => setSelectedSettlementOrderId('O-FUL-77234')}>O-FUL-77234</div>
+                                <div className="text-xs text-zinc-400">2024-05-02 11:30</div>
+                              </td>
+                              <td className="px-6 py-4">
+                                <span className="bg-orange-50 text-orange-600 border border-orange-100 px-2 py-1 text-[10px] font-bold">冻结中</span>
+                              </td>
+                              <td className="px-6 py-4 text-right">¥ 20,000.00</td>
+                              <td className="px-6 py-4 text-right">¥ 8,900.00</td>
+                              <td className="px-6 py-4 text-right text-orange-600">- ¥ {domesticSettlementMode === 't1' ? '289.00' : '173.40'}</td>
+                              <td className="px-6 py-4 text-right text-green-600 font-bold">+ ¥ {domesticSettlementMode === 't1' ? '28,611.00' : '28,726.60'}</td>
+                              <td className="px-6 py-4 text-center">
+                                <button onClick={() => setSelectedSettlementOrderId('O-FUL-77234')} className="text-blue-600 hover:underline text-xs">查看详情</button>
+                              </td>
+                            </tr>
+                          </>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
               </div>
-              <div className="p-0 overflow-x-auto">
-                <table className="w-full text-left text-sm min-w-[700px]">
-                  <thead className="bg-zinc-50/50 text-xs text-zinc-500 uppercase">
-                    <tr>
-                      <th className="px-6 py-3 font-bold border-b border-zinc-200">流水号/时间</th>
-                      <th className="px-6 py-3 font-bold border-b border-zinc-200">交易类型</th>
-                      <th className="px-6 py-3 font-bold border-b border-zinc-200">收款方/上游</th>
-                      <th className="px-6 py-3 font-bold border-b border-zinc-200 text-right">金额变动</th>
-                      <th className="px-6 py-3 font-bold border-b border-zinc-200 text-right">分账余额</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr className="hover:bg-zinc-50 border-b border-zinc-100">
-                      <td className="px-6 py-4">
-                        <div className="font-mono text-xs">SPL-20240502-05</div>
-                        <div className="text-xs text-zinc-400">2024-05-02 12:30</div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className="px-2 py-1 bg-red-100 text-red-800 text-[10px] font-bold">支付上游货款</span>
-                      </td>
-                      <td className="px-6 py-4 font-bold">欧洲表行</td>
-                      <td className="px-6 py-4 text-right text-red-600 font-bold">- ¥ 60,000.00</td>
-                      <td className="px-6 py-4 text-right font-bold text-orange-600">- ¥ 3,200.00</td>
-                    </tr>
-                    <tr className="hover:bg-zinc-50 border-b border-zinc-100">
-                      <td className="px-6 py-4">
-                        <div className="font-mono text-xs">SPL-20240502-04</div>
-                        <div className="text-xs text-zinc-400">2024-05-02 11:15</div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className="px-2 py-1 bg-blue-100 text-blue-800 text-[10px] font-bold">收入订单结算</span>
-                      </td>
-                      <td className="px-6 py-4 text-zinc-400">-</td>
-                      <td className="px-6 py-4 text-right text-blue-600 font-bold">+ ¥ 65,000.00</td>
-                      <td className="px-6 py-4 text-right font-bold">¥ 56,800.00</td>
-                    </tr>
-                    <tr className="hover:bg-zinc-50 border-b border-zinc-100">
-                      <td className="px-6 py-4">
-                        <div className="font-mono text-xs">SPL-20240501-12</div>
-                        <div className="text-xs text-zinc-400">2024-05-01 18:00</div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className="px-2 py-1 bg-zinc-200 text-zinc-800 text-[10px] font-bold">代扣跨境税费</span>
-                      </td>
-                      <td className="px-6 py-4 font-bold">海关专户</td>
-                      <td className="px-6 py-4 text-right text-orange-600 font-bold">- ¥ 5,915.00</td>
-                      <td className="px-6 py-4 text-right font-bold text-orange-600">- ¥ 8,200.00</td>
-                    </tr>
-                  </tbody>
-                </table>
+            )}
+
+            {activeFlowTab === 'margin' && activeAccountTab === 'international' && (
+              <div className="space-y-6 animate-in fade-in duration-300">
+                 <div className="flex justify-between items-center bg-white border border-zinc-200 shadow-sm p-4">
+                   <div>
+                     <h2 className="text-sm font-black uppercase tracking-tight flex items-center gap-2">
+                       <CreditCard size={18} />
+                       保证金账户流水
+                     </h2>
+                     <div className="text-xs text-zinc-500 mt-1">展示向供应商支付货款，平台税费/运费支付，及资金充值明细</div>
+                   </div>
+                   <button 
+                     onClick={() => setShowRechargeModal(true)}
+                     className="bg-black text-white px-6 py-3 text-xs font-bold hover:bg-zinc-800 transition-colors uppercase tracking-widest"
+                   >
+                     充值
+                   </button>
+                 </div>
+                 <div className="bg-white border border-zinc-200 shadow-sm">
+                   <div className="p-0 overflow-x-auto">
+                     <table className="w-full text-left text-sm min-w-[700px]">
+                       <thead className="bg-zinc-50/50 text-xs text-zinc-500 uppercase">
+                         <tr>
+                            <th className="px-6 py-3 font-bold border-b border-zinc-200">流水号/时间</th>
+                            <th className="px-6 py-3 font-bold border-b border-zinc-200">交易类型</th>
+                            <th className="px-6 py-3 font-bold border-b border-zinc-200">关联信息</th>
+                            <th className="px-6 py-3 font-bold border-b border-zinc-200 text-right">金额</th>
+                            <th className="px-6 py-3 font-bold border-b border-zinc-200">状态</th>
+                         </tr>
+                       </thead>
+                       <tbody>
+                          <tr className="hover:bg-zinc-50 border-b border-zinc-100">
+                             <td className="px-6 py-4">
+                                <div className="font-mono text-xs">DEP-20240503-01</div>
+                                <div className="text-xs text-zinc-400">2024-05-03 14:00</div>
+                             </td>
+                             <td className="px-6 py-4"><span className="bg-blue-50 text-blue-600 px-2 py-1 text-[10px] font-bold">充值资金</span></td>
+                             <td className="px-6 py-4 text-xs text-zinc-500">公对公转入</td>
+                             <td className="px-6 py-4 text-right font-bold text-green-600">+ ¥ 50,000.00</td>
+                             <td className="px-6 py-4"><span className="text-[10px] bg-emerald-50 text-emerald-600 px-2 py-1 font-bold">已充值</span></td>
+                          </tr>
+                          <tr className="hover:bg-zinc-50 border-b border-zinc-100">
+                             <td className="px-6 py-4">
+                                <div className="font-mono text-xs">TAX-20240502-05</div>
+                                <div className="text-xs text-zinc-400">2024-05-02 16:30</div>
+                             </td>
+                             <td className="px-6 py-4"><span className="bg-orange-50 text-orange-600 px-2 py-1 text-[10px] font-bold">税和运费结算</span></td>
+                             <td className="px-6 py-4 text-xs font-mono text-blue-600 hover:underline cursor-pointer">O-DEP-88902</td>
+                             <td className="px-6 py-4 text-right font-bold text-orange-600">- ¥ 1,200.00</td>
+                             <td className="px-6 py-4"><span className="text-[10px] bg-emerald-50 text-emerald-600 px-2 py-1 font-bold">已扣款</span></td>
+                          </tr>
+                          <tr className="hover:bg-zinc-50 border-b border-zinc-100">
+                             <td className="px-6 py-4">
+                                <div className="font-mono text-xs">B2B-20240502-11</div>
+                                <div className="text-xs text-zinc-400">2024-05-02 11:20</div>
+                             </td>
+                             <td className="px-6 py-4"><span className="bg-purple-50 text-purple-600 px-2 py-1 text-[10px] font-bold">供应商货款支付</span></td>
+                             <td className="px-6 py-4 text-xs font-mono text-blue-600 hover:underline cursor-pointer">O-FUL-77234</td>
+                             <td className="px-6 py-4 text-right font-bold text-orange-600">- ¥ 30,000.00</td>
+                             <td className="px-6 py-4"><span className="text-[10px] bg-emerald-50 text-emerald-600 px-2 py-1 font-bold">已支付</span></td>
+                          </tr>
+                          <tr className="hover:bg-zinc-50 border-b border-zinc-100">
+                             <td className="px-6 py-4">
+                                <div className="font-mono text-xs">DEP-20240501-02</div>
+                                <div className="text-xs text-zinc-400">2024-05-01 09:15</div>
+                             </td>
+                             <td className="px-6 py-4"><span className="bg-blue-50 text-blue-600 px-2 py-1 text-[10px] font-bold">充值资金</span></td>
+                             <td className="px-6 py-4 text-xs text-zinc-500">水单已上传</td>
+                             <td className="px-6 py-4 text-right font-bold text-green-600">+ ¥ 20,000.00</td>
+                             <td className="px-6 py-4"><span className="text-[10px] bg-orange-50 text-orange-600 px-2 py-1 font-bold">审核中</span></td>
+                          </tr>
+                       </tbody>
+                     </table>
+                   </div>
+                 </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       )}
+
+      {/* Settlement Details Drawer */}
+      {selectedSettlementOrderId && (() => {
+        const order = ordersData.find(o => o.orderId === selectedSettlementOrderId);
+        if (!order) return null;
+
+        // Mock statuses
+        const settlementStatus = order.orderId === 'O-DEP-88902' ? '已结算' : '冻结中';
+        const isSettled = settlementStatus === '已结算';
+        
+        return (
+          <div className="fixed inset-0 z-40 flex justify-end md:p-4">
+            <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setSelectedSettlementOrderId(null)}></div>
+            <div className="relative w-full md:w-[600px] bg-white h-full shadow-2xl flex flex-col animate-in slide-in-from-right duration-300 md:rounded-xl overflow-hidden">
+              <div className="flex items-center justify-between px-4 md:px-8 py-4 md:py-6 border-b border-zinc-100">
+                <div>
+                  <h2 className="text-lg md:text-xl font-black uppercase tracking-tight mb-1">订单结算详情</h2>
+                  <div className="text-xs text-zinc-500 font-mono">订单编号: {order.orderId}</div>
+                </div>
+                <button onClick={() => setSelectedSettlementOrderId(null)} className="text-zinc-400 hover:text-black transition-colors"><X size={24} /></button>
+              </div>
+              
+              <div className="flex-1 overflow-y-auto p-4 md:p-8">
+                
+                <div className="grid grid-cols-2 gap-4 mb-8">
+                  <div className="bg-zinc-50 p-4 border border-zinc-100">
+                    <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1">支付单号</div>
+                    <div className="font-mono text-sm">PAY-{order.orderId.substring(6)}-2024</div>
+                  </div>
+                  <div className="bg-zinc-50 p-4 border border-zinc-100">
+                    <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1">结算时间</div>
+                    <div className="font-mono text-sm">{isSettled ? '2024-05-02 10:15' : '--'}</div>
+                  </div>
+                  <div className="bg-zinc-50 p-4 border border-zinc-100">
+                    <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1">订单状态</div>
+                    <div className="font-bold text-sm text-zinc-800">已发货 / 已签收</div>
+                  </div>
+                  <div className={`p-4 border ${isSettled ? 'bg-emerald-50 border-emerald-100' : 'bg-orange-50 border-orange-100'}`}>
+                    <div className={`text-[10px] font-bold uppercase tracking-widest mb-1 ${isSettled ? 'text-emerald-600' : 'text-orange-600'}`}>结算状态</div>
+                    <div className={`font-bold text-sm ${isSettled ? 'text-emerald-700' : 'text-orange-700'}`}>{settlementStatus}</div>
+                  </div>
+                </div>
+
+                <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-3">包含商品</div>
+                <div className="space-y-2">
+                  {order.products.map((product: any, pIdx: number) => (
+                    <div key={pIdx} className="flex items-center justify-between text-xs bg-zinc-50 p-3 border border-zinc-100">
+                      <div>
+                        <div className="font-bold mb-0.5">{product.name}</div>
+                        <div className="text-zinc-500 font-mono text-[10px]">SKU: {product.sku}</div>
+                      </div>
+                      <div className="text-right">
+                        <div className="font-bold">¥ {product.price.toLocaleString()}</div>
+                        <div className="text-zinc-500">x {product.qty}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* Order Details Drawer */}
       {selectedOrderId && (() => {
@@ -848,6 +1188,93 @@ export function FinanceAudit() {
                   </button>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Detail Modals Drawer */}
+      {activeDetailModal && (
+        <div className="fixed inset-0 z-40 flex justify-end md:p-4">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setActiveDetailModal(null)}></div>
+          <div className="relative w-full md:w-[800px] bg-white h-full shadow-2xl flex flex-col animate-in slide-in-from-right duration-300 md:rounded-xl overflow-hidden">
+            <div className="flex items-center justify-between px-4 md:px-8 py-4 md:py-6 border-b border-zinc-100">
+              <div>
+                <h2 className="text-lg md:text-xl font-black uppercase tracking-tight mb-1">
+                  {activeDetailModal === 'margin' ? '保证金账户明细' : 
+                   activeDetailModal === 'frozen' ? '冻结中资金明细' : '已结算订单明细'}
+                </h2>
+              </div>
+              <button onClick={() => setActiveDetailModal(null)} className="text-zinc-400 hover:text-black transition-colors"><X size={24} /></button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-4 md:p-8">
+              {activeDetailModal === 'margin' && (
+                <div className="text-center py-20 text-zinc-500">
+                  <Package size={32} className="mx-auto mb-4 opacity-50" />
+                  展示支付B2B结算、运费和税费结算记录。
+                </div>
+              )}
+              {activeDetailModal === 'frozen' && (
+                <div className="text-center py-20 text-zinc-500">
+                  <Clock size={32} className="mx-auto mb-4 opacity-50" />
+                  展示即将到账并且尚未完成结算周期的订单资金明细，包括冻结中的货款和佣金记录。
+                </div>
+              )}
+              {activeDetailModal === 'settled' && (
+                <div className="text-center py-20 text-zinc-500">
+                  <CheckCircle2 size={32} className="mx-auto mb-4 opacity-50" />
+                  展示已经完成货款和佣金结算的订单明细记录。
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Recharge Modal */}
+      {showRechargeModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setShowRechargeModal(false)}></div>
+          <div className="relative bg-white w-full max-w-md shadow-2xl animate-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between p-4 border-b border-zinc-100">
+              <h3 className="font-bold text-lg">保证金充值</h3>
+              <button onClick={() => setShowRechargeModal(false)} className="text-zinc-400 hover:text-black transition-colors"><X size={20} /></button>
+            </div>
+            <div className="p-6">
+              <div className="text-xs text-zinc-500 mb-4">
+                向下方平台对公账户打款后，请上传转账水单。财务人员审核通过后，资金将转入您的保证金账户。
+              </div>
+              <div className="bg-zinc-50 border border-zinc-200 p-4 mb-6">
+                <div className="mb-3">
+                  <div className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest mb-1">收款账户名称</div>
+                  <div className="text-sm font-bold">UNIBUY 供应链管理有限公司</div>
+                </div>
+                <div className="mb-3">
+                  <div className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest mb-1">收款银行</div>
+                  <div className="text-sm font-bold">招商银行 深圳科苑支行</div>
+                </div>
+                <div>
+                  <div className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest mb-1">收款账号</div>
+                  <div className="text-sm font-bold tracking-widest font-mono">7559 1234 5678 901</div>
+                </div>
+              </div>
+              
+              <div className="mb-6">
+                <label className="block text-xs font-bold mb-2">充值金额 (¥)</label>
+                <input type="number" placeholder="请输入打款金额" className="w-full border border-zinc-200 px-3 py-2 text-sm focus:border-black focus:ring-0 outline-none" />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold mb-2">上传转账水单</label>
+                <div className="border-2 border-dashed border-zinc-200 bg-zinc-50 p-6 flex flex-col items-center justify-center cursor-pointer hover:border-black transition-colors">
+                  <ImageIcon size={24} className="text-zinc-300 mb-2" />
+                  <div className="text-sm font-bold text-zinc-600 text-center">点击或拖拽上传水单图片</div>
+                  <div className="text-[10px] text-zinc-400 mt-1">支持 JPG, PNG, PDF，最大 5MB</div>
+                </div>
+              </div>
+            </div>
+            <div className="p-4 border-t border-zinc-100 flex justify-end gap-3 bg-zinc-50">
+              <button onClick={() => setShowRechargeModal(false)} className="px-4 py-2 text-xs font-bold text-zinc-600 hover:text-black">取消</button>
+              <button onClick={() => setShowRechargeModal(false)} className="px-4 py-2 text-xs font-bold bg-black text-white hover:bg-zinc-800">提交充值申请</button>
             </div>
           </div>
         </div>
