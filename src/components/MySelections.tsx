@@ -40,8 +40,8 @@ export function MySelections() {
             id: 'default',
             name: '默认',
             suppliers: [
-              { id: '1567', name: 'UNIBUY (1567)', origin: '中国大陆', costStr: '¥145,000.00', cost: 145000, markupRuleName: '品牌加价 10%', markupFactor: 1.1, stock: 5 },
-              { id: '14746', name: '002 (14746)', origin: '港澳 / 保税仓', costStr: 'HK$155,000.00', cost: 142000, markupRuleName: '品类加价 18.3%', markupFactor: 1.183, stock: 10 }
+              { id: '1567', name: 'UNIBUY (1567)', origin: '中国大陆', channel: 'domestic', costStr: '¥145,000.00', cost: 145000, markupRuleName: '品牌加价 10%', markupFactor: 1.1, stock: 5, currency: 'CNY', exchangeRate: 1 },
+              { id: '14746', name: '002 (14746)', origin: '港澳直邮', channel: 'international', costStr: 'HK$155,000.00', cost: 142600, markupRuleName: '品类加价 18.3%', markupFactor: 1.183, stock: 10, currency: 'HKD', exchangeRate: 0.92 }
             ]
           }
         ]
@@ -55,27 +55,27 @@ export function MySelections() {
             id: '36',
             name: '36',
             suppliers: [
-              { id: '1795', name: 'HANNAH (1795)', origin: '港澳', costStr: 'HK$3,000.00', cost: 2750, markupRuleName: '商家特殊 12%', markupFactor: 1.12, stock: 4 },
-              { id: '14746', name: '002 (14746)', origin: '韩国直递', costStr: 'KRW 520,000', cost: 2780, markupRuleName: '全局 10%', markupFactor: 1.1, stock: 1 },
-              { id: '1567', name: 'UNIBUY (1567)', origin: '中国大陆', costStr: '¥2,850.00', cost: 2850, markupRuleName: '全局 10%', markupFactor: 1.1, stock: 12 },
+              { id: '1795', name: 'HANNAH (1795)', origin: '港澳直通', channel: 'international', costStr: 'HK$3,000.00', cost: 2760, markupRuleName: '商家特殊 12%', markupFactor: 1.12, stock: 4, currency: 'HKD', exchangeRate: 0.92 },
+              { id: '14746', name: '002 (14746)', origin: '港澳物流', channel: 'international', costStr: 'HK$3,100.00', cost: 2852, markupRuleName: '全局 10%', markupFactor: 1.1, stock: 1, currency: 'HKD', exchangeRate: 0.92 },
+              { id: '1567', name: 'UNIBUY (1567)', origin: '中国大陆', channel: 'domestic', costStr: '¥2,850.00', cost: 2850, markupRuleName: '全局 10%', markupFactor: 1.1, stock: 12, currency: 'CNY', exchangeRate: 1 },
             ]
           },
           {
             id: '37',
             name: '37',
             suppliers: [
-               { id: '14746', name: '002 (14746)', origin: '韩国直递', costStr: 'KRW 520,000', cost: 2780, markupRuleName: '全局 10%', markupFactor: 1.1, stock: 1 },
-               { id: '1567', name: 'UNIBUY (1567)', origin: '中国大陆', costStr: '¥2,850.00', cost: 2850, markupRuleName: '全局 10%', markupFactor: 1.1, stock: 12 },
-               { id: '9921', name: 'VIP-LUX (9921)', origin: '欧洲直邮', costStr: '€410.00', cost: 3150, markupRuleName: '全局 10%', markupFactor: 1.1, stock: 5 },
+               { id: '14746', name: '002 (14746)', origin: '港澳物流', channel: 'international', costStr: 'HK$3,100.00', cost: 2852, markupRuleName: '全局 10%', markupFactor: 1.1, stock: 1, currency: 'HKD', exchangeRate: 0.92 },
+               { id: '1567', name: 'UNIBUY (1567)', origin: '中国大陆', channel: 'domestic', costStr: '¥2,850.00', cost: 2850, markupRuleName: '全局 10%', markupFactor: 1.1, stock: 12, currency: 'CNY', exchangeRate: 1 },
+               { id: '1795', name: 'HANNAH (1795)', origin: '港澳直通', channel: 'international', costStr: 'HK$3,150.00', cost: 2898, markupRuleName: '商家特殊 12%', markupFactor: 1.12, stock: 5, currency: 'HKD', exchangeRate: 0.92 },
             ]
           },
           {
             id: '38',
             name: '38',
             suppliers: [
-               { id: '1795', name: 'HANNAH (1795)', origin: '港澳', costStr: 'HK$3,000.00', cost: 2750, markupRuleName: '商家特殊 12%', markupFactor: 1.12, stock: 8 },
-               { id: '1567', name: 'UNIBUY (1567)', origin: '中国大陆', costStr: '¥2,850.00', cost: 2850, markupRuleName: '全局 10%', markupFactor: 1.1, stock: 15 },
-               { id: '14746', name: '002 (14746)', origin: '韩国直递', costStr: 'KRW 520,000', cost: 2780, markupRuleName: '全局 10%', markupFactor: 1.1, stock: 1 },
+               { id: '1795', name: 'HANNAH (1795)', origin: '港澳直通', channel: 'international', costStr: 'HK$3,000.00', cost: 2760, markupRuleName: '商家特殊 12%', markupFactor: 1.12, stock: 8, currency: 'HKD', exchangeRate: 0.92 },
+               { id: '1567', name: 'UNIBUY (1567)', origin: '中国大陆', channel: 'domestic', costStr: '¥2,850.00', cost: 2850, markupRuleName: '全局 10%', markupFactor: 1.1, stock: 15, currency: 'CNY', exchangeRate: 1 },
+               { id: '14746', name: '002 (14746)', origin: '港澳物流', channel: 'international', costStr: 'HK$3,100.00', cost: 2852, markupRuleName: '全局 10%', markupFactor: 1.1, stock: 1, currency: 'HKD', exchangeRate: 0.92 },
             ]
           }
         ]
@@ -89,23 +89,23 @@ export function MySelections() {
             id: 'S',
             name: 'S',
             suppliers: [
-              { id: '9921', name: 'VIP-LUX (9921)', origin: '欧洲直邮', costStr: '€1,950.00', cost: 15000, markupRuleName: '全局加价 15%', markupFactor: 1.15, stock: 2 },
-              { id: '1567', name: 'UNIBUY (1567)', origin: '中国大陆', costStr: '¥16,500.00', cost: 16500, markupRuleName: '商家特殊 10%', markupFactor: 1.1, stock: 5 }
+              { id: '14746', name: '002 (14746)', origin: '港澳物流', channel: 'international', costStr: 'HK$16,500.00', cost: 15180, markupRuleName: '全局加价 15%', markupFactor: 1.15, stock: 2, currency: 'HKD', exchangeRate: 0.92 },
+              { id: '1567', name: 'UNIBUY (1567)', origin: '中国大陆', channel: 'domestic', costStr: '¥16,500.00', cost: 16500, markupRuleName: '商家特殊 10%', markupFactor: 1.1, stock: 5, currency: 'CNY', exchangeRate: 1 }
             ]
           },
           {
             id: 'M',
             name: 'M',
             suppliers: [
-              { id: '9921', name: 'VIP-LUX (9921)', origin: '欧洲直邮', costStr: '€1,950.00', cost: 15000, markupRuleName: '全局加价 15%', markupFactor: 1.15, stock: 3 },
-              { id: '1567', name: 'UNIBUY (1567)', origin: '中国大陆', costStr: '¥16,500.00', cost: 16500, markupRuleName: '商家特殊 10%', markupFactor: 1.1, stock: 1 }
+              { id: '14746', name: '002 (14746)', origin: '港澳物流', channel: 'international', costStr: 'HK$16,500.00', cost: 15180, markupRuleName: '全局加价 15%', markupFactor: 1.15, stock: 3, currency: 'HKD', exchangeRate: 0.92 },
+              { id: '1567', name: 'UNIBUY (1567)', origin: '中国大陆', channel: 'domestic', costStr: '¥16,500.00', cost: 16500, markupRuleName: '商家特殊 10%', markupFactor: 1.1, stock: 1, currency: 'CNY', exchangeRate: 1 }
             ]
           },
           {
             id: 'L',
             name: 'L',
             suppliers: [
-              { id: '9921', name: 'VIP-LUX (9921)', origin: '欧洲直邮', costStr: '€1,950.00', cost: 15000, markupRuleName: '全局加价 15%', markupFactor: 1.15, stock: 4 }
+              { id: '14746', name: '002 (14746)', origin: '港澳物流', channel: 'international', costStr: 'HK$16,500.00', cost: 15180, markupRuleName: '全局加价 15%', markupFactor: 1.15, stock: 4, currency: 'HKD', exchangeRate: 0.92 }
             ]
           }
         ]
@@ -383,28 +383,30 @@ export function MySelections() {
 
                    {pricingStrategy === 'follow' && (
                       <div className="animate-in fade-in slide-in-from-top-2 duration-300">
-                         <h4 className="text-xs font-black uppercase tracking-widest mb-4">配置跟随商家顺序</h4>
-                         <div className="flex flex-col md:flex-row gap-4 items-end max-w-2xl">
-                            <div className="w-full">
-                               <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-2">优先跟随商家</label>
-                               <select 
-                                  value={followSupplierId}
-                                  onChange={(e) => setFollowSupplierId(e.target.value)}
-                                  className="w-full border border-zinc-200 px-3 py-2 text-sm font-bold focus:border-black focus:ring-0 outline-none bg-white"
-                               >
-                                  <option value="">请选择...</option>
-                                  <option value="1567">UNIBUY (1567)</option>
-                                  <option value="14746">002 (14746)</option>
-                                  <option value="1795">HANNAH (1795)</option>
-                                  <option value="9921">VIP-LUX (9921)</option>
-                               </select>
+                         <div className="flex items-center justify-between mb-4">
+                            <h4 className="text-xs font-black uppercase tracking-widest">排队读取商家零售版</h4>
+                         </div>
+                         <div className="flex flex-col gap-3 max-w-2xl">
+                            <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest">全局配置的优先级</label>
+                            <div className="flex items-center gap-2">
+                               <div className="bg-white border border-zinc-200 px-4 py-2 text-sm font-bold flex items-center gap-2">
+                                  <span className="text-[10px] bg-black text-white px-1.5 py-0.5">1</span>
+                                  002 (14746)
+                               </div>
+                               <span className="text-zinc-300">→</span>
+                               <div className="bg-white border border-zinc-200 px-4 py-2 text-sm font-bold flex items-center gap-2">
+                                  <span className="text-[10px] bg-black text-white px-1.5 py-0.5">2</span>
+                                  HANNAH (1795)
+                               </div>
+                               <span className="text-zinc-300">→</span>
+                               <div className="bg-white border border-zinc-200 px-4 py-2 text-sm font-bold flex items-center gap-2">
+                                  <span className="text-[10px] bg-black text-white px-1.5 py-0.5">3</span>
+                                  UNIBUY (1567)
+                               </div>
                             </div>
-                            <button className="bg-black text-white px-6 py-2 text-sm font-bold whitespace-nowrap hover:bg-zinc-800 transition-colors">
-                               保存排序
-                            </button>
                          </div>
                          <p className="mt-4 text-[10px] text-zinc-500 bg-white p-3 border border-zinc-100">
-                            <strong>计价逻辑说明:</strong> 在前端展现商品价格时，系统将依序检查上述选择的商家是否在同一SKU上提供了「零售指导价」。如果优先级1的商家有配置零售价，则直接采用该金额作为分销最终价；否则继续检查优先级2，依此类推。若选择的商家均无零售价，则进入优先级3，使用下方的加价规则和尾数策略进行计算。
+                            <strong>计价逻辑说明:</strong> 此排序由「加价策略」全局设定所控制。系统将依序检查上述商家是否在同一SKU上提供了报价。如果优先级 1 的商家有配置，则转换为人民币并同步显示原生币种最终价；否则继续检查优先级 2，依此类推。若上述商家均无报价，则本策略失效，您需要开启「特例价」或使用「默认加价规则」。
                          </p>
                       </div>
                    )}
@@ -429,14 +431,20 @@ export function MySelections() {
                      if (pricingStrategy === 'special' && fixedPrice && !isNaN(Number(fixedPrice))) {
                         spuPricingMode = '单品特例价: ¥' + fixedPrice;
                         badgeColor = 'text-purple-700';
-                     } else if (pricingStrategy === 'follow' && followSupplierId) {
-                        let foundName = followSupplierId;
-                        for (const s of spuData.skus) {
-                           const b = s.suppliers.find((sup: any) => sup.id === followSupplierId);
-                           if (b) { foundName = b.name; break; }
+                     } else if (pricingStrategy === 'follow') {
+                        const followQueue = ['14746', '1795', '1567'];
+                        let foundName = '';
+                        for (const fId of followQueue) {
+                           for (const s of spuData.skus) {
+                              const b = s.suppliers.find((sup: any) => sup.id === fId);
+                              if (b) { foundName = b.name; break; }
+                           }
+                           if (foundName) break;
                         }
-                        spuPricingMode = '跟随零售价 (' + foundName + ')';
-                        badgeColor = 'text-orange-600';
+                        if (foundName) {
+                           spuPricingMode = '跟随零售价 (' + foundName + ')';
+                           badgeColor = 'text-orange-600';
+                        }
                      } else {
                         spuPricingMode = '无 (按照各商家加价规则)';
                         if (rounding && rounding !== 'none') {
@@ -456,41 +464,48 @@ export function MySelections() {
                 </div>
 
                 <div className="bg-white border border-zinc-200 shadow-sm overflow-x-auto">
-                  <table className="w-full text-left border-collapse min-w-[800px]">
+                  <table className="w-full text-left border-collapse min-w-[800px] table-fixed">
                     <thead>
-                      <tr className="bg-zinc-50 border-b border-zinc-200 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
-                        <th className="p-4 font-bold">商家 / 商品所在地</th>
-                        <th className="p-4 font-bold text-right">集市供货价</th>
-                        <th className="p-4 font-bold text-right">分销零售价</th>
-                        <th className="p-4 font-bold text-right">利润</th>
-                        <th className="p-4 font-bold text-right w-24">库存</th>
+                      <tr className="bg-zinc-50 border-b border-zinc-200 text-xs font-bold text-zinc-500 uppercase tracking-widest">
+                        <th className="p-4 font-bold border-r border-zinc-200 w-1/4">规格</th>
+                        <th className="p-4 font-bold border-r border-zinc-200 w-[37.5%]">境内商家</th>
+                        <th className="p-4 font-bold w-[37.5%]">境外商家</th>
                       </tr>
                     </thead>
-                    <tbody className="text-sm">
+                    <tbody className="text-sm align-top">
                       {(() => {
                         // 1. Determine baseline retail price for the ENTIRE SPU
-                        let targetRetailPrice: number | null = null;
+                        let targetRetailPriceRMB: number | null = null;
                         let pricingMode = '';
+                        let followedBenchmarkId = '';
                         
                         if (pricingStrategy === 'special' && currentGlobalFixedPrice !== null) {
-                           targetRetailPrice = currentGlobalFixedPrice;
-                           pricingMode = '单品特例价: ¥' + currentGlobalFixedPrice;
-                        } else if (pricingStrategy === 'follow' && followSupplierId) {
+                           targetRetailPriceRMB = currentGlobalFixedPrice;
+                           pricingMode = '单品特例价';
+                        } else if (pricingStrategy === 'follow') {
                            let foundCost = 0;
                            let foundFactor = 0;
-                           let foundName = followSupplierId;
-                           for (const s of spuData.skus) {
-                              const b = s.suppliers.find((sup: any) => sup.id === followSupplierId);
-                              if (b) {
-                                 foundCost = b.cost;
-                                 foundFactor = b.markupFactor;
-                                 foundName = b.name;
-                                 break;
-                              }
+                           let foundName = '';
+                           
+                           const followQueue = ['14746', '1795', '1567'];
+                           for (const fId of followQueue) {
+                               let found = false;
+                               for (const s of spuData.skus) {
+                                  const b = s.suppliers.find((sup: any) => sup.id === fId);
+                                  if (b) {
+                                     foundCost = b.cost;
+                                     foundFactor = b.markupFactor;
+                                     foundName = b.name;
+                                     followedBenchmarkId = b.id;
+                                     found = true;
+                                     break;
+                                  }
+                               }
+                               if (found) break;
                            }
                            
                            if (foundCost > 0) {
-                              targetRetailPrice = foundCost * foundFactor;
+                              targetRetailPriceRMB = foundCost * foundFactor;
                               pricingMode = '跟随零售价 (' + foundName + ')';
                            } else {
                               pricingMode = '无 (按照各商家加价规则)';
@@ -508,36 +523,39 @@ export function MySelections() {
                         return spuData.skus.map((sku) => {
                           // 2. Process suppliers
                           const processedSuppliers = sku.suppliers.map(supplier => {
-                              let calcRetail = 0;
+                              let calcRetailRMB = 0;
                               let usedStrategy = '';
                               let isBenchmark = false;
                               
-                              if (targetRetailPrice !== null) {
-                                  calcRetail = targetRetailPrice;
+                              if (targetRetailPriceRMB !== null) {
+                                  calcRetailRMB = targetRetailPriceRMB;
                                   usedStrategy = pricingMode;
-                                  if (pricingStrategy === 'follow' && supplier.id === followSupplierId) {
+                                  if (pricingStrategy === 'follow' && supplier.id === followedBenchmarkId) {
                                      isBenchmark = true;
                                   }
                               } else {
-                                  calcRetail = supplier.cost * supplier.markupFactor;
+                                  calcRetailRMB = supplier.cost * supplier.markupFactor;
                                   usedStrategy = supplier.markupRuleName;
                                   
                                   if (rounding === '9') {
-                                     calcRetail = Math.floor(calcRetail / 10) * 10 + 9;
+                                     calcRetailRMB = Math.floor(calcRetailRMB / 10) * 10 + 9;
                                   } else if (rounding === '0') {
-                                     calcRetail = Math.round(calcRetail / 10) * 10;
+                                     calcRetailRMB = Math.round(calcRetailRMB / 10) * 10;
                                   }
                               }
                               
-                              const profit = calcRetail - supplier.cost;
+                              const profit = calcRetailRMB - supplier.cost;
                               const profitMargin = profit / supplier.cost;
                               const inverted = profit < 0;
                               
                               const isRedlineBreached = currentProfitRedline !== null && profit < currentProfitRedline;
                               
+                              const calcRetailNative = calcRetailRMB / supplier.exchangeRate;
+
                               return {
                                  ...supplier,
-                                 calcRetail,
+                                 calcRetailRMB,
+                                 calcRetailNative,
                                  profit,
                                  profitMargin,
                                  inverted,
@@ -547,62 +565,84 @@ export function MySelections() {
                               };
                           });
                           
-                          // 3. Sort suppliers
-                          processedSuppliers.sort((a, b) => a.calcRetail - b.calcRetail);
+                          // 3. Sort & Group suppliers
+                          const domesticSuppliers = processedSuppliers.filter(s => s.channel === 'domestic');
+                          const intlSuppliers = processedSuppliers.filter(s => s.channel === 'international');
+
+                          domesticSuppliers.sort((a, b) => a.calcRetailRMB - b.calcRetailRMB);
+                          intlSuppliers.sort((a, b) => a.calcRetailRMB - b.calcRetailRMB);
+
+                          const renderSupplierList = (suppliers: any[]) => {
+                             if (suppliers.length === 0) return <div className="text-zinc-400 text-xs italic text-center py-4">无报价</div>;
+                             return suppliers.map((supplier, index) => (
+                               <details key={supplier.id} className={`group mb-2 last:mb-0 border ${index === 0 && !supplier.isRedlineBreached ? 'border-black bg-white shadow-sm' : 'border-zinc-200 bg-white/50 opacity-80'}`}>
+                                 <summary className="flex items-center justify-between p-2 text-xs cursor-pointer select-none outline-none hover:bg-zinc-50/80 transition-colors">
+                                   <div className="flex items-center gap-2 flex-1">
+                                      <div className="font-bold whitespace-nowrap flex items-center gap-1">
+                                         {index === 0 && !supplier.isRedlineBreached && <span className="w-1.5 h-1.5 rounded-full bg-black"></span>}
+                                         {supplier.name.split(' ')[0]} {/* Short name */}
+                                      </div>
+                                      <div className="text-zinc-500 font-medium">
+                                         {supplier.costStr}
+                                      </div>
+                                   </div>
+                                   <div className="flex items-center gap-4">
+                                      <div className={`font-black ${supplier.isRedlineBreached ? 'text-red-500 line-through' : 'text-black'}`}>
+                                         {supplier.currency === 'HKD' ? 'HK$' : '¥'}{supplier.calcRetailNative.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                                      </div>
+                                      <div className={`w-12 text-right ${supplier.stock <= 1 ? 'text-orange-600 font-bold' : 'text-zinc-500'}`}>
+                                         库存 {supplier.stock}
+                                      </div>
+                                   </div>
+                                 </summary>
+                                 <div className="p-3 pt-0 text-[10px] text-zinc-500 bg-zinc-50/50 border-t border-zinc-100 mt-1 cursor-default">
+                                    <div className="grid grid-cols-2 gap-2 mt-2">
+                                       <div>
+                                          <div className="text-zinc-400">商家信息</div>
+                                          <div className="font-medium text-zinc-700">{supplier.name}</div>
+                                          <div>{supplier.origin}</div>
+                                       </div>
+                                       <div>
+                                          <div className="text-zinc-400">策略应用</div>
+                                          <div className="font-medium text-zinc-700">{supplier.usedStrategy} {supplier.isBenchmark && <span className="text-orange-500 font-bold">(基准)</span>}</div>
+                                          <div className="flex items-center gap-1 mt-1">
+                                             利润: <span className={`font-bold ${supplier.inverted ? 'text-red-500' : 'text-green-600'}`}>{supplier.profit < 0 ? '-' : ''}¥{Math.abs(supplier.profit).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</span>
+                                             <span className="opacity-70">({supplier.inverted ? '倒挂' : `${(supplier.profitMargin * 100).toFixed(1)}%`})</span>
+                                          </div>
+                                       </div>
+                                       {supplier.currency !== 'CNY' && (
+                                          <div className="col-span-2 flex justify-between mt-1 pt-1 border-t border-zinc-200/50">
+                                             <span>成本约 ¥{supplier.cost.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</span>
+                                             <span>零售折合 ¥{supplier.calcRetailRMB.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</span>
+                                          </div>
+                                       )}
+                                       {supplier.isRedlineBreached && (
+                                          <div className="col-span-2 mt-1 text-red-600 font-bold">
+                                             因利润率低于红线，已自动下架。
+                                          </div>
+                                       )}
+                                    </div>
+                                 </div>
+                               </details>
+                             ));
+                          };
   
                           return (
-                            <Fragment key={sku.id}>
-                              <tr className="bg-zinc-100/80 border-y border-zinc-200">
-                                <td colSpan={5} className="p-4">
-                                  <div className="flex items-center justify-between">
-                                    <span className="font-black text-sm">规格: {sku.name}</span>
-                                  </div>
+                            <tr key={sku.id} className="border-b border-zinc-200">
+                                <td className="p-4 border-r border-zinc-200 bg-white">
+                                  <div className="font-black text-sm">{sku.name}</div>
+                                  <div className="text-[10px] text-zinc-400 mt-1">供货商家数: {sku.suppliers.length}</div>
                                 </td>
-                              </tr>
-                              {processedSuppliers.map((supplier, index) => (
-                              <tr key={supplier.id} className={`border-b border-zinc-100 transition-colors ${supplier.isRedlineBreached ? 'bg-red-50/50 hover:bg-red-50' : 'hover:bg-zinc-50'}`}>
-                                <td className="p-4">
-                                  <div className="text-xs font-bold mb-1">
-                                    {supplier.name} 
-                                    {index === 0 && !supplier.isRedlineBreached && <span className="ml-[6px] text-[10px] bg-black text-white px-1.5 py-0.5 font-normal rounded-sm">当前露出商家</span>}
-                                    {supplier.isBenchmark && <span className="ml-[6px] text-[10px] bg-orange-100 text-orange-700 px-1 py-0.5 rounded-sm">基准</span>}
-                                    {supplier.isRedlineBreached && <span className="ml-[6px] text-[10px] bg-red-100 text-red-700 px-1 py-0.5 rounded-sm">触碰红线 (下架)</span>}
-                                  </div>
-                                  <div className="flex flex-wrap gap-1">
-                                    <span className="bg-zinc-100 text-zinc-600 border border-zinc-200 px-2 py-1 text-[10px] font-bold uppercase tracking-wider">{supplier.origin}</span>
-                                  </div>
-                                  <div className="text-[10px] text-zinc-500 mt-2">应用策略: {supplier.usedStrategy}</div>
+                                <td className="p-4 border-r border-zinc-200 bg-zinc-50/50">
+                                  {renderSupplierList(domesticSuppliers)}
                                 </td>
-                                <td className="p-4 text-right">
-                                  <div className="font-bold text-zinc-500">{supplier.costStr}</div>
-                                  <div className="text-[10px] text-zinc-400 mt-1">
-                                    {supplier.costStr !== `¥${supplier.cost.toLocaleString('en-US')}` && `约 ¥${supplier.cost.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`}
-                                  </div>
+                                <td className="p-4 bg-zinc-50/50">
+                                  {renderSupplierList(intlSuppliers)}
                                 </td>
-                                <td className="p-4 text-right">
-                                  {supplier.isRedlineBreached ? (
-                                    <div className="font-bold text-zinc-400 line-through text-lg">¥{supplier.calcRetail.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-                                  ) : (
-                                    <div className="font-bold text-black text-lg">¥{supplier.calcRetail.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-                                  )}
-                                </td>
-                                <td className="p-4 text-right">
-                                  <div className={`font-bold ${supplier.inverted || supplier.isRedlineBreached ? 'text-red-600' : 'text-black'}`}>
-                                    {supplier.profit < 0 ? '-' : ''}¥{Math.abs(supplier.profit).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
-                                  </div>
-                                  <div className={`text-[10px] ${supplier.inverted || supplier.isRedlineBreached ? 'text-red-600' : 'text-zinc-400'}`}>
-                                    {supplier.inverted ? '价格倒挂' : `${(supplier.profitMargin * 100).toFixed(1)}%`}
-                                  </div>
-                                </td>
-                                <td className={`p-4 text-right font-bold ${supplier.stock <= 1 && !supplier.isRedlineBreached ? 'text-orange-600' : (supplier.isRedlineBreached ? 'text-red-400 line-through' : '')}`}>
-                                  {supplier.stock <= 1 ? `仅剩 ${supplier.stock}` : supplier.stock}
-                                </td>
-                              </tr>
-                            ))}
-                          </Fragment>
-                        );
-                      });
-                    })()}
+                            </tr>
+                          );
+                        });
+                      })()}
                     </tbody>
                   </table>
                 </div>
