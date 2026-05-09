@@ -25,7 +25,22 @@ export function MySelections() {
 
   const [pricingStrategy, setPricingStrategy] = useState<'special' | 'follow' | 'default'>('default');
   const [followSupplierId, setFollowSupplierId] = useState('');
-  const [fixedPrice, setFixedPrice] = useState('');
+  const [fixedPriceRmb, setFixedPriceRmb] = useState('');
+  const [fixedPriceHkd, setFixedPriceHkd] = useState('');
+  
+  const handleFixedPriceRmbChange = (val: string) => {
+    setFixedPriceRmb(val);
+    if (val && !isNaN(Number(val))) {
+      setFixedPriceHkd(String(Math.round(Number(val) / 0.92)));
+    } else {
+      setFixedPriceHkd('');
+    }
+  };
+
+  const handleFixedPriceHkdChange = (val: string) => {
+    setFixedPriceHkd(val);
+  };
+
   const [profitRedline, setProfitRedline] = useState('');
   const [rounding, setRounding] = useState<'9' | '0' | 'none'>('none');
   
@@ -114,23 +129,32 @@ export function MySelections() {
     return selectedSpu ? db[selectedSpu] : undefined;
   }, [selectedSpu]);
 
-  const currentGlobalFixedPrice = pricingStrategy === 'special' && fixedPrice && !isNaN(Number(fixedPrice)) ? Number(fixedPrice) : null;
+  const currentGlobalFixedPriceRmb = pricingStrategy === 'special' && fixedPriceRmb && !isNaN(Number(fixedPriceRmb)) ? Number(fixedPriceRmb) : null;
+  const currentGlobalFixedPriceHkd = pricingStrategy === 'special' && fixedPriceHkd && !isNaN(Number(fixedPriceHkd)) ? Number(fixedPriceHkd) : null;
+
   const currentProfitRedline = pricingStrategy === 'special' && profitRedline && !isNaN(Number(profitRedline)) ? Number(profitRedline) : null;
 
   useEffect(() => {
     if (spuData) {
       if (spuData.ruleType === 'special_price') {
         setPricingStrategy('special');
-        setFixedPrice(String(spuData.ruleValue));
+        setFixedPriceRmb(String(spuData.ruleValue));
+        if (spuData.ruleValue) {
+           setFixedPriceHkd(String(Math.round(Number(spuData.ruleValue) / 0.92)));
+        } else {
+           setFixedPriceHkd('');
+        }
         setFollowSupplierId('14746');
       } else if (spuData.ruleType === 'follow_supplier') {
         setPricingStrategy('follow');
         setFollowSupplierId(String(spuData.ruleValue));
-        setFixedPrice('');
+        setFixedPriceRmb('');
+        setFixedPriceHkd('');
       } else {
         setPricingStrategy('default');
         setFollowSupplierId('14746');
-        setFixedPrice('');
+        setFixedPriceRmb('');
+        setFixedPriceHkd('');
       }
 
       setRounding(spuData.rounding || 'none');
@@ -353,14 +377,28 @@ export function MySelections() {
                         <h4 className="text-xs font-black uppercase tracking-widest mb-4">配置单品特例价格</h4>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                            <div>
-                           <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-2">固定展现价 (¥)</label>
-                           <input 
-                              type="number" 
-                              value={fixedPrice}
-                              onChange={(e) => setFixedPrice(e.target.value)}
-                              placeholder="覆盖当前策略的自动计算价格" 
-                              className="w-full border border-zinc-200 px-3 py-2 text-sm font-bold focus:border-black focus:ring-0 outline-none" 
-                           />
+                         <div className="flex gap-2">
+                           <div className="flex-1">
+                             <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-2">境内特例价 (¥)</label>
+                             <input 
+                                type="number" 
+                                value={fixedPriceRmb}
+                                onChange={(e) => handleFixedPriceRmbChange(e.target.value)}
+                                placeholder="RMB金额" 
+                                className="w-full border border-zinc-200 px-3 py-2 text-sm font-bold focus:border-black focus:ring-0 outline-none" 
+                             />
+                           </div>
+                           <div className="flex-1">
+                             <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-2">境外特例价 (HK$)</label>
+                             <input 
+                                type="number" 
+                                value={fixedPriceHkd}
+                                onChange={(e) => handleFixedPriceHkdChange(e.target.value)}
+                                placeholder="HKD金额" 
+                                className="w-full border border-zinc-200 px-3 py-2 text-sm font-bold focus:border-black focus:ring-0 outline-none" 
+                             />
+                           </div>
+                         </div>
                            <p className="mt-1.5 text-[10px] text-zinc-500">此价格将优先于全局或商家加价策略进行展现。</p>
                            </div>
                            <div>
@@ -406,7 +444,7 @@ export function MySelections() {
                             </div>
                          </div>
                          <p className="mt-4 text-[10px] text-zinc-500 bg-white p-3 border border-zinc-100">
-                            <strong>计价逻辑说明:</strong> 此排序由「加价策略」全局设定所控制。系统将依序检查上述商家是否在同一SKU上提供了报价。如果优先级 1 的商家有配置，则转换为人民币并同步显示原生币种最终价；否则继续检查优先级 2，依此类推。若上述商家均无报价，则本策略失效，您需要开启「特例价」或使用「默认加价规则」。
+                            <strong>计价逻辑说明:</strong> 此排序由「加价策略」全局设定所控制。系统将依序检查上述商家是否在同一SKU上提供了报价。如果此商家的报价包含境内(人民币)价格，将作为境内零售价基准；若包含境外(港币)价格，将作为境外零售价基准，两侧独立跟随。若上述商家均无报价，则采用「默认加价规则」。
                          </p>
                       </div>
                    )}
@@ -428,8 +466,10 @@ export function MySelections() {
                      let spuPricingMode = '无 (按照各商家加价规则)';
                      let badgeColor = 'text-black';
                      
-                     if (pricingStrategy === 'special' && fixedPrice && !isNaN(Number(fixedPrice))) {
-                        spuPricingMode = '单品特例价: ¥' + fixedPrice;
+                     if (pricingStrategy === 'special' && (fixedPriceRmb || fixedPriceHkd)) {
+                        spuPricingMode = '单品特例价';
+                        if (fixedPriceRmb) spuPricingMode += ` ¥${fixedPriceRmb}`;
+                        if (fixedPriceHkd) spuPricingMode += ` HK$${fixedPriceHkd}`;
                         badgeColor = 'text-purple-700';
                      } else if (pricingStrategy === 'follow') {
                         const followQueue = ['14746', '1795', '1567'];
@@ -474,89 +514,101 @@ export function MySelections() {
                     </thead>
                     <tbody className="text-sm align-top">
                       {(() => {
-                        // 1. Determine baseline retail price for the ENTIRE SPU
-                        let targetRetailPriceRMB: number | null = null;
-                        let pricingMode = '';
-                        let followedBenchmarkId = '';
-                        
-                        if (pricingStrategy === 'special' && currentGlobalFixedPrice !== null) {
-                           targetRetailPriceRMB = currentGlobalFixedPrice;
-                           pricingMode = '单品特例价';
-                        } else if (pricingStrategy === 'follow') {
-                           let foundCost = 0;
-                           let foundFactor = 0;
-                           let foundName = '';
-                           
-                           const followQueue = ['14746', '1795', '1567'];
-                           for (const fId of followQueue) {
-                               let found = false;
-                               for (const s of spuData.skus) {
-                                  const b = s.suppliers.find((sup: any) => sup.id === fId);
-                                  if (b) {
-                                     foundCost = b.cost;
-                                     foundFactor = b.markupFactor;
-                                     foundName = b.name;
-                                     followedBenchmarkId = b.id;
-                                     found = true;
-                                     break;
-                                  }
-                               }
-                               if (found) break;
-                           }
-                           
-                           if (foundCost > 0) {
-                              targetRetailPriceRMB = foundCost * foundFactor;
-                              pricingMode = '跟随零售价 (' + foundName + ')';
-                           } else {
-                              pricingMode = '无 (按照各商家加价规则)';
-                              if (rounding && rounding !== 'none') {
-                                 pricingMode += ` + 尾数化 ${rounding}`;
-                              }
-                           }
-                        } else {
-                           pricingMode = '无 (按照各商家加价规则)';
-                           if (rounding && rounding !== 'none') {
-                              pricingMode += ` + 尾数化 ${rounding}`;
-                           }
-                        }
-                        
                         return spuData.skus.map((sku) => {
+                          // 1. Determine baseline retail price for this specific SKU (Independent channels)
+                          let targetRetailPriceRMB: number | null = null;
+                          let targetRetailPriceHKD: number | null = null;
+                          let pricingModeRMB = '';
+                          let pricingModeHKD = '';
+                          let followedBenchmarkIdRMB = '';
+                          let followedBenchmarkIdHKD = '';
+                          
+                          if (pricingStrategy === 'special') {
+                             if (currentGlobalFixedPriceRmb !== null) {
+                                targetRetailPriceRMB = currentGlobalFixedPriceRmb;
+                                pricingModeRMB = '单品特例价';
+                             }
+                             if (currentGlobalFixedPriceHkd !== null) {
+                                targetRetailPriceHKD = currentGlobalFixedPriceHkd;
+                                pricingModeHKD = '单品特例价';
+                             }
+                          } else if (pricingStrategy === 'follow') {
+                             const followQueue = ['14746', '1795', '1567'];
+                             for (const fId of followQueue) {
+                                const matchedQuotes = sku.suppliers.filter((sup: any) => sup.id === fId);
+                                if (matchedQuotes.length > 0) {
+                                   for (const q of matchedQuotes) {
+                                      let rawRetailNative = q.cost * q.markupFactor;
+                                      if (q.currency === 'CNY' && targetRetailPriceRMB === null) {
+                                         targetRetailPriceRMB = rawRetailNative;
+                                         pricingModeRMB = '跟随零售价 (' + q.name.split(' ')[0] + ')';
+                                         followedBenchmarkIdRMB = fId;
+                                      } else if (q.currency === 'HKD' && targetRetailPriceHKD === null) {
+                                         targetRetailPriceHKD = rawRetailNative;
+                                         pricingModeHKD = '跟随零售价 (' + q.name.split(' ')[0] + ')';
+                                         followedBenchmarkIdHKD = fId;
+                                      }
+                                   }
+                                }
+                                if (targetRetailPriceRMB !== null && targetRetailPriceHKD !== null) break;
+                             }
+                          }
+                          
+                          if (targetRetailPriceRMB === null) {
+                             pricingModeRMB = '无 (按照各商家加价规则)';
+                             if (rounding && rounding !== 'none') pricingModeRMB += ` + 尾数化 ${rounding}`;
+                          }
+                          if (targetRetailPriceHKD === null) {
+                             pricingModeHKD = '无 (按照各商家加价规则)';
+                             if (rounding && rounding !== 'none') pricingModeHKD += ` + 尾数化 ${rounding}`;
+                          }
+                        
                           // 2. Process suppliers
                           const processedSuppliers = sku.suppliers.map(supplier => {
+                              let calcRetailNative = 0;
                               let calcRetailRMB = 0;
                               let usedStrategy = '';
                               let isBenchmark = false;
                               
-                              if (targetRetailPriceRMB !== null) {
-                                  calcRetailRMB = targetRetailPriceRMB;
-                                  usedStrategy = pricingMode;
-                                  if (pricingStrategy === 'follow' && supplier.id === followedBenchmarkId) {
-                                     isBenchmark = true;
-                                  }
-                              } else {
-                                  calcRetailRMB = supplier.cost * supplier.markupFactor;
-                                  usedStrategy = supplier.markupRuleName;
-                                  
-                                  if (rounding === '9') {
-                                     calcRetailRMB = Math.floor(calcRetailRMB / 10) * 10 + 9;
-                                  } else if (rounding === '0') {
-                                     calcRetailRMB = Math.round(calcRetailRMB / 10) * 10;
-                                  }
+                              if (supplier.currency === 'CNY') {
+                                 if (targetRetailPriceRMB !== null) {
+                                    calcRetailNative = targetRetailPriceRMB;
+                                    calcRetailRMB = calcRetailNative;
+                                    usedStrategy = pricingModeRMB;
+                                    if (pricingStrategy === 'follow' && supplier.id === followedBenchmarkIdRMB) isBenchmark = true;
+                                 } else {
+                                    calcRetailNative = supplier.cost * supplier.markupFactor;
+                                    usedStrategy = supplier.markupRuleName;
+                                    if (rounding === '9') calcRetailNative = Math.floor(calcRetailNative / 10) * 10 + 9;
+                                    else if (rounding === '0') calcRetailNative = Math.round(calcRetailNative / 10) * 10;
+                                    calcRetailRMB = calcRetailNative;
+                                 }
+                              } else if (supplier.currency === 'HKD') {
+                                 if (targetRetailPriceHKD !== null) {
+                                    calcRetailNative = targetRetailPriceHKD;
+                                    usedStrategy = pricingModeHKD;
+                                    if (pricingStrategy === 'follow' && supplier.id === followedBenchmarkIdHKD) isBenchmark = true;
+                                 } else {
+                                    calcRetailNative = supplier.cost * supplier.markupFactor;
+                                    usedStrategy = supplier.markupRuleName;
+                                    if (rounding === '9') calcRetailNative = Math.floor(calcRetailNative / 10) * 10 + 9;
+                                    else if (rounding === '0') calcRetailNative = Math.round(calcRetailNative / 10) * 10;
+                                 }
+                                 calcRetailRMB = calcRetailNative * supplier.exchangeRate;
                               }
                               
-                              const profit = calcRetailRMB - supplier.cost;
-                              const profitMargin = profit / supplier.cost;
-                              const inverted = profit < 0;
+                              const profitNative = calcRetailNative - supplier.cost;
+                              const profitMargin = profitNative / supplier.cost;
+                              const profitRMB = calcRetailRMB - (supplier.currency === 'CNY' ? supplier.cost : supplier.cost * supplier.exchangeRate);
+                              const inverted = profitNative < 0;
                               
-                              const isRedlineBreached = currentProfitRedline !== null && profit < currentProfitRedline;
-                              
-                              const calcRetailNative = calcRetailRMB / supplier.exchangeRate;
+                              const isRedlineBreached = currentProfitRedline !== null && profitRMB < currentProfitRedline;
 
                               return {
                                  ...supplier,
                                  calcRetailRMB,
                                  calcRetailNative,
-                                 profit,
+                                 profit: profitRMB,
                                  profitMargin,
                                  inverted,
                                  isBenchmark,
