@@ -1,12 +1,17 @@
 import { Search, ChevronDown, TrendingUp, TrendingDown, X, Copy, AlertCircle } from "lucide-react";
-import { useState, useMemo } from "react";
+import { useState, useMemo, Fragment, useEffect } from "react";
 import { MultiSelectDropdown } from "./MultiSelectDropdown";
 import { CategoryMultiSelectDropdown } from "./CategoryMultiSelectDropdown";
 import { CATEGORY_HIERARCHY, ALL_BRANDS } from "../lib/constants";
 
+const YOUR_SELECTIONS = [
+  { id: 'hermes', brand: 'Hermès', name: 'Hermès Birkin 25 金扣', no: 'H-B25-GOLD', image: 'https://images.unsplash.com/photo-1584916201218-f4242ceb4809?auto=format&fit=crop&w=400&q=80', minRetail: '¥168,000.00', minCost: '¥142,000.00' },
+  { id: 'ggdb', brand: 'Golden Goose', name: 'Golden Goose Super-Star 经典做旧运动鞋', no: 'GWF00102.F000317', image: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=400&q=80', minRetail: '¥3,058.00', minCost: '¥2,750.00' },
+  { id: 'maxmara', brand: 'Max Mara', name: 'Max Mara Madame 101801 经典大衣', no: '101801-MADAME', image: 'https://images.unsplash.com/photo-1539533113208-f6df8cc8b543?auto=format&fit=crop&w=400&q=80', minRetail: '¥18,500.00', minCost: '¥15,000.00' },
+];
+
 export function MySelections() {
   const [selectedSpu, setSelectedSpu] = useState<string | null>(null);
-  const [isConfigModalOpen, setIsConfigModalOpen] = useState(false);
 
   const [filterBrands, setFilterBrands] = useState<string[]>([]);
   const [filterCategories, setFilterCategories] = useState<string[]>([]);
@@ -21,6 +26,109 @@ export function MySelections() {
   const [isSpecialRuleEnabled, setIsSpecialRuleEnabled] = useState(false);
   const [fixedPrice, setFixedPrice] = useState('');
   const [profitRedline, setProfitRedline] = useState('');
+  const [rounding, setRounding] = useState<'9' | '0' | 'none'>('none');
+  
+  const spuData = useMemo(() => {
+    const db: Record<string, { ruleType: string; ruleValue: string | number; rounding?: '9' | '0' | 'none'; skus: any[] }> = {
+      hermes: {
+        ruleType: 'none',
+        ruleValue: '',
+        rounding: '9',
+        skus: [
+          {
+            id: 'default',
+            name: '默认 (Default)',
+            suppliers: [
+              { id: '1567', name: 'UNIBUY (1567)', origin: '中国大陆', costStr: '¥145,000.00', cost: 145000, markupRuleName: '品牌加价 10%', markupFactor: 1.1, stock: 5 },
+              { id: '14746', name: '002 (14746)', origin: '港澳 / 保税仓', costStr: 'HK$155,000.00', cost: 142000, markupRuleName: '品类加价 18.3%', markupFactor: 1.183, stock: 10 }
+            ]
+          }
+        ]
+      },
+      ggdb: {
+        ruleType: 'follow_supplier',
+        ruleValue: '14746',
+        rounding: '9',
+        skus: [
+          {
+            id: '36',
+            name: '36',
+            suppliers: [
+              { id: '1795', name: 'HANNAH (1795)', origin: '港澳', costStr: 'HK$3,000.00', cost: 2750, markupRuleName: '商家特殊 12%', markupFactor: 1.12, stock: 4 },
+              { id: '14746', name: '002 (14746)', origin: '韩国直递', costStr: 'KRW 520,000', cost: 2780, markupRuleName: '全局 10%', markupFactor: 1.1, stock: 1 },
+              { id: '1567', name: 'UNIBUY (1567)', origin: '中国大陆', costStr: '¥2,850.00', cost: 2850, markupRuleName: '全局 10%', markupFactor: 1.1, stock: 12 },
+            ]
+          },
+          {
+            id: '37',
+            name: '37',
+            suppliers: [
+               { id: '14746', name: '002 (14746)', origin: '韩国直递', costStr: 'KRW 520,000', cost: 2780, markupRuleName: '全局 10%', markupFactor: 1.1, stock: 1 },
+               { id: '1567', name: 'UNIBUY (1567)', origin: '中国大陆', costStr: '¥2,850.00', cost: 2850, markupRuleName: '全局 10%', markupFactor: 1.1, stock: 12 },
+               { id: '9921', name: 'VIP-LUX (9921)', origin: '欧洲直邮', costStr: '€410.00', cost: 3150, markupRuleName: '全局 10%', markupFactor: 1.1, stock: 5 },
+            ]
+          },
+          {
+            id: '38',
+            name: '38',
+            suppliers: [
+               { id: '1795', name: 'HANNAH (1795)', origin: '港澳', costStr: 'HK$3,000.00', cost: 2750, markupRuleName: '商家特殊 12%', markupFactor: 1.12, stock: 8 },
+               { id: '1567', name: 'UNIBUY (1567)', origin: '中国大陆', costStr: '¥2,850.00', cost: 2850, markupRuleName: '全局 10%', markupFactor: 1.1, stock: 15 },
+               { id: '14746', name: '002 (14746)', origin: '韩国直递', costStr: 'KRW 520,000', cost: 2780, markupRuleName: '全局 10%', markupFactor: 1.1, stock: 1 },
+            ]
+          }
+        ]
+      },
+      maxmara: {
+        ruleType: 'special_price',
+        ruleValue: 18000,
+        rounding: '0',
+        skus: [
+          {
+            id: 'S',
+            name: 'S',
+            suppliers: [
+              { id: '9921', name: 'VIP-LUX (9921)', origin: '欧洲直邮', costStr: '€1,950.00', cost: 15000, markupRuleName: '全局加价 15%', markupFactor: 1.15, stock: 2 },
+              { id: '1567', name: 'UNIBUY (1567)', origin: '中国大陆', costStr: '¥16,500.00', cost: 16500, markupRuleName: '商家特殊 10%', markupFactor: 1.1, stock: 5 }
+            ]
+          },
+          {
+            id: 'M',
+            name: 'M',
+            suppliers: [
+              { id: '9921', name: 'VIP-LUX (9921)', origin: '欧洲直邮', costStr: '€1,950.00', cost: 15000, markupRuleName: '全局加价 15%', markupFactor: 1.15, stock: 3 },
+              { id: '1567', name: 'UNIBUY (1567)', origin: '中国大陆', costStr: '¥16,500.00', cost: 16500, markupRuleName: '商家特殊 10%', markupFactor: 1.1, stock: 1 }
+            ]
+          },
+          {
+            id: 'L',
+            name: 'L',
+            suppliers: [
+              { id: '9921', name: 'VIP-LUX (9921)', origin: '欧洲直邮', costStr: '€1,950.00', cost: 15000, markupRuleName: '全局加价 15%', markupFactor: 1.15, stock: 4 }
+            ]
+          }
+        ]
+      }
+    };
+    return selectedSpu ? db[selectedSpu] : undefined;
+  }, [selectedSpu]);
+
+  const currentGlobalFixedPrice = isSpecialRuleEnabled && fixedPrice && !isNaN(Number(fixedPrice)) ? Number(fixedPrice) : null;
+  const currentProfitRedline = isSpecialRuleEnabled && profitRedline && !isNaN(Number(profitRedline)) ? Number(profitRedline) : null;
+
+  useEffect(() => {
+    if (spuData) {
+      if (spuData.ruleType === 'special_price') {
+        setIsSpecialRuleEnabled(true);
+        setFixedPrice(String(spuData.ruleValue));
+      } else {
+        setIsSpecialRuleEnabled(false);
+        setFixedPrice('');
+      }
+      setRounding(spuData.rounding || 'none');
+      setProfitRedline('');
+    }
+  }, [spuData]);
 
   return (
     <div className="max-w-7xl mx-auto">
@@ -87,88 +195,53 @@ export function MySelections() {
           <div className="col-span-2 text-center">操作</div>
         </div>
 
-        {/* Row 1 */}
-        <div className="border-b border-zinc-200">
-          <div className="flex flex-col md:grid md:grid-cols-12 gap-4 px-4 md:px-6 py-4 md:items-center hover:bg-zinc-50 transition-colors">
-            <div className="hidden md:flex col-span-1 justify-center">
-              <input type="checkbox" className="w-4 h-4 accent-black" />
-            </div>
-            <div className="md:col-span-6 flex gap-4 items-center">
-              <div className="md:hidden pt-1">
+        {YOUR_SELECTIONS.map(item => (
+          <div key={item.id} className="border-b border-zinc-200">
+            <div className="flex flex-col md:grid md:grid-cols-12 gap-4 px-4 md:px-6 py-4 md:items-center hover:bg-zinc-50 transition-colors">
+              <div className="hidden md:flex col-span-1 justify-center">
                 <input type="checkbox" className="w-4 h-4 accent-black" />
               </div>
-              <div className="w-16 h-16 md:w-12 md:h-12 bg-zinc-100 p-1 flex-shrink-0">
-                <img src="https://images.unsplash.com/photo-1584916201218-f4242ceb4809?auto=format&fit=crop&w=100&q=80" className="w-full h-full object-contain mix-blend-multiply" />
+              <div className="md:col-span-6 flex gap-4 items-center">
+                <div className="md:hidden pt-1">
+                  <input type="checkbox" className="w-4 h-4 accent-black" />
+                </div>
+                <div className="w-16 h-16 md:w-12 md:h-12 bg-zinc-100 p-1 flex-shrink-0">
+                  <img src={item.image} className="w-full h-full object-contain mix-blend-multiply" />
+                </div>
+                <div>
+                  <div className="text-sm md:text-xs font-bold mb-1">{item.name}</div>
+                  <div className="text-[10px] text-zinc-400">货号: {item.no}</div>
+                </div>
               </div>
-              <div>
-                <div className="text-sm md:text-xs font-bold mb-1">Hermès Birkin 25 金扣</div>
-                <div className="text-[10px] text-zinc-400">货号: H-B25-GOLD</div>
+              <div className="flex justify-between items-center md:contents">
+                <div className="text-xs text-zinc-500 md:hidden ml-8">分销零售价</div>
+                <div className="md:col-span-3 text-right">
+                  <div className="text-xs font-bold">{item.minRetail} <span className="text-[10px] text-zinc-400 font-normal">起</span></div>
+                  <div className="text-[10px] text-zinc-400">供货价: {item.minCost} 起</div>
+                </div>
               </div>
-            </div>
-            <div className="flex justify-between items-center md:contents">
-              <div className="text-xs text-zinc-500 md:hidden ml-8">分销零售价</div>
-              <div className="md:col-span-3 text-right">
-                <div className="text-xs font-bold">¥168,000.00 <span className="text-[10px] text-zinc-400 font-normal">起</span></div>
-                <div className="text-[10px] text-zinc-400">供货价: ¥142,000.00 起</div>
+              <div className="md:col-span-2 flex flex-col items-center gap-2 mt-2 md:mt-0 ml-8 md:ml-0">
+                <button 
+                  onClick={() => setSelectedSpu(item.id)}
+                  className="w-full md:w-auto text-xs text-black font-bold border border-zinc-200 md:border-none py-2 md:py-0 md:hover:underline"
+                >
+                  查看SKU详情
+                </button>
               </div>
-            </div>
-            <div className="md:col-span-2 flex flex-col items-center gap-2 mt-2 md:mt-0 ml-8 md:ml-0">
-              <button 
-                onClick={() => setSelectedSpu('hermes')}
-                className="w-full md:w-auto text-xs text-black font-bold border border-zinc-200 md:border-none py-2 md:py-0 md:hover:underline"
-              >
-                查看SKU详情
-              </button>
             </div>
           </div>
-        </div>
-
-        {/* Row 2 */}
-        <div className="border-b border-zinc-200">
-          <div className="flex flex-col md:grid md:grid-cols-12 gap-4 px-4 md:px-6 py-4 md:items-center hover:bg-zinc-50 transition-colors">
-            <div className="hidden md:flex col-span-1 justify-center">
-               <input type="checkbox" className="w-4 h-4 accent-black" />
-             </div>
-             <div className="md:col-span-6 flex gap-4 items-center">
-               <div className="md:hidden pt-1">
-                 <input type="checkbox" className="w-4 h-4 accent-black" />
-               </div>
-               <div className="w-16 h-16 md:w-12 md:h-12 bg-zinc-100 p-1 flex-shrink-0">
-                 <img src="https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=100&q=80" className="w-full h-full object-contain mix-blend-multiply" />
-               </div>
-               <div>
-                 <div className="text-sm md:text-xs font-bold mb-1">Golden Goose Super-Star 经典做旧运动鞋</div>
-                 <div className="text-[10px] text-zinc-400">货号: GWF00102.F000317</div>
-               </div>
-             </div>
-             <div className="flex justify-between items-center md:contents">
-               <div className="text-xs text-zinc-500 md:hidden ml-8">分销零售价</div>
-               <div className="md:col-span-3 text-right">
-                 <div className="text-xs font-bold">¥3,200.00 <span className="text-[10px] text-zinc-400 font-normal">起</span></div>
-                 <div className="text-[10px] text-zinc-400">供货价: ¥2,800.00 起</div>
-               </div>
-             </div>
-             <div className="md:col-span-2 flex flex-col items-center gap-2 mt-2 md:mt-0 ml-8 md:ml-0">
-               <button 
-                 onClick={() => setSelectedSpu('ggdb')}
-                 className="w-full md:w-auto text-xs text-black font-bold border border-zinc-200 md:border-none py-2 md:py-0 md:hover:underline"
-               >
-                 查看SKU详情
-               </button>
-             </div>
-           </div>
-        </div>
+        ))}
       </div>
 
       {/* Product Data Drawer */}
-      {selectedSpu && (
+      {selectedSpu && spuData && (
         <div className="fixed inset-0 z-50 flex justify-end">
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setSelectedSpu(null)}></div>
           <div className="relative w-full md:w-[1100px] bg-white h-full shadow-2xl flex flex-col animate-in slide-in-from-right duration-300">
             <div className="flex items-center justify-between px-4 md:px-8 py-4 md:py-6 border-b border-zinc-100">
               <div>
                 <h2 className="text-lg md:text-xl font-black uppercase tracking-tight mb-1">商品数据</h2>
-                <div className="text-[10px] md:text-xs text-zinc-500 font-mono">SPU: {selectedSpu === 'hermes' ? 'H-B25-GOLD' : 'GWF00102.F000317'}</div>
+                <div className="text-[10px] md:text-xs text-zinc-500 font-mono">SPU: {YOUR_SELECTIONS.find(i => i.id === selectedSpu)?.no}</div>
               </div>
               <button onClick={() => setSelectedSpu(null)} className="text-zinc-400 hover:text-black transition-colors"><X size={24} /></button>
             </div>
@@ -179,38 +252,21 @@ export function MySelections() {
                 <div className="flex flex-col md:flex-row gap-4 md:gap-6 items-start">
                   <div className="w-20 h-20 md:w-24 md:h-24 border border-zinc-200 rounded-lg p-2 flex-shrink-0">
                     <img 
-                      src={selectedSpu === 'hermes' 
-                        ? "https://images.unsplash.com/photo-1584916201218-f4242ceb4809?auto=format&fit=crop&w=200&q=80" 
-                        : "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=200&q=80"} 
+                      src={YOUR_SELECTIONS.find(i => i.id === selectedSpu)?.image} 
                       className="w-full h-full object-contain mix-blend-multiply" 
                     />
                   </div>
                   <div className="pt-0 md:pt-2">
                     <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1">
-                      {selectedSpu === 'hermes' ? 'Hermès' : 'Golden Goose'}
+                      {YOUR_SELECTIONS.find(i => i.id === selectedSpu)?.brand}
                     </div>
                     <div className="text-sm md:text-base font-black tracking-tight leading-none mb-2 text-zinc-800">
-                      {selectedSpu === 'hermes' ? 'Hermès Birkin 25 金扣' : 'Golden Goose Super-Star 经典做旧运动鞋'}
+                      {YOUR_SELECTIONS.find(i => i.id === selectedSpu)?.name}
                     </div>
                     <div className="flex items-center gap-2 text-xs md:text-sm text-zinc-500">
-                      货号: {selectedSpu === 'hermes' ? 'H-B25-GOLD' : 'GWF00102.F000317'}
+                      货号: {YOUR_SELECTIONS.find(i => i.id === selectedSpu)?.no}
                       <button className="text-zinc-400 hover:text-black"><Copy size={14} /></button>
                     </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Strategy Info Section */}
-              <div className="p-4 md:p-8 border-b border-zinc-100 bg-white">
-                <h3 className="text-xs md:text-sm font-black uppercase tracking-widest mb-4 md:mb-6">全局/商家价格策略</h3>
-                <div className="grid grid-cols-2 gap-4 md:gap-6">
-                  <div className="bg-zinc-50 p-4 border border-zinc-200">
-                    <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1">当前命中策略</div>
-                    <div className="text-sm font-bold truncate">默认全局加价 (STR-DEFAULT)</div>
-                  </div>
-                  <div className="bg-zinc-50 p-4 border border-zinc-200">
-                    <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1">加价规则</div>
-                    <div className="text-sm font-bold text-emerald-600">顺加加价 18.3% <span className="text-zinc-400 font-normal ml-2">/ 尾数 9 结尾</span></div>
                   </div>
                 </div>
               </div>
@@ -268,299 +324,192 @@ export function MySelections() {
               <div className="p-4 md:p-8 bg-zinc-50/50">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4 md:mb-6">
                   <h3 className="text-xs md:text-sm font-black uppercase tracking-widest">SKU 规格与报价 (包含所有商家)</h3>
+                  {(() => {
+                     let spuPricingMode = '无 (按照各商家加价规则)';
+                     let badgeColor = 'text-black';
+                     if (currentGlobalFixedPrice !== null) {
+                        spuPricingMode = '全局固定展现价: ¥' + currentGlobalFixedPrice;
+                        badgeColor = 'text-purple-700';
+                     } else if (spuData.ruleType === 'special_price' && spuData.ruleValue) {
+                        spuPricingMode = '特例价: ¥' + spuData.ruleValue;
+                        badgeColor = 'text-purple-700';
+                     } else if (spuData.ruleType === 'follow_supplier' && spuData.ruleValue) {
+                        // Find supplier name roughly
+                        let foundName = spuData.ruleValue as string;
+                        for (const s of spuData.skus) {
+                           const b = s.suppliers.find((sup: any) => sup.id === spuData.ruleValue);
+                           if (b) {
+                              foundName = b.name;
+                              break;
+                           }
+                        }
+                        spuPricingMode = '跟随零售价 (' + foundName + ')';
+                        badgeColor = 'text-orange-600';
+                     }
+                     if (currentGlobalFixedPrice === null && spuData.ruleType === 'none' && spuData.rounding && spuData.rounding !== 'none') {
+                           spuPricingMode += ` + 尾数化 ${spuData.rounding}`;
+                     }
+                     
+                     return (
+                        <div className="flex items-center gap-3">
+                           <span className="text-[10px] font-bold text-zinc-500 uppercase">当前SPU应用策略</span>
+                           <span className={`font-bold text-xs bg-white px-3 py-1 border border-zinc-200 ${badgeColor}`}>
+                             {spuPricingMode}
+                           </span>
+                        </div>
+                     )
+                  })()}
                 </div>
 
                 <div className="bg-white border border-zinc-200 shadow-sm overflow-x-auto">
                   <table className="w-full text-left border-collapse min-w-[800px]">
                     <thead>
                       <tr className="bg-zinc-50 border-b border-zinc-200 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
-                        <th className="p-4 font-bold">规格 (尺码)</th>
                         <th className="p-4 font-bold">商家 / 商品所在地</th>
                         <th className="p-4 font-bold text-right">集市供货价</th>
-                        <th className="p-4 font-bold text-center">当前单品加价策略</th>
-                        <th className="p-4 font-bold text-right">我的分销价</th>
+                        <th className="p-4 font-bold text-right">分销零售价</th>
                         <th className="p-4 font-bold text-right">利润</th>
-                        <th className="p-4 font-bold text-right">库存</th>
-                        <th className="p-4 font-bold text-center">操作</th>
+                        <th className="p-4 font-bold text-right w-24">库存</th>
                       </tr>
                     </thead>
                     <tbody className="text-sm">
-                      {selectedSpu === 'hermes' ? (
-                        <>
-                          {/* Hermes SKUs from global/different suppliers */}
-                          <tr className="border-b border-zinc-100 hover:bg-zinc-50 transition-colors">
-                            <td className="p-4 font-bold text-zinc-800">默认</td>
-                            <td className="p-4">
-                              <div className="text-xs font-bold mb-1">002 (14746)</div>
-                              <div className="flex flex-wrap gap-1">
-                                <span className="bg-zinc-100 text-zinc-600 border border-zinc-200 px-2 py-1 text-[10px] font-bold uppercase tracking-wider">港澳</span>
-                                <span className="bg-zinc-100 text-zinc-600 border border-zinc-200 px-2 py-1 text-[10px] font-bold uppercase tracking-wider">保税仓</span>
-                              </div>
-                            </td>
-                            <td className="p-4 text-right">
-                              <div className="font-bold text-zinc-500">HK$155,000.00</div>
-                              <div className="text-[10px] text-zinc-400 mt-1">约 ¥142,000 (含税)</div>
-                            </td>
-                            <td className="p-4 text-center">
-                              <span className="text-[10px] font-bold text-zinc-600 border border-zinc-200 bg-zinc-50 px-2 py-1">加价策略: 18.3%</span>
-                            </td>
-                            <td className="p-4 text-right">
-                              <div className="font-bold text-black">¥168,000.00</div>
-                            </td>
-                            <td className="p-4 text-right">
-                              <div className="font-bold text-black">¥26,000</div>
-                              <div className="text-[10px] text-zinc-400">18.3%</div>
-                            </td>
-                            <td className="p-4 text-right font-bold">10</td>
-                            <td className="p-4 text-center">
-                              <button onClick={() => setIsConfigModalOpen(true)} className="text-xs font-bold text-black border border-zinc-200 px-3 py-1 hover:bg-zinc-100 transition-colors">配置策略</button>
-                            </td>
-                          </tr>
-                          <tr className="border-b border-zinc-100 hover:bg-zinc-50 transition-colors">
-                            <td className="p-4 font-bold text-zinc-800">默认</td>
-                            <td className="p-4">
-                              <div className="text-xs font-bold mb-1">UNIBUY (1567)</div>
-                              <div className="flex flex-wrap gap-1">
-                                <span className="bg-zinc-100 text-zinc-600 border border-zinc-200 px-2 py-1 text-[10px] font-bold uppercase tracking-wider">中国大陆</span>
-                              </div>
-                            </td>
-                            <td className="p-4 text-right">
-                              <div className="font-bold text-zinc-500">¥145,000.00</div>
-                            </td>
-                            <td className="p-4 text-center">
-                              <span className="text-[10px] font-bold text-zinc-500 border border-zinc-200 bg-zinc-50 px-2 py-1">加价策略: 10%</span>
-                            </td>
-                            <td className="p-4 text-right">
-                              <div className="font-bold text-black">¥159,500.00</div>
-                            </td>
-                            <td className="p-4 text-right">
-                              <div className="font-bold text-black">¥14,500</div>
-                              <div className="text-[10px] text-zinc-400">10.0%</div>
-                            </td>
-                            <td className="p-4 text-right font-bold">5</td>
-                            <td className="p-4 text-center">
-                              <button onClick={() => setIsConfigModalOpen(true)} className="text-xs font-bold text-black border border-zinc-200 px-3 py-1 hover:bg-zinc-100 transition-colors">配置策略</button>
-                            </td>
-                          </tr>
-                        </>
-                      ) : (
-                        <>
-                          <tr className="border-b border-zinc-100 hover:bg-zinc-50 transition-colors">
-                            <td className="p-4 font-bold text-zinc-800 border-r border-zinc-100" rowSpan={3}>36</td>
-                            <td className="p-4">
-                              <div className="text-xs font-bold mb-1">HANNAH (1795)</div>
-                              <div className="flex flex-wrap gap-1">
-                                <span className="bg-zinc-100 text-zinc-600 border border-zinc-200 px-2 py-1 text-[10px] font-bold uppercase tracking-wider">港澳</span>
-                              </div>
-                            </td>
-                            <td className="p-4 text-right">
-                              <div className="font-bold text-zinc-500">HK$3,000.00</div>
-                              <div className="text-[10px] text-zinc-400 mt-1">约 ¥2,750</div>
-                            </td>
-                            <td className="p-4 text-center">
-                              <span className="text-[10px] font-bold text-zinc-600 border border-zinc-200 bg-zinc-50 px-2 py-1">特例价: ¥3,500</span>
-                            </td>
-                            <td className="p-4 text-right">
-                              <div className="font-bold text-black">¥3,500.00</div>
-                            </td>
-                            <td className="p-4 text-right">
-                              <div className="font-bold text-black">¥750</div>
-                              <div className="text-[10px] text-zinc-400">27.2%</div>
-                            </td>
-                            <td className="p-4 text-right font-bold">4</td>
-                            <td className="p-4 text-center">
-                              <button onClick={() => setIsConfigModalOpen(true)} className="text-xs font-bold text-black border border-zinc-200 px-3 py-1 hover:bg-zinc-100 transition-colors">配置策略</button>
-                            </td>
-                          </tr>
-                          <tr className="border-b border-zinc-100 hover:bg-zinc-50 transition-colors">
-                            <td className="p-4">
-                              <div className="text-xs font-bold mb-1">002 (14746)</div>
-                              <div className="flex flex-wrap gap-1">
-                                <span className="bg-zinc-100 text-zinc-600 border border-zinc-200 px-2 py-1 text-[10px] font-bold uppercase tracking-wider">韩国直递</span>
-                              </div>
-                            </td>
-                            <td className="p-4 text-right">
-                              <div className="font-bold text-zinc-500">KRW 520,000</div>
-                              <div className="text-[10px] text-zinc-400 mt-1">约 ¥2,780</div>
-                            </td>
-                            <td className="p-4 text-center">
-                              <span className="text-[10px] font-bold text-zinc-600 border border-zinc-200 bg-zinc-50 px-2 py-1">跟随零售价 (002 14746)</span>
-                            </td>
-                            <td className="p-4 text-right">
-                              <div className="font-bold text-black">¥3,058.00</div>
-                            </td>
-                            <td className="p-4 text-right">
-                              <div className="font-bold text-black">¥278</div>
-                              <div className="text-[10px] text-zinc-400">10.0%</div>
-                            </td>
-                            <td className="p-4 text-right font-bold text-black">仅剩 1</td>
-                            <td className="p-4 text-center">
-                              <button onClick={() => setIsConfigModalOpen(true)} className="text-xs font-bold text-black border border-zinc-200 px-3 py-1 hover:bg-zinc-100 transition-colors">配置策略</button>
-                            </td>
-                          </tr>
-                          <tr className="border-b-4 border-zinc-200 hover:bg-zinc-50 transition-colors">
-                            <td className="p-4">
-                              <div className="text-xs font-bold mb-1">UNIBUY (1567)</div>
-                              <div className="flex flex-wrap gap-1">
-                                <span className="bg-zinc-100 text-zinc-600 border border-zinc-200 px-2 py-1 text-[10px] font-bold uppercase tracking-wider">中国大陆</span>
-                              </div>
-                            </td>
-                            <td className="p-4 text-right">
-                              <div className="font-bold text-zinc-500">¥2,850.00</div>
-                            </td>
-                            <td className="p-4 text-center">
-                              <span className="text-[10px] font-bold text-zinc-500 border border-zinc-200 bg-zinc-50 px-2 py-1">加价策略: 10%</span>
-                            </td>
-                            <td className="p-4 text-right">
-                              <div className="font-bold text-black">¥3,135.00</div>
-                            </td>
-                            <td className="p-4 text-right">
-                              <div className="font-bold text-black">¥285</div>
-                              <div className="text-[10px] text-zinc-400">10.0%</div>
-                            </td>
-                            <td className="p-4 text-right font-bold">12</td>
-                            <td className="p-4 text-center">
-                              <button onClick={() => setIsConfigModalOpen(true)} className="text-xs font-bold text-black border border-zinc-200 px-3 py-1 hover:bg-zinc-100 transition-colors">配置策略</button>
-                            </td>
-                          </tr>
-
-                          {/* Size 37 */}
-                          <tr className="border-b border-zinc-100 hover:bg-zinc-50 transition-colors">
-                            <td className="p-4 font-bold text-zinc-800 border-r border-zinc-100" rowSpan={2}>37</td>
-                            <td className="p-4">
-                              <div className="text-xs font-bold mb-1">HANNAH (1795)</div>
-                              <div className="flex flex-wrap gap-1">
-                                <span className="bg-zinc-100 text-zinc-600 border border-zinc-200 px-2 py-1 text-[10px] font-bold uppercase tracking-wider">港澳</span>
-                              </div>
-                            </td>
-                            <td className="p-4 text-right">
-                              <div className="font-bold text-zinc-500">HK$3,000.00</div>
-                              <div className="text-[10px] text-zinc-400 mt-1">约 ¥2,750</div>
-                            </td>
-                            <td className="p-4 text-center">
-                              <span className="text-[10px] font-bold text-zinc-600 border border-zinc-200 bg-zinc-50 px-2 py-1">特例价: ¥3,500</span>
-                            </td>
-                            <td className="p-4 text-right">
-                              <div className="font-bold text-black">¥3,500.00</div>
-                            </td>
-                            <td className="p-4 text-right">
-                              <div className="font-bold text-black">¥750</div>
-                              <div className="text-[10px] text-zinc-400">27.2%</div>
-                            </td>
-                            <td className="p-4 text-right font-bold">8</td>
-                            <td className="p-4 text-center">
-                              <button onClick={() => setIsConfigModalOpen(true)} className="text-xs font-bold text-black border border-zinc-200 px-3 py-1 hover:bg-zinc-100 transition-colors">配置策略</button>
-                            </td>
-                          </tr>
-                          <tr className="border-b-4 border-zinc-200 hover:bg-zinc-50 transition-colors">
-                            <td className="p-4">
-                              <div className="text-xs font-bold mb-1">UNIBUY (1567)</div>
-                              <div className="flex flex-wrap gap-1">
-                                <span className="bg-zinc-100 text-zinc-600 border border-zinc-200 px-2 py-1 text-[10px] font-bold uppercase tracking-wider">中国大陆</span>
-                              </div>
-                            </td>
-                            <td className="p-4 text-right">
-                              <div className="font-bold text-zinc-500">¥2,850.00</div>
-                            </td>
-                            <td className="p-4 text-center">
-                              <span className="text-[10px] font-bold text-zinc-500 border border-zinc-200 bg-zinc-50 px-2 py-1">加价策略: 10%</span>
-                            </td>
-                            <td className="p-4 text-right">
-                              <div className="font-bold text-black">¥3,135.00</div>
-                            </td>
-                            <td className="p-4 text-right">
-                              <div className="font-bold text-black">¥285</div>
-                              <div className="text-[10px] text-zinc-400">10.0%</div>
-                            </td>
-                            <td className="p-4 text-right font-bold">15</td>
-                            <td className="p-4 text-center">
-                              <button onClick={() => setIsConfigModalOpen(true)} className="text-xs font-bold text-black border border-zinc-200 px-3 py-1 hover:bg-zinc-100 transition-colors">配置策略</button>
-                            </td>
-                          </tr>
+                      {(() => {
+                        // 1. Determine baseline retail price for the ENTIRE SPU
+                        let targetRetailPrice: number | null = null;
+                        let pricingMode = '';
+                        
+                        if (currentGlobalFixedPrice !== null) {
+                           targetRetailPrice = currentGlobalFixedPrice;
+                           pricingMode = '全局特例价';
+                        } else if (spuData.ruleType === 'special_price' && spuData.ruleValue) {
+                           targetRetailPrice = Number(spuData.ruleValue);
+                           pricingMode = '特例价: ¥' + spuData.ruleValue;
+                        } else if (spuData.ruleType === 'follow_supplier' && spuData.ruleValue) {
+                           // Find the benchmark supplier price across all SKUs to establish a single price
+                           let foundCost = 0;
+                           let foundFactor = 0;
+                           let foundName = spuData.ruleValue as string; // fallback
+                           for (const s of spuData.skus) {
+                              const b = s.suppliers.find((sup: any) => sup.id === spuData.ruleValue);
+                              if (b) {
+                                 foundCost = b.cost;
+                                 foundFactor = b.markupFactor;
+                                 foundName = b.name;
+                                 break; // Use the first found instance to determine SPU-wide retail price
+                              }
+                           }
+                           
+                           if (foundCost > 0) {
+                              targetRetailPrice = foundCost * foundFactor;
+                              pricingMode = '跟随零售价 (' + foundName + ')';
+                           } else {
+                              pricingMode = '无 (按照各商家加价规则)';
+                           }
+                        } else {
+                           pricingMode = '无 (按照各商家加价规则)';
+                        }
+                        
+                        return spuData.skus.map((sku) => {
+                          // 2. Process suppliers
+                          const processedSuppliers = sku.suppliers.map(supplier => {
+                              let calcRetail = 0;
+                              let usedStrategy = '';
+                              let isBenchmark = false;
+                              
+                              if (targetRetailPrice !== null) {
+                                  calcRetail = targetRetailPrice;
+                                  usedStrategy = pricingMode;
+                                  if (spuData.ruleType === 'follow_supplier' && supplier.id === spuData.ruleValue) {
+                                     isBenchmark = true;
+                                  }
+                              } else {
+                                  calcRetail = supplier.cost * supplier.markupFactor;
+                                  usedStrategy = supplier.markupRuleName;
+                              }
+                              
+                              if (rounding === '9') {
+                                 calcRetail = Math.floor(calcRetail / 10) * 10 + 9;
+                              } else if (rounding === '0') {
+                                 calcRetail = Math.round(calcRetail / 10) * 10;
+                              }
+                              
+                              const profit = calcRetail - supplier.cost;
+                              const profitMargin = profit / supplier.cost;
+                              const inverted = profit < 0;
+                              
+                              const isRedlineBreached = currentProfitRedline !== null && profit < currentProfitRedline;
+                              
+                              return {
+                                 ...supplier,
+                                 calcRetail,
+                                 profit,
+                                 profitMargin,
+                                 inverted,
+                                 isBenchmark,
+                                 usedStrategy,
+                                 isRedlineBreached
+                              };
+                          });
                           
-                          {/* Size 38 */}
-                          <tr className="border-b border-zinc-100 hover:bg-zinc-50 transition-colors">
-                            <td className="p-4 font-bold text-zinc-800 border-r border-zinc-100" rowSpan={1}>38</td>
-                            <td className="p-4">
-                              <div className="text-xs font-bold mb-1">002 (14746)</div>
-                              <div className="flex flex-wrap gap-1">
-                                <span className="bg-zinc-100 text-zinc-600 border border-zinc-200 px-2 py-1 text-[10px] font-bold uppercase tracking-wider">韩国直递</span>
-                              </div>
-                            </td>
-                            <td className="p-4 text-right">
-                              <div className="font-bold text-zinc-500">KRW 520,000</div>
-                              <div className="text-[10px] text-zinc-400 mt-1">约 ¥2,780</div>
-                            </td>
-                            <td className="p-4 text-center">
-                              <span className="text-[10px] font-bold text-zinc-600 border border-zinc-200 bg-zinc-50 px-2 py-1">跟随零售价 (002 14746)</span>
-                            </td>
-                            <td className="p-4 text-right">
-                              <div className="font-bold text-black">¥3,058.00</div>
-                            </td>
-                            <td className="p-4 text-right">
-                              <div className="font-bold text-black">¥278</div>
-                              <div className="text-[10px] text-zinc-400">10.0%</div>
-                            </td>
-                            <td className="p-4 text-right font-bold text-black">仅剩 1</td>
-                            <td className="p-4 text-center">
-                              <button onClick={() => setIsConfigModalOpen(true)} className="text-xs font-bold text-black border border-zinc-200 px-3 py-1 hover:bg-zinc-100 transition-colors">配置策略</button>
-                            </td>
-                          </tr>
-
-                        </>
-                      )}
+                          // 3. Sort suppliers
+                          processedSuppliers.sort((a, b) => a.calcRetail - b.calcRetail);
+  
+                          return (
+                            <Fragment key={sku.id}>
+                              <tr className="bg-zinc-100/80 border-y border-zinc-200">
+                                <td colSpan={5} className="p-4">
+                                  <div className="flex items-center justify-between">
+                                    <span className="font-black text-sm">规格: {sku.name}</span>
+                                  </div>
+                                </td>
+                              </tr>
+                              {processedSuppliers.map((supplier) => (
+                              <tr key={supplier.id} className={`border-b border-zinc-100 transition-colors ${supplier.isRedlineBreached ? 'bg-red-50/50 hover:bg-red-50' : 'hover:bg-zinc-50'}`}>
+                                <td className="p-4">
+                                  <div className="text-xs font-bold mb-1">
+                                    {supplier.name} 
+                                    {supplier.isBenchmark && <span className="ml-1 text-[10px] bg-orange-100 text-orange-700 px-1 py-0.5 rounded-sm">基准</span>}
+                                    {supplier.isRedlineBreached && <span className="ml-1 text-[10px] bg-red-100 text-red-700 px-1 py-0.5 rounded-sm">触碰红线 (下架)</span>}
+                                  </div>
+                                  <div className="flex flex-wrap gap-1">
+                                    <span className="bg-zinc-100 text-zinc-600 border border-zinc-200 px-2 py-1 text-[10px] font-bold uppercase tracking-wider">{supplier.origin}</span>
+                                  </div>
+                                  <div className="text-[10px] text-zinc-500 mt-2">应用策略: {supplier.usedStrategy}</div>
+                                </td>
+                                <td className="p-4 text-right">
+                                  <div className="font-bold text-zinc-500">{supplier.costStr}</div>
+                                  <div className="text-[10px] text-zinc-400 mt-1">
+                                    {supplier.costStr !== `¥${supplier.cost.toLocaleString('en-US')}` && `约 ¥${supplier.cost.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`}
+                                  </div>
+                                </td>
+                                <td className="p-4 text-right">
+                                  {supplier.isRedlineBreached ? (
+                                    <div className="font-bold text-zinc-400 line-through text-lg">¥{supplier.calcRetail.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                                  ) : (
+                                    <div className="font-bold text-black text-lg">¥{supplier.calcRetail.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                                  )}
+                                </td>
+                                <td className="p-4 text-right">
+                                  <div className={`font-bold ${supplier.inverted || supplier.isRedlineBreached ? 'text-red-600' : 'text-black'}`}>
+                                    {supplier.profit < 0 ? '-' : ''}¥{Math.abs(supplier.profit).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                                  </div>
+                                  <div className={`text-[10px] ${supplier.inverted || supplier.isRedlineBreached ? 'text-red-600' : 'text-zinc-400'}`}>
+                                    {supplier.inverted ? '价格倒挂' : `${(supplier.profitMargin * 100).toFixed(1)}%`}
+                                  </div>
+                                </td>
+                                <td className={`p-4 text-right font-bold ${supplier.stock <= 1 && !supplier.isRedlineBreached ? 'text-orange-600' : (supplier.isRedlineBreached ? 'text-red-400 line-through' : '')}`}>
+                                  {supplier.stock <= 1 ? `仅剩 ${supplier.stock}` : supplier.stock}
+                                </td>
+                              </tr>
+                            ))}
+                          </Fragment>
+                        );
+                      });
+                    })()}
                     </tbody>
                   </table>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Config Modal */}
-      {isConfigModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setIsConfigModalOpen(false)}></div>
-          <div className="relative bg-white w-full max-w-md shadow-2xl animate-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-100">
-              <h2 className="text-lg font-black uppercase tracking-tight">修改加价策略</h2>
-              <button onClick={() => setIsConfigModalOpen(false)} className="text-zinc-400 hover:text-black transition-colors"><X size={20} /></button>
-            </div>
-            
-            <div className="p-6 bg-zinc-50 border-b border-zinc-100">
-              <div className="flex items-start gap-3 text-orange-600 bg-orange-50 border border-orange-100 p-3 mb-6">
-                <AlertCircle size={16} className="mt-0.5 shrink-0" />
-                <p className="text-xs font-bold leading-relaxed">
-                  注意：修改此策略配置，将影响<span className="underline decoration-orange-300 underline-offset-2 mx-1">所有适用该策略</span>的特定商品或特定商家商品。是否继续？
-                </p>
-              </div>
-
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-xs font-bold uppercase tracking-widest text-zinc-500 mb-2">调整策略 (示例)</label>
-                  <select className="w-full border border-zinc-200 px-3 py-2 text-sm focus:border-black focus:ring-1 focus:ring-black outline-none bg-white">
-                    <option>加价策略: 18.3%</option>
-                    <option>跟随零售价 (002 14746)</option>
-                    <option>特例价: ¥3,500</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            <div className="p-4 flex justify-end gap-3 bg-white">
-              <button 
-                onClick={() => setIsConfigModalOpen(false)} 
-                className="px-6 py-2 text-xs font-bold text-zinc-600 hover:text-black transition-colors border border-zinc-200"
-              >
-                取消
-              </button>
-              <button 
-                onClick={() => setIsConfigModalOpen(false)} 
-                className="px-6 py-2 text-xs font-bold bg-black text-white hover:bg-zinc-800 transition-colors"
-              >
-                确认修改
-              </button>
             </div>
           </div>
         </div>
