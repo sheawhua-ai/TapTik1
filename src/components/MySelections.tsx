@@ -1,4 +1,4 @@
-import { Search, ChevronDown, TrendingUp, TrendingDown, X, Copy } from "lucide-react";
+import { Search, ChevronDown, TrendingUp, TrendingDown, X, Copy, AlertCircle } from "lucide-react";
 import { useState, useMemo } from "react";
 import { MultiSelectDropdown } from "./MultiSelectDropdown";
 import { CategoryMultiSelectDropdown } from "./CategoryMultiSelectDropdown";
@@ -6,7 +6,7 @@ import { CATEGORY_HIERARCHY, ALL_BRANDS } from "../lib/constants";
 
 export function MySelections() {
   const [selectedSpu, setSelectedSpu] = useState<string | null>(null);
-  const [activeWarehouseTab, setActiveWarehouseTab] = useState<'domestic' | 'overseas'>('domestic');
+  const [isConfigModalOpen, setIsConfigModalOpen] = useState(false);
 
   const [filterBrands, setFilterBrands] = useState<string[]>([]);
   const [filterCategories, setFilterCategories] = useState<string[]>([]);
@@ -82,10 +82,9 @@ export function MySelections() {
           <div className="col-span-1 flex justify-center">
             <input type="checkbox" className="w-4 h-4 accent-black" />
           </div>
-          <div className="col-span-5">商品信息</div>
-          <div className="col-span-2 text-right">分销零售价</div>
-          <div className="col-span-3 text-center">当前加价策略</div>
-          <div className="col-span-1 text-center">操作</div>
+          <div className="col-span-6">商品信息</div>
+          <div className="col-span-3 text-right">分销零售价 (我的报价)</div>
+          <div className="col-span-2 text-center">操作</div>
         </div>
 
         {/* Row 1 */}
@@ -94,7 +93,7 @@ export function MySelections() {
             <div className="hidden md:flex col-span-1 justify-center">
               <input type="checkbox" className="w-4 h-4 accent-black" />
             </div>
-            <div className="md:col-span-5 flex gap-4 items-center">
+            <div className="md:col-span-6 flex gap-4 items-center">
               <div className="md:hidden pt-1">
                 <input type="checkbox" className="w-4 h-4 accent-black" />
               </div>
@@ -108,23 +107,17 @@ export function MySelections() {
             </div>
             <div className="flex justify-between items-center md:contents">
               <div className="text-xs text-zinc-500 md:hidden ml-8">分销零售价</div>
-              <div className="md:col-span-2 text-right">
-                <div className="text-xs font-bold">¥168,000.00</div>
-                <div className="text-[10px] text-zinc-400">供货价: ¥142,000.00</div>
+              <div className="md:col-span-3 text-right">
+                <div className="text-xs font-bold">¥168,000.00 <span className="text-[10px] text-zinc-400 font-normal">起</span></div>
+                <div className="text-[10px] text-zinc-400">供货价: ¥142,000.00 起</div>
               </div>
             </div>
-            <div className="flex justify-between items-center md:contents">
-              <div className="text-xs text-zinc-500 md:hidden ml-8">加价策略</div>
-              <div className="md:col-span-3 md:text-center">
-                <div className="text-xs font-bold text-emerald-600">顺加加价 18.3%</div>
-              </div>
-            </div>
-            <div className="md:col-span-1 flex flex-col items-center gap-2 mt-2 md:mt-0 ml-8 md:ml-0">
+            <div className="md:col-span-2 flex flex-col items-center gap-2 mt-2 md:mt-0 ml-8 md:ml-0">
               <button 
                 onClick={() => setSelectedSpu('hermes')}
                 className="w-full md:w-auto text-xs text-black font-bold border border-zinc-200 md:border-none py-2 md:py-0 md:hover:underline"
               >
-                查看详情
+                查看SKU详情
               </button>
             </div>
           </div>
@@ -134,42 +127,36 @@ export function MySelections() {
         <div className="border-b border-zinc-200">
           <div className="flex flex-col md:grid md:grid-cols-12 gap-4 px-4 md:px-6 py-4 md:items-center hover:bg-zinc-50 transition-colors">
             <div className="hidden md:flex col-span-1 justify-center">
-              <input type="checkbox" className="w-4 h-4 accent-black" />
-            </div>
-            <div className="md:col-span-5 flex gap-4 items-center">
-              <div className="md:hidden pt-1">
-                <input type="checkbox" className="w-4 h-4 accent-black" />
-              </div>
-              <div className="w-16 h-16 md:w-12 md:h-12 bg-zinc-100 p-1 flex-shrink-0">
-                <img src="https://images.unsplash.com/photo-1523170335258-f5ed11844a49?auto=format&fit=crop&w=100&q=80" className="w-full h-full object-contain mix-blend-multiply" />
-              </div>
-              <div>
-                <div className="text-sm md:text-xs font-bold mb-1">Rolex Submariner Date 黑水鬼</div>
-                <div className="text-[10px] text-zinc-400">货号: 126610LN</div>
-              </div>
-            </div>
-            <div className="flex justify-between items-center md:contents">
-              <div className="text-xs text-zinc-500 md:hidden ml-8">分销零售价</div>
-              <div className="md:col-span-2 text-right">
-                <div className="text-xs font-bold">¥93,500.00</div>
-                <div className="text-[10px] text-zinc-400">供货价: ¥85,000.00</div>
-              </div>
-            </div>
-            <div className="flex justify-between items-center md:contents">
-              <div className="text-xs text-zinc-500 md:hidden ml-8">加价策略</div>
-              <div className="md:col-span-3 md:text-center">
-                <div className="text-xs font-bold text-emerald-600">全局加价 10%</div>
-              </div>
-            </div>
-            <div className="md:col-span-1 flex flex-col items-center gap-2 mt-2 md:mt-0 ml-8 md:ml-0">
-              <button 
-                onClick={() => setSelectedSpu('rolex')}
-                className="w-full md:w-auto text-xs text-black font-bold border border-zinc-200 md:border-none py-2 md:py-0 md:hover:underline"
-              >
-                查看详情
-              </button>
-            </div>
-          </div>
+               <input type="checkbox" className="w-4 h-4 accent-black" />
+             </div>
+             <div className="md:col-span-6 flex gap-4 items-center">
+               <div className="md:hidden pt-1">
+                 <input type="checkbox" className="w-4 h-4 accent-black" />
+               </div>
+               <div className="w-16 h-16 md:w-12 md:h-12 bg-zinc-100 p-1 flex-shrink-0">
+                 <img src="https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=100&q=80" className="w-full h-full object-contain mix-blend-multiply" />
+               </div>
+               <div>
+                 <div className="text-sm md:text-xs font-bold mb-1">Golden Goose Super-Star 经典做旧运动鞋</div>
+                 <div className="text-[10px] text-zinc-400">货号: GWF00102.F000317</div>
+               </div>
+             </div>
+             <div className="flex justify-between items-center md:contents">
+               <div className="text-xs text-zinc-500 md:hidden ml-8">分销零售价</div>
+               <div className="md:col-span-3 text-right">
+                 <div className="text-xs font-bold">¥3,200.00 <span className="text-[10px] text-zinc-400 font-normal">起</span></div>
+                 <div className="text-[10px] text-zinc-400">供货价: ¥2,800.00 起</div>
+               </div>
+             </div>
+             <div className="md:col-span-2 flex flex-col items-center gap-2 mt-2 md:mt-0 ml-8 md:ml-0">
+               <button 
+                 onClick={() => setSelectedSpu('ggdb')}
+                 className="w-full md:w-auto text-xs text-black font-bold border border-zinc-200 md:border-none py-2 md:py-0 md:hover:underline"
+               >
+                 查看SKU详情
+               </button>
+             </div>
+           </div>
         </div>
       </div>
 
@@ -181,7 +168,7 @@ export function MySelections() {
             <div className="flex items-center justify-between px-4 md:px-8 py-4 md:py-6 border-b border-zinc-100">
               <div>
                 <h2 className="text-lg md:text-xl font-black uppercase tracking-tight mb-1">商品数据</h2>
-                <div className="text-[10px] md:text-xs text-zinc-500 font-mono">SPU: {selectedSpu === 'hermes' ? 'H-B25-GOLD' : '126610LN'}</div>
+                <div className="text-[10px] md:text-xs text-zinc-500 font-mono">SPU: {selectedSpu === 'hermes' ? 'H-B25-GOLD' : 'GWF00102.F000317'}</div>
               </div>
               <button onClick={() => setSelectedSpu(null)} className="text-zinc-400 hover:text-black transition-colors"><X size={24} /></button>
             </div>
@@ -194,19 +181,19 @@ export function MySelections() {
                     <img 
                       src={selectedSpu === 'hermes' 
                         ? "https://images.unsplash.com/photo-1584916201218-f4242ceb4809?auto=format&fit=crop&w=200&q=80" 
-                        : "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?auto=format&fit=crop&w=200&q=80"} 
+                        : "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=200&q=80"} 
                       className="w-full h-full object-contain mix-blend-multiply" 
                     />
                   </div>
                   <div className="pt-0 md:pt-2">
                     <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1">
-                      {selectedSpu === 'hermes' ? 'Hermès' : 'Rolex'}
+                      {selectedSpu === 'hermes' ? 'Hermès' : 'Golden Goose'}
                     </div>
                     <div className="text-sm md:text-base font-black tracking-tight leading-none mb-2 text-zinc-800">
-                      {selectedSpu === 'hermes' ? 'Hermès Birkin 25 金扣' : 'Rolex Submariner Date 黑水鬼'}
+                      {selectedSpu === 'hermes' ? 'Hermès Birkin 25 金扣' : 'Golden Goose Super-Star 经典做旧运动鞋'}
                     </div>
                     <div className="flex items-center gap-2 text-xs md:text-sm text-zinc-500">
-                      货号: {selectedSpu === 'hermes' ? 'H-B25-GOLD' : '126610LN'}
+                      货号: {selectedSpu === 'hermes' ? 'H-B25-GOLD' : 'GWF00102.F000317'}
                       <button className="text-zinc-400 hover:text-black"><Copy size={14} /></button>
                     </div>
                   </div>
@@ -280,83 +267,300 @@ export function MySelections() {
               {/* SKU Info Section */}
               <div className="p-4 md:p-8 bg-zinc-50/50">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4 md:mb-6">
-                  <h3 className="text-xs md:text-sm font-black uppercase tracking-widest">SKU 规格与报价</h3>
-                  <div className="flex gap-4">
-                    <button 
-                      onClick={() => setActiveWarehouseTab('domestic')}
-                      className={`text-[10px] md:text-xs font-bold pb-1 transition-colors ${activeWarehouseTab === 'domestic' ? 'text-black border-b-2 border-black' : 'text-zinc-400 hover:text-black'}`}
-                    >
-                      境内商品 (Domestic)
-                    </button>
-                    <button 
-                      onClick={() => setActiveWarehouseTab('overseas')}
-                      className={`text-[10px] md:text-xs font-bold pb-1 transition-colors ${activeWarehouseTab === 'overseas' ? 'text-black border-b-2 border-black' : 'text-zinc-400 hover:text-black'}`}
-                    >
-                      境外商品 (Overseas)
-                    </button>
-                  </div>
+                  <h3 className="text-xs md:text-sm font-black uppercase tracking-widest">SKU 规格与报价 (包含所有商家)</h3>
                 </div>
 
                 <div className="bg-white border border-zinc-200 shadow-sm overflow-x-auto">
-                  <table className="w-full text-left border-collapse min-w-[700px]">
+                  <table className="w-full text-left border-collapse min-w-[800px]">
                     <thead>
                       <tr className="bg-zinc-50 border-b border-zinc-200 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
                         <th className="p-4 font-bold">规格 (尺码)</th>
-                        <th className="p-4 font-bold">商品所在地</th>
-                        <th className="p-4 font-bold">当前排队商家</th>
+                        <th className="p-4 font-bold">商家 / 商品所在地</th>
                         <th className="p-4 font-bold text-right">集市供货价</th>
+                        <th className="p-4 font-bold text-center">当前单品加价策略</th>
                         <th className="p-4 font-bold text-right">我的分销价</th>
                         <th className="p-4 font-bold text-right">利润</th>
                         <th className="p-4 font-bold text-right">库存</th>
+                        <th className="p-4 font-bold text-center">操作</th>
                       </tr>
                     </thead>
                     <tbody className="text-sm">
-                      {activeWarehouseTab === 'domestic' ? (
+                      {selectedSpu === 'hermes' ? (
                         <>
+                          {/* Hermes SKUs from global/different suppliers */}
                           <tr className="border-b border-zinc-100 hover:bg-zinc-50 transition-colors">
                             <td className="p-4 font-bold text-zinc-800">默认</td>
-                            <td className="p-4"><span className="bg-emerald-50 text-emerald-600 border border-emerald-100 px-2 py-1 text-[10px] font-bold uppercase tracking-wider">中国大陆</span></td>
-                            <td className="p-4 text-xs">UNIBUY (1567)</td>
-                            <td className="p-4 text-right font-bold text-zinc-500">¥145,000.00</td>
-                            <td className="p-4 text-right font-bold text-emerald-600">¥168,000.00</td>
+                            <td className="p-4">
+                              <div className="text-xs font-bold mb-1">002 (14746)</div>
+                              <div className="flex flex-wrap gap-1">
+                                <span className="bg-zinc-100 text-zinc-600 border border-zinc-200 px-2 py-1 text-[10px] font-bold uppercase tracking-wider">港澳</span>
+                                <span className="bg-zinc-100 text-zinc-600 border border-zinc-200 px-2 py-1 text-[10px] font-bold uppercase tracking-wider">保税仓</span>
+                              </div>
+                            </td>
                             <td className="p-4 text-right">
-                              <div className="font-bold text-emerald-600">¥23,000</div>
-                              <div className="text-[10px] text-zinc-400">15.8%</div>
+                              <div className="font-bold text-zinc-500">HK$155,000.00</div>
+                              <div className="text-[10px] text-zinc-400 mt-1">约 ¥142,000 (含税)</div>
+                            </td>
+                            <td className="p-4 text-center">
+                              <span className="text-[10px] font-bold text-zinc-600 border border-zinc-200 bg-zinc-50 px-2 py-1">加价策略: 18.3%</span>
+                            </td>
+                            <td className="p-4 text-right">
+                              <div className="font-bold text-black">¥168,000.00</div>
+                            </td>
+                            <td className="p-4 text-right">
+                              <div className="font-bold text-black">¥26,000</div>
+                              <div className="text-[10px] text-zinc-400">18.3%</div>
+                            </td>
+                            <td className="p-4 text-right font-bold">10</td>
+                            <td className="p-4 text-center">
+                              <button onClick={() => setIsConfigModalOpen(true)} className="text-xs font-bold text-black border border-zinc-200 px-3 py-1 hover:bg-zinc-100 transition-colors">配置策略</button>
+                            </td>
+                          </tr>
+                          <tr className="border-b border-zinc-100 hover:bg-zinc-50 transition-colors">
+                            <td className="p-4 font-bold text-zinc-800">默认</td>
+                            <td className="p-4">
+                              <div className="text-xs font-bold mb-1">UNIBUY (1567)</div>
+                              <div className="flex flex-wrap gap-1">
+                                <span className="bg-zinc-100 text-zinc-600 border border-zinc-200 px-2 py-1 text-[10px] font-bold uppercase tracking-wider">中国大陆</span>
+                              </div>
+                            </td>
+                            <td className="p-4 text-right">
+                              <div className="font-bold text-zinc-500">¥145,000.00</div>
+                            </td>
+                            <td className="p-4 text-center">
+                              <span className="text-[10px] font-bold text-zinc-500 border border-zinc-200 bg-zinc-50 px-2 py-1">加价策略: 10%</span>
+                            </td>
+                            <td className="p-4 text-right">
+                              <div className="font-bold text-black">¥159,500.00</div>
+                            </td>
+                            <td className="p-4 text-right">
+                              <div className="font-bold text-black">¥14,500</div>
+                              <div className="text-[10px] text-zinc-400">10.0%</div>
                             </td>
                             <td className="p-4 text-right font-bold">5</td>
+                            <td className="p-4 text-center">
+                              <button onClick={() => setIsConfigModalOpen(true)} className="text-xs font-bold text-black border border-zinc-200 px-3 py-1 hover:bg-zinc-100 transition-colors">配置策略</button>
+                            </td>
                           </tr>
                         </>
                       ) : (
                         <>
                           <tr className="border-b border-zinc-100 hover:bg-zinc-50 transition-colors">
-                            <td className="p-4 font-bold text-zinc-800">默认</td>
+                            <td className="p-4 font-bold text-zinc-800 border-r border-zinc-100" rowSpan={3}>36</td>
                             <td className="p-4">
+                              <div className="text-xs font-bold mb-1">HANNAH (1795)</div>
                               <div className="flex flex-wrap gap-1">
-                                <span className="bg-blue-50 text-blue-600 border border-blue-100 px-2 py-1 text-[10px] font-bold uppercase tracking-wider">港澳</span>
-                                <span className="bg-purple-50 text-purple-600 border border-purple-100 px-2 py-1 text-[10px] font-bold uppercase tracking-wider">保税仓</span>
+                                <span className="bg-zinc-100 text-zinc-600 border border-zinc-200 px-2 py-1 text-[10px] font-bold uppercase tracking-wider">港澳</span>
                               </div>
                             </td>
-                            <td className="p-4 text-xs">002 (14746)</td>
                             <td className="p-4 text-right">
-                              <div className="font-bold text-zinc-500">HK$155,000.00</div>
-                              <div className="text-[10px] text-zinc-400 mt-1">约 ¥142,000 (含税)</div>
+                              <div className="font-bold text-zinc-500">HK$3,000.00</div>
+                              <div className="text-[10px] text-zinc-400 mt-1">约 ¥2,750</div>
+                            </td>
+                            <td className="p-4 text-center">
+                              <span className="text-[10px] font-bold text-zinc-600 border border-zinc-200 bg-zinc-50 px-2 py-1">特例价: ¥3,500</span>
                             </td>
                             <td className="p-4 text-right">
-                              <div className="font-bold text-emerald-600">HK$183,000.00</div>
-                              <div className="text-[10px] text-zinc-400 mt-1">约 ¥168,000</div>
+                              <div className="font-bold text-black">¥3,500.00</div>
                             </td>
                             <td className="p-4 text-right">
-                              <div className="font-bold text-emerald-600">HK$28,000</div>
-                              <div className="text-[10px] text-zinc-400">18.3%</div>
+                              <div className="font-bold text-black">¥750</div>
+                              <div className="text-[10px] text-zinc-400">27.2%</div>
                             </td>
-                            <td className="p-4 text-right font-bold">10</td>
+                            <td className="p-4 text-right font-bold">4</td>
+                            <td className="p-4 text-center">
+                              <button onClick={() => setIsConfigModalOpen(true)} className="text-xs font-bold text-black border border-zinc-200 px-3 py-1 hover:bg-zinc-100 transition-colors">配置策略</button>
+                            </td>
                           </tr>
+                          <tr className="border-b border-zinc-100 hover:bg-zinc-50 transition-colors">
+                            <td className="p-4">
+                              <div className="text-xs font-bold mb-1">002 (14746)</div>
+                              <div className="flex flex-wrap gap-1">
+                                <span className="bg-zinc-100 text-zinc-600 border border-zinc-200 px-2 py-1 text-[10px] font-bold uppercase tracking-wider">韩国直递</span>
+                              </div>
+                            </td>
+                            <td className="p-4 text-right">
+                              <div className="font-bold text-zinc-500">KRW 520,000</div>
+                              <div className="text-[10px] text-zinc-400 mt-1">约 ¥2,780</div>
+                            </td>
+                            <td className="p-4 text-center">
+                              <span className="text-[10px] font-bold text-zinc-600 border border-zinc-200 bg-zinc-50 px-2 py-1">跟随零售价 (002 14746)</span>
+                            </td>
+                            <td className="p-4 text-right">
+                              <div className="font-bold text-black">¥3,058.00</div>
+                            </td>
+                            <td className="p-4 text-right">
+                              <div className="font-bold text-black">¥278</div>
+                              <div className="text-[10px] text-zinc-400">10.0%</div>
+                            </td>
+                            <td className="p-4 text-right font-bold text-black">仅剩 1</td>
+                            <td className="p-4 text-center">
+                              <button onClick={() => setIsConfigModalOpen(true)} className="text-xs font-bold text-black border border-zinc-200 px-3 py-1 hover:bg-zinc-100 transition-colors">配置策略</button>
+                            </td>
+                          </tr>
+                          <tr className="border-b-4 border-zinc-200 hover:bg-zinc-50 transition-colors">
+                            <td className="p-4">
+                              <div className="text-xs font-bold mb-1">UNIBUY (1567)</div>
+                              <div className="flex flex-wrap gap-1">
+                                <span className="bg-zinc-100 text-zinc-600 border border-zinc-200 px-2 py-1 text-[10px] font-bold uppercase tracking-wider">中国大陆</span>
+                              </div>
+                            </td>
+                            <td className="p-4 text-right">
+                              <div className="font-bold text-zinc-500">¥2,850.00</div>
+                            </td>
+                            <td className="p-4 text-center">
+                              <span className="text-[10px] font-bold text-zinc-500 border border-zinc-200 bg-zinc-50 px-2 py-1">加价策略: 10%</span>
+                            </td>
+                            <td className="p-4 text-right">
+                              <div className="font-bold text-black">¥3,135.00</div>
+                            </td>
+                            <td className="p-4 text-right">
+                              <div className="font-bold text-black">¥285</div>
+                              <div className="text-[10px] text-zinc-400">10.0%</div>
+                            </td>
+                            <td className="p-4 text-right font-bold">12</td>
+                            <td className="p-4 text-center">
+                              <button onClick={() => setIsConfigModalOpen(true)} className="text-xs font-bold text-black border border-zinc-200 px-3 py-1 hover:bg-zinc-100 transition-colors">配置策略</button>
+                            </td>
+                          </tr>
+
+                          {/* Size 37 */}
+                          <tr className="border-b border-zinc-100 hover:bg-zinc-50 transition-colors">
+                            <td className="p-4 font-bold text-zinc-800 border-r border-zinc-100" rowSpan={2}>37</td>
+                            <td className="p-4">
+                              <div className="text-xs font-bold mb-1">HANNAH (1795)</div>
+                              <div className="flex flex-wrap gap-1">
+                                <span className="bg-zinc-100 text-zinc-600 border border-zinc-200 px-2 py-1 text-[10px] font-bold uppercase tracking-wider">港澳</span>
+                              </div>
+                            </td>
+                            <td className="p-4 text-right">
+                              <div className="font-bold text-zinc-500">HK$3,000.00</div>
+                              <div className="text-[10px] text-zinc-400 mt-1">约 ¥2,750</div>
+                            </td>
+                            <td className="p-4 text-center">
+                              <span className="text-[10px] font-bold text-zinc-600 border border-zinc-200 bg-zinc-50 px-2 py-1">特例价: ¥3,500</span>
+                            </td>
+                            <td className="p-4 text-right">
+                              <div className="font-bold text-black">¥3,500.00</div>
+                            </td>
+                            <td className="p-4 text-right">
+                              <div className="font-bold text-black">¥750</div>
+                              <div className="text-[10px] text-zinc-400">27.2%</div>
+                            </td>
+                            <td className="p-4 text-right font-bold">8</td>
+                            <td className="p-4 text-center">
+                              <button onClick={() => setIsConfigModalOpen(true)} className="text-xs font-bold text-black border border-zinc-200 px-3 py-1 hover:bg-zinc-100 transition-colors">配置策略</button>
+                            </td>
+                          </tr>
+                          <tr className="border-b-4 border-zinc-200 hover:bg-zinc-50 transition-colors">
+                            <td className="p-4">
+                              <div className="text-xs font-bold mb-1">UNIBUY (1567)</div>
+                              <div className="flex flex-wrap gap-1">
+                                <span className="bg-zinc-100 text-zinc-600 border border-zinc-200 px-2 py-1 text-[10px] font-bold uppercase tracking-wider">中国大陆</span>
+                              </div>
+                            </td>
+                            <td className="p-4 text-right">
+                              <div className="font-bold text-zinc-500">¥2,850.00</div>
+                            </td>
+                            <td className="p-4 text-center">
+                              <span className="text-[10px] font-bold text-zinc-500 border border-zinc-200 bg-zinc-50 px-2 py-1">加价策略: 10%</span>
+                            </td>
+                            <td className="p-4 text-right">
+                              <div className="font-bold text-black">¥3,135.00</div>
+                            </td>
+                            <td className="p-4 text-right">
+                              <div className="font-bold text-black">¥285</div>
+                              <div className="text-[10px] text-zinc-400">10.0%</div>
+                            </td>
+                            <td className="p-4 text-right font-bold">15</td>
+                            <td className="p-4 text-center">
+                              <button onClick={() => setIsConfigModalOpen(true)} className="text-xs font-bold text-black border border-zinc-200 px-3 py-1 hover:bg-zinc-100 transition-colors">配置策略</button>
+                            </td>
+                          </tr>
+                          
+                          {/* Size 38 */}
+                          <tr className="border-b border-zinc-100 hover:bg-zinc-50 transition-colors">
+                            <td className="p-4 font-bold text-zinc-800 border-r border-zinc-100" rowSpan={1}>38</td>
+                            <td className="p-4">
+                              <div className="text-xs font-bold mb-1">002 (14746)</div>
+                              <div className="flex flex-wrap gap-1">
+                                <span className="bg-zinc-100 text-zinc-600 border border-zinc-200 px-2 py-1 text-[10px] font-bold uppercase tracking-wider">韩国直递</span>
+                              </div>
+                            </td>
+                            <td className="p-4 text-right">
+                              <div className="font-bold text-zinc-500">KRW 520,000</div>
+                              <div className="text-[10px] text-zinc-400 mt-1">约 ¥2,780</div>
+                            </td>
+                            <td className="p-4 text-center">
+                              <span className="text-[10px] font-bold text-zinc-600 border border-zinc-200 bg-zinc-50 px-2 py-1">跟随零售价 (002 14746)</span>
+                            </td>
+                            <td className="p-4 text-right">
+                              <div className="font-bold text-black">¥3,058.00</div>
+                            </td>
+                            <td className="p-4 text-right">
+                              <div className="font-bold text-black">¥278</div>
+                              <div className="text-[10px] text-zinc-400">10.0%</div>
+                            </td>
+                            <td className="p-4 text-right font-bold text-black">仅剩 1</td>
+                            <td className="p-4 text-center">
+                              <button onClick={() => setIsConfigModalOpen(true)} className="text-xs font-bold text-black border border-zinc-200 px-3 py-1 hover:bg-zinc-100 transition-colors">配置策略</button>
+                            </td>
+                          </tr>
+
                         </>
                       )}
                     </tbody>
                   </table>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Config Modal */}
+      {isConfigModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setIsConfigModalOpen(false)}></div>
+          <div className="relative bg-white w-full max-w-md shadow-2xl animate-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-100">
+              <h2 className="text-lg font-black uppercase tracking-tight">修改加价策略</h2>
+              <button onClick={() => setIsConfigModalOpen(false)} className="text-zinc-400 hover:text-black transition-colors"><X size={20} /></button>
+            </div>
+            
+            <div className="p-6 bg-zinc-50 border-b border-zinc-100">
+              <div className="flex items-start gap-3 text-orange-600 bg-orange-50 border border-orange-100 p-3 mb-6">
+                <AlertCircle size={16} className="mt-0.5 shrink-0" />
+                <p className="text-xs font-bold leading-relaxed">
+                  注意：修改此策略配置，将影响<span className="underline decoration-orange-300 underline-offset-2 mx-1">所有适用该策略</span>的特定商品或特定商家商品。是否继续？
+                </p>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-widest text-zinc-500 mb-2">调整策略 (示例)</label>
+                  <select className="w-full border border-zinc-200 px-3 py-2 text-sm focus:border-black focus:ring-1 focus:ring-black outline-none bg-white">
+                    <option>加价策略: 18.3%</option>
+                    <option>跟随零售价 (002 14746)</option>
+                    <option>特例价: ¥3,500</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-4 flex justify-end gap-3 bg-white">
+              <button 
+                onClick={() => setIsConfigModalOpen(false)} 
+                className="px-6 py-2 text-xs font-bold text-zinc-600 hover:text-black transition-colors border border-zinc-200"
+              >
+                取消
+              </button>
+              <button 
+                onClick={() => setIsConfigModalOpen(false)} 
+                className="px-6 py-2 text-xs font-bold bg-black text-white hover:bg-zinc-800 transition-colors"
+              >
+                确认修改
+              </button>
             </div>
           </div>
         </div>

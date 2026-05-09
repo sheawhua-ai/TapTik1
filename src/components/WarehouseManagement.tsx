@@ -194,6 +194,9 @@ export function WarehouseManagement() {
                     setAddLocation(val);
                     if (val === 'bonded') {
                       setAddDropshipping(true);
+                    } else if (val !== '') {
+                      // Optionally reset to false or leave it, but bonded forces true.
+                      setAddDropshipping(false);
                     }
                   }}
                   className="flex-1 border border-zinc-200 px-3 py-2 text-sm focus:border-black focus:ring-1 focus:ring-black outline-none bg-white text-zinc-500"

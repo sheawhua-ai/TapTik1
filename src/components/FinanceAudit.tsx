@@ -438,7 +438,10 @@ export function FinanceAudit() {
           {/* Account Sub-Tabs */}
           <div className="flex gap-6 border-b border-zinc-200">
             <button 
-              onClick={() => setActiveAccountTab('domestic')}
+              onClick={() => {
+                setActiveAccountTab('domestic');
+                if (activeFlowTab === 'margin') setActiveFlowTab('order');
+              }}
               className={`pb-3 text-sm font-bold transition-colors ${activeAccountTab === 'domestic' ? 'text-black border-b-2 border-black' : 'text-zinc-500 hover:text-black'}`}
             >
               国内账户
@@ -1243,18 +1246,32 @@ export function FinanceAudit() {
               <div className="text-xs text-zinc-500 mb-4">
                 向下方平台对公账户打款后，请上传转账水单。财务人员审核通过后，资金将转入您的保证金账户。
               </div>
-              <div className="bg-zinc-50 border border-zinc-200 p-4 mb-6">
-                <div className="mb-3">
-                  <div className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest mb-1">收款账户名称</div>
-                  <div className="text-sm font-bold">UNIBUY 供应链管理有限公司</div>
-                </div>
-                <div className="mb-3">
-                  <div className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest mb-1">收款银行</div>
-                  <div className="text-sm font-bold">招商银行 深圳科苑支行</div>
+              <div className="bg-zinc-50 border border-zinc-200 p-4 mb-6 space-y-3">
+                <div>
+                  <div className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest mb-1">收款账户名称 (Account Name)</div>
+                  <div className="text-sm font-bold">LUXEPORTER GROUP LIMITED</div>
                 </div>
                 <div>
-                  <div className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest mb-1">收款账号</div>
-                  <div className="text-sm font-bold tracking-widest font-mono">7559 1234 5678 901</div>
+                  <div className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest mb-1">收款账号 (Account)</div>
+                  <div className="text-sm font-bold tracking-widest font-mono">47413376548</div>
+                </div>
+                <div className="flex gap-4">
+                  <div className="flex-1">
+                    <div className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest mb-1">Bank Code</div>
+                    <div className="text-sm font-bold tracking-widest font-mono">003</div>
+                  </div>
+                  <div className="flex-1">
+                    <div className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest mb-1">SWIFT</div>
+                    <div className="text-sm font-bold tracking-widest font-mono">SCBLHKHH</div>
+                  </div>
+                </div>
+                <div>
+                  <div className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest mb-1">收款银行 (Bank Name)</div>
+                  <div className="text-sm font-bold">Standard Chartered Bank (Hong Kong) Ltd</div>
+                </div>
+                <div>
+                  <div className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest mb-1">银行地址 (Bank Address)</div>
+                  <div className="text-xs font-bold text-zinc-600">32nd Floor, 4-4A Des Voeux Road Central, Hong Kong SAR</div>
                 </div>
               </div>
               

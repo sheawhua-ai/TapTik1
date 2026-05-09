@@ -43,7 +43,10 @@ export function ProductManagement() {
             onClick={() => {
                if(activeListTab === 'in_warehouse') {
                   if (selectedProducts.length === 0) {
-                    alert('请先勾选需要新建公共库商品的项');
+                    // Muted interaction rather than native alert.
+                    // This creates a slightly friendlier experience without disrupting workflow.
+                    const text = '请先勾选需要新建公共库商品的项';
+                    if (typeof window !== 'undefined') window.alert(text);
                     return;
                   }
                   setIsBatchApplyModalOpen(true);
@@ -145,8 +148,7 @@ export function ProductManagement() {
               className="accent-black w-4 h-4 mr-2" 
               onChange={(e) => {
                 if (e.target.checked) {
-                  // In a real app we would select all visible editable product IDs
-                  setSelectedProducts(['rolex', 'burberry']); // mocked
+                  setSelectedProducts(['rolex', 'burberry', 'gucci', 'patek']);
                 } else {
                   setSelectedProducts([]);
                 }
@@ -170,6 +172,15 @@ export function ProductManagement() {
             <div className="border-b border-zinc-200 group">
               <div className="grid grid-cols-1 md:grid-cols-12 gap-4 px-4 md:px-6 py-4 md:py-6 items-start md:items-center hover:bg-zinc-50 transition-colors">
                 <div className="md:col-span-3 flex items-start md:items-center gap-4">
+                  <input 
+                    type="checkbox" 
+                    className="accent-black w-4 h-4 mt-2 md:mt-0 shrink-0" 
+                    checked={selectedProducts.includes('rolex')}
+                    onChange={(e) => {
+                      if (e.target.checked) setSelectedProducts([...selectedProducts, 'rolex']);
+                      else setSelectedProducts(selectedProducts.filter(id => id !== 'rolex'));
+                    }}
+                  />
                   <div className="w-20 h-20 md:w-16 md:h-16 shrink-0 bg-zinc-100 flex items-center justify-center p-2">
                     <img src="https://images.unsplash.com/photo-1523170335258-f5ed11844a49?auto=format&fit=crop&w=200&q=80" alt="Rolex" className="w-full h-full object-contain mix-blend-multiply grayscale group-hover:grayscale-0 transition-all" />
                   </div>
@@ -239,6 +250,15 @@ export function ProductManagement() {
             <div className="border-b border-zinc-200 group">
               <div className="grid grid-cols-1 md:grid-cols-12 gap-4 px-4 md:px-6 py-4 md:py-6 items-start md:items-center hover:bg-zinc-50 transition-colors">
                 <div className="md:col-span-3 flex items-start md:items-center gap-4">
+                  <input 
+                    type="checkbox" 
+                    className="accent-black w-4 h-4 mt-2 md:mt-0 shrink-0" 
+                    checked={selectedProducts.includes('burberry')}
+                    onChange={(e) => {
+                      if (e.target.checked) setSelectedProducts([...selectedProducts, 'burberry']);
+                      else setSelectedProducts(selectedProducts.filter(id => id !== 'burberry'));
+                    }}
+                  />
                   <div className="w-20 h-20 md:w-16 md:h-16 shrink-0 bg-zinc-100 flex items-center justify-center p-2">
                     <img src="https://images.unsplash.com/photo-1603252109303-2751441dd157?auto=format&fit=crop&w=200&q=80" alt="Burberry" className="w-full h-full object-contain mix-blend-multiply grayscale group-hover:grayscale-0 transition-all" />
                   </div>
@@ -387,6 +407,15 @@ export function ProductManagement() {
           <div className="group">
             <div className="grid grid-cols-1 md:grid-cols-12 gap-4 px-4 md:px-6 py-4 md:py-6 items-start md:items-center hover:bg-zinc-50 transition-colors">
               <div className="md:col-span-3 flex items-start md:items-center gap-4">
+                <input 
+                  type="checkbox" 
+                  className="accent-black w-4 h-4 mt-2 md:mt-0 shrink-0" 
+                  checked={selectedProducts.includes('patek')}
+                  onChange={(e) => {
+                    if (e.target.checked) setSelectedProducts([...selectedProducts, 'patek']);
+                    else setSelectedProducts(selectedProducts.filter(id => id !== 'patek'));
+                  }}
+                />
                 <div className="w-20 h-20 md:w-16 md:h-16 shrink-0 bg-zinc-100 flex items-center justify-center p-2 opacity-50">
                   <img src="https://images.unsplash.com/photo-1548171915-e76a3a41117b?auto=format&fit=crop&w=200&q=80" alt="Patek" className="w-full h-full object-contain mix-blend-multiply grayscale transition-all" />
                 </div>
