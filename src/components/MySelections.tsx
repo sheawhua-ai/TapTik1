@@ -5,9 +5,9 @@ import { CategoryMultiSelectDropdown } from "./CategoryMultiSelectDropdown";
 import { CATEGORY_HIERARCHY, ALL_BRANDS } from "../lib/constants";
 
 const YOUR_SELECTIONS = [
-  { id: 'hermes', brand: 'Hermès', name: 'Hermès Birkin 25 金扣', no: 'H-B25-GOLD', image: 'https://images.unsplash.com/photo-1584916201218-f4242ceb4809?auto=format&fit=crop&w=400&q=80', minRetail: '¥168,000.00', minCost: '¥142,000.00' },
-  { id: 'ggdb', brand: 'Golden Goose', name: 'Golden Goose Super-Star 经典做旧运动鞋', no: 'GWF00102.F000317', image: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=400&q=80', minRetail: '¥3,058.00', minCost: '¥2,750.00' },
-  { id: 'maxmara', brand: 'Max Mara', name: 'Max Mara Madame 101801 经典大衣', no: '101801-MADAME', image: 'https://images.unsplash.com/photo-1539533113208-f6df8cc8b543?auto=format&fit=crop&w=400&q=80', minRetail: '¥18,500.00', minCost: '¥15,000.00' },
+  { id: 'hermes', brand: 'Hermès', category: '箱包', name: 'Hermès Birkin 25 金扣', no: 'H-B25-GOLD', image: 'https://images.unsplash.com/photo-1584916201218-f4242ceb4809?auto=format&fit=crop&w=400&q=80', minRetail: '¥168,000.00', minCost: '¥142,000.00', suppliers: ['UNIBUY (1567)', '002 (14746)'] },
+  { id: 'ggdb', brand: 'Golden Goose', category: '鞋履', name: 'Golden Goose Super-Star 经典做旧运动鞋', no: 'GWF00102.F000317', image: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=400&q=80', minRetail: '¥3,058.00', minCost: '¥2,750.00', suppliers: ['HANNAH (1795)', '002 (14746)', 'UNIBUY (1567)'] },
+  { id: 'maxmara', brand: 'Max Mara', category: '服饰', name: 'Max Mara Madame 101801 经典大衣', no: '101801-MADAME', image: 'https://images.unsplash.com/photo-1539533113208-f6df8cc8b543?auto=format&fit=crop&w=400&q=80', minRetail: '¥18,500.00', minCost: '¥15,000.00', suppliers: ['002 (14746)'] },
 ];
 
 export function MySelections() {
@@ -23,7 +23,8 @@ export function MySelections() {
     { value: '1795', label: 'HANNAH (1795)' },
   ];
 
-  const [isSpecialRuleEnabled, setIsSpecialRuleEnabled] = useState(false);
+  const [pricingStrategy, setPricingStrategy] = useState<'special' | 'follow' | 'default'>('default');
+  const [followSupplierId, setFollowSupplierId] = useState('');
   const [fixedPrice, setFixedPrice] = useState('');
   const [profitRedline, setProfitRedline] = useState('');
   const [rounding, setRounding] = useState<'9' | '0' | 'none'>('none');
@@ -37,7 +38,7 @@ export function MySelections() {
         skus: [
           {
             id: 'default',
-            name: '默认 (Default)',
+            name: '默认',
             suppliers: [
               { id: '1567', name: 'UNIBUY (1567)', origin: '中国大陆', costStr: '¥145,000.00', cost: 145000, markupRuleName: '品牌加价 10%', markupFactor: 1.1, stock: 5 },
               { id: '14746', name: '002 (14746)', origin: '港澳 / 保税仓', costStr: 'HK$155,000.00', cost: 142000, markupRuleName: '品类加价 18.3%', markupFactor: 1.183, stock: 10 }
@@ -113,18 +114,25 @@ export function MySelections() {
     return selectedSpu ? db[selectedSpu] : undefined;
   }, [selectedSpu]);
 
-  const currentGlobalFixedPrice = isSpecialRuleEnabled && fixedPrice && !isNaN(Number(fixedPrice)) ? Number(fixedPrice) : null;
-  const currentProfitRedline = isSpecialRuleEnabled && profitRedline && !isNaN(Number(profitRedline)) ? Number(profitRedline) : null;
+  const currentGlobalFixedPrice = pricingStrategy === 'special' && fixedPrice && !isNaN(Number(fixedPrice)) ? Number(fixedPrice) : null;
+  const currentProfitRedline = pricingStrategy === 'special' && profitRedline && !isNaN(Number(profitRedline)) ? Number(profitRedline) : null;
 
   useEffect(() => {
     if (spuData) {
       if (spuData.ruleType === 'special_price') {
-        setIsSpecialRuleEnabled(true);
+        setPricingStrategy('special');
         setFixedPrice(String(spuData.ruleValue));
+        setFollowSupplierId('14746');
+      } else if (spuData.ruleType === 'follow_supplier') {
+        setPricingStrategy('follow');
+        setFollowSupplierId(String(spuData.ruleValue));
+        setFixedPrice('');
       } else {
-        setIsSpecialRuleEnabled(false);
+        setPricingStrategy('default');
+        setFollowSupplierId('14746');
         setFixedPrice('');
       }
+
       setRounding(spuData.rounding || 'none');
       setProfitRedline('');
     }
@@ -191,7 +199,7 @@ export function MySelections() {
             <input type="checkbox" className="w-4 h-4 accent-black" />
           </div>
           <div className="col-span-6">商品信息</div>
-          <div className="col-span-3 text-right">分销零售价 (我的报价)</div>
+          <div className="col-span-3 text-right">分销零售价</div>
           <div className="col-span-2 text-center">操作</div>
         </div>
 
@@ -209,14 +217,30 @@ export function MySelections() {
                   <img src={item.image} className="w-full h-full object-contain mix-blend-multiply" />
                 </div>
                 <div>
-                  <div className="text-sm md:text-xs font-bold mb-1">{item.name}</div>
+                  <div className="text-sm md:text-xs font-bold mb-1.5">{item.name}</div>
+                  <div className="flex flex-wrap items-center gap-1.5 mb-1">
+                    <span className="text-[10px] text-zinc-600 bg-zinc-100 px-1.5 py-0.5 font-medium">{item.brand}</span>
+                    <span className="text-[10px] text-zinc-600 bg-zinc-100 px-1.5 py-0.5 font-medium">{item.category}</span>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-1 mb-1">
+                    {item.suppliers.slice(0, 2).map((sup, idx) => (
+                      <span key={idx} className="text-[9px] text-zinc-500 border border-zinc-200 px-1.5 py-0.5 whitespace-nowrap">
+                        {sup}
+                      </span>
+                    ))}
+                    {item.suppliers.length > 2 && (
+                      <span className="text-[9px] text-zinc-400 border border-dashed border-zinc-200 bg-zinc-50 px-1.5 py-0.5 cursor-help" title={item.suppliers.slice(2).join(', ')}>
+                        +{item.suppliers.length - 2}
+                      </span>
+                    )}
+                  </div>
                   <div className="text-[10px] text-zinc-400">货号: {item.no}</div>
                 </div>
               </div>
               <div className="flex justify-between items-center md:contents">
                 <div className="text-xs text-zinc-500 md:hidden ml-8">分销零售价</div>
                 <div className="md:col-span-3 text-right">
-                  <div className="text-xs font-bold">{item.minRetail} <span className="text-[10px] text-zinc-400 font-normal">起</span></div>
+                  <div className="text-xs font-bold">{item.minRetail}</div>
                   <div className="text-[10px] text-zinc-400">供货价: {item.minCost} 起</div>
                 </div>
               </div>
@@ -271,53 +295,127 @@ export function MySelections() {
                 </div>
               </div>
 
-              {/* Special Pricing & Protection Section */}
+              {/* Priority Pipeline & Special Pricing */}
               <div className="p-4 md:p-8 border-b border-zinc-100 bg-white">
-                <div className="flex items-center justify-between mb-4 md:mb-6">
-                  <h3 className="text-xs md:text-sm font-black uppercase tracking-widest">单品特殊定价与红线保护</h3>
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] md:text-xs font-bold text-zinc-500">启用特殊规则</span>
-                    <label className="relative flex items-center cursor-pointer">
-                      <input type="checkbox" className="sr-only peer" checked={isSpecialRuleEnabled} onChange={(e) => setIsSpecialRuleEnabled(e.target.checked)} />
-                      <div className="w-9 h-5 bg-zinc-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-black"></div>
-                    </label>
+                <h3 className="text-xs md:text-sm font-black uppercase tracking-widest mb-4">全局定价优先级与跟随商家策略</h3>
+                
+                <div className="flex flex-col md:flex-row gap-0 border border-zinc-200 mb-8 max-w-4xl">
+                  <div className={`group flex-1 p-4 border-b md:border-b-0 md:border-r border-zinc-200 cursor-pointer transition-all ${pricingStrategy === 'special' ? 'bg-zinc-50 shadow-[inset_0_2px_0_black]' : 'bg-white hover:bg-zinc-50'}`} onClick={() => {
+                    setPricingStrategy('special');
+                  }}>
+                    <div className="flex items-center justify-between mb-2">
+                       <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">优先级 1</span>
+                       {pricingStrategy === 'special' ? (
+                          <div className="w-4 h-4 bg-black rounded-full border-[4px] border-white ring-1 ring-black shadow-sm"></div>
+                       ) : (
+                          <div className="w-4 h-4 bg-white rounded-full border border-zinc-300"></div>
+                       )}
+                    </div>
+                    <div className={`text-sm font-black mb-1 ${pricingStrategy === 'special' ? 'text-black' : 'text-zinc-600'}`}>单品特例价格</div>
+                    <div className="text-[10px] text-zinc-500 leading-relaxed">在「我的选品」中为特定SPU设置的固定展现价。</div>
+                  </div>
+                  
+                  <div className={`group flex-1 p-4 border-b md:border-b-0 md:border-r border-zinc-200 cursor-pointer transition-all ${pricingStrategy === 'follow' ? 'bg-zinc-50 shadow-[inset_0_2px_0_black]' : 'bg-white hover:bg-zinc-50'}`} onClick={() => {
+                    setPricingStrategy('follow');
+                  }}>
+                    <div className="flex items-center justify-between mb-2">
+                       <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">优先级 2</span>
+                       {pricingStrategy === 'follow' ? (
+                          <div className="w-4 h-4 bg-black rounded-full border-[4px] border-white ring-1 ring-black shadow-sm"></div>
+                       ) : (
+                          <div className="w-4 h-4 bg-white rounded-full border border-zinc-300"></div>
+                       )}
+                    </div>
+                    <div className={`text-sm font-black mb-1 ${pricingStrategy === 'follow' ? 'text-black' : 'text-zinc-600'}`}>跟随指定商家零售价</div>
+                    <div className="text-[10px] text-zinc-500 leading-relaxed">若配置了跟随商家，将优先读取该商家的指导零售价。</div>
+                  </div>
+                  
+                  <div className={`group flex-1 p-4 cursor-pointer transition-all ${pricingStrategy === 'default' ? 'bg-zinc-50 shadow-[inset_0_2px_0_black]' : 'bg-white hover:bg-zinc-50'}`} onClick={() => {
+                     setPricingStrategy('default');
+                  }}>
+                    <div className="flex items-center justify-between mb-2">
+                       <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">优先级 3</span>
+                       {pricingStrategy === 'default' ? (
+                          <div className="w-4 h-4 bg-black rounded-full border-[4px] border-white ring-1 ring-black shadow-sm"></div>
+                       ) : (
+                          <div className="w-4 h-4 bg-white rounded-full border border-zinc-300"></div>
+                       )}
+                    </div>
+                    <div className={`text-sm font-black mb-1 ${pricingStrategy === 'default' ? 'text-black' : 'text-zinc-600'}`}>加价策略计算</div>
+                    <div className="text-[10px] text-zinc-500 leading-relaxed">若前置策略未开启或均未命中，将应用默认的「全局/商家加价规则」与尾数计算。</div>
                   </div>
                 </div>
-                
-                {isSpecialRuleEnabled ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 animate-in fade-in slide-in-from-top-2 duration-300">
-                    <div>
-                      <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-2">固定展现价 (¥)</label>
-                      <input 
-                        type="number" 
-                        value={fixedPrice}
-                        onChange={(e) => setFixedPrice(e.target.value)}
-                        placeholder="覆盖当前策略的自动计算价格" 
-                        className="w-full border border-zinc-200 px-3 py-2 text-sm font-bold focus:border-black focus:ring-0 outline-none" 
-                      />
-                      <p className="mt-1.5 text-[10px] text-zinc-500">此价格将优先于全局或商家加价策略进行展现。</p>
-                    </div>
-                    <div>
-                      <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-2">毛利红线 (¥)</label>
-                      <div className="flex relative">
-                        <input 
-                          type="number" 
-                          value={profitRedline}
-                          onChange={(e) => setProfitRedline(e.target.value)}
-                          placeholder="例如：2000" 
-                          className="w-full border border-zinc-200 border-r-0 px-3 py-2 text-sm font-bold focus:border-black focus:ring-0 outline-none" 
-                        />
-                        <button className="bg-black text-white px-4 text-xs font-bold whitespace-nowrap">应用保护</button>
+
+                {/* Configuration Area */}
+                <div className="border border-zinc-200 bg-zinc-50/50 p-6">
+                   {pricingStrategy === 'special' && (
+                     <div className="animate-in fade-in slide-in-from-top-2 duration-300">
+                        <h4 className="text-xs font-black uppercase tracking-widest mb-4">配置单品特例价格</h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                           <div>
+                           <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-2">固定展现价 (¥)</label>
+                           <input 
+                              type="number" 
+                              value={fixedPrice}
+                              onChange={(e) => setFixedPrice(e.target.value)}
+                              placeholder="覆盖当前策略的自动计算价格" 
+                              className="w-full border border-zinc-200 px-3 py-2 text-sm font-bold focus:border-black focus:ring-0 outline-none" 
+                           />
+                           <p className="mt-1.5 text-[10px] text-zinc-500">此价格将优先于全局或商家加价策略进行展现。</p>
+                           </div>
+                           <div>
+                           <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-2">毛利红线 (¥)</label>
+                           <div className="flex relative">
+                              <input 
+                                 type="number" 
+                                 value={profitRedline}
+                                 onChange={(e) => setProfitRedline(e.target.value)}
+                                 placeholder="例如：2000" 
+                                 className="w-full border border-zinc-200 border-r-0 px-3 py-2 text-sm font-bold focus:border-black focus:ring-0 outline-none" 
+                              />
+                              <button className="bg-black text-white px-4 text-xs font-bold whitespace-nowrap">应用保护</button>
+                           </div>
+                           <p className="mt-1.5 text-[10px] text-red-500 font-bold">若集市供货价上涨导致单件毛利低于此金额，该商品将自动下架。</p>
+                           </div>
+                        </div>
+                     </div>
+                   )}
+
+                   {pricingStrategy === 'follow' && (
+                      <div className="animate-in fade-in slide-in-from-top-2 duration-300">
+                         <h4 className="text-xs font-black uppercase tracking-widest mb-4">配置跟随商家顺序</h4>
+                         <div className="flex flex-col md:flex-row gap-4 items-end max-w-2xl">
+                            <div className="w-full">
+                               <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-2">优先跟随商家</label>
+                               <select 
+                                  value={followSupplierId}
+                                  onChange={(e) => setFollowSupplierId(e.target.value)}
+                                  className="w-full border border-zinc-200 px-3 py-2 text-sm font-bold focus:border-black focus:ring-0 outline-none bg-white"
+                               >
+                                  <option value="">请选择...</option>
+                                  <option value="1567">UNIBUY (1567)</option>
+                                  <option value="14746">002 (14746)</option>
+                                  <option value="1795">HANNAH (1795)</option>
+                                  <option value="9921">VIP-LUX (9921)</option>
+                               </select>
+                            </div>
+                            <button className="bg-black text-white px-6 py-2 text-sm font-bold whitespace-nowrap hover:bg-zinc-800 transition-colors">
+                               保存排序
+                            </button>
+                         </div>
+                         <p className="mt-4 text-[10px] text-zinc-500 bg-white p-3 border border-zinc-100">
+                            <strong>计价逻辑说明:</strong> 在前端展现商品价格时，系统将依序检查上述选择的商家是否在同一SKU上提供了「零售指导价」。如果优先级1的商家有配置零售价，则直接采用该金额作为分销最终价；否则继续检查优先级2，依此类推。若选择的商家均无零售价，则进入优先级3，使用下方的加价规则和尾数策略进行计算。
+                         </p>
                       </div>
-                      <p className="mt-1.5 text-[10px] text-red-500 font-bold">若集市供货价上涨导致单件毛利低于此金额，该商品将自动下架。</p>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="bg-zinc-50 p-6 border border-zinc-200 text-center flex flex-col items-center justify-center">
-                    <p className="text-xs text-zinc-500 font-bold mb-1">当前未开启单品特殊定价</p>
-                    <p className="text-[10px] text-zinc-400">商品分销价格将由【默认全局加价 (STR-DEFAULT)】策略自动计算得出。</p>
-                  </div>
-                )}
+                   )}
+
+                   {pricingStrategy === 'default' && (
+                      <div className="animate-in fade-in slide-in-from-top-2 duration-300 text-center py-4">
+                         <p className="text-xs text-zinc-500 font-bold mb-1">将应用默认加价策略</p>
+                         <p className="text-[10px] text-zinc-400">目前商品分销价格将由【默认全局加价 (STR-DEFAULT)】策略自动计算得出。</p>
+                      </div>
+                   )}
+                </div>
               </div>
 
               {/* SKU Info Section */}
@@ -327,27 +425,23 @@ export function MySelections() {
                   {(() => {
                      let spuPricingMode = '无 (按照各商家加价规则)';
                      let badgeColor = 'text-black';
-                     if (currentGlobalFixedPrice !== null) {
-                        spuPricingMode = '全局固定展现价: ¥' + currentGlobalFixedPrice;
+                     
+                     if (pricingStrategy === 'special' && fixedPrice && !isNaN(Number(fixedPrice))) {
+                        spuPricingMode = '单品特例价: ¥' + fixedPrice;
                         badgeColor = 'text-purple-700';
-                     } else if (spuData.ruleType === 'special_price' && spuData.ruleValue) {
-                        spuPricingMode = '特例价: ¥' + spuData.ruleValue;
-                        badgeColor = 'text-purple-700';
-                     } else if (spuData.ruleType === 'follow_supplier' && spuData.ruleValue) {
-                        // Find supplier name roughly
-                        let foundName = spuData.ruleValue as string;
+                     } else if (pricingStrategy === 'follow' && followSupplierId) {
+                        let foundName = followSupplierId;
                         for (const s of spuData.skus) {
-                           const b = s.suppliers.find((sup: any) => sup.id === spuData.ruleValue);
-                           if (b) {
-                              foundName = b.name;
-                              break;
-                           }
+                           const b = s.suppliers.find((sup: any) => sup.id === followSupplierId);
+                           if (b) { foundName = b.name; break; }
                         }
                         spuPricingMode = '跟随零售价 (' + foundName + ')';
                         badgeColor = 'text-orange-600';
-                     }
-                     if (currentGlobalFixedPrice === null && spuData.ruleType === 'none' && spuData.rounding && spuData.rounding !== 'none') {
-                           spuPricingMode += ` + 尾数化 ${spuData.rounding}`;
+                     } else {
+                        spuPricingMode = '无 (按照各商家加价规则)';
+                        if (rounding && rounding !== 'none') {
+                           spuPricingMode += ` + 尾数化 ${rounding}`;
+                        }
                      }
                      
                      return (
@@ -378,24 +472,20 @@ export function MySelections() {
                         let targetRetailPrice: number | null = null;
                         let pricingMode = '';
                         
-                        if (currentGlobalFixedPrice !== null) {
+                        if (pricingStrategy === 'special' && currentGlobalFixedPrice !== null) {
                            targetRetailPrice = currentGlobalFixedPrice;
-                           pricingMode = '全局特例价';
-                        } else if (spuData.ruleType === 'special_price' && spuData.ruleValue) {
-                           targetRetailPrice = Number(spuData.ruleValue);
-                           pricingMode = '特例价: ¥' + spuData.ruleValue;
-                        } else if (spuData.ruleType === 'follow_supplier' && spuData.ruleValue) {
-                           // Find the benchmark supplier price across all SKUs to establish a single price
+                           pricingMode = '单品特例价: ¥' + currentGlobalFixedPrice;
+                        } else if (pricingStrategy === 'follow' && followSupplierId) {
                            let foundCost = 0;
                            let foundFactor = 0;
-                           let foundName = spuData.ruleValue as string; // fallback
+                           let foundName = followSupplierId;
                            for (const s of spuData.skus) {
-                              const b = s.suppliers.find((sup: any) => sup.id === spuData.ruleValue);
+                              const b = s.suppliers.find((sup: any) => sup.id === followSupplierId);
                               if (b) {
                                  foundCost = b.cost;
                                  foundFactor = b.markupFactor;
                                  foundName = b.name;
-                                 break; // Use the first found instance to determine SPU-wide retail price
+                                 break;
                               }
                            }
                            
@@ -404,9 +494,15 @@ export function MySelections() {
                               pricingMode = '跟随零售价 (' + foundName + ')';
                            } else {
                               pricingMode = '无 (按照各商家加价规则)';
+                              if (rounding && rounding !== 'none') {
+                                 pricingMode += ` + 尾数化 ${rounding}`;
+                              }
                            }
                         } else {
                            pricingMode = '无 (按照各商家加价规则)';
+                           if (rounding && rounding !== 'none') {
+                              pricingMode += ` + 尾数化 ${rounding}`;
+                           }
                         }
                         
                         return spuData.skus.map((sku) => {
@@ -419,18 +515,18 @@ export function MySelections() {
                               if (targetRetailPrice !== null) {
                                   calcRetail = targetRetailPrice;
                                   usedStrategy = pricingMode;
-                                  if (spuData.ruleType === 'follow_supplier' && supplier.id === spuData.ruleValue) {
+                                  if (pricingStrategy === 'follow' && supplier.id === followSupplierId) {
                                      isBenchmark = true;
                                   }
                               } else {
                                   calcRetail = supplier.cost * supplier.markupFactor;
                                   usedStrategy = supplier.markupRuleName;
-                              }
-                              
-                              if (rounding === '9') {
-                                 calcRetail = Math.floor(calcRetail / 10) * 10 + 9;
-                              } else if (rounding === '0') {
-                                 calcRetail = Math.round(calcRetail / 10) * 10;
+                                  
+                                  if (rounding === '9') {
+                                     calcRetail = Math.floor(calcRetail / 10) * 10 + 9;
+                                  } else if (rounding === '0') {
+                                     calcRetail = Math.round(calcRetail / 10) * 10;
+                                  }
                               }
                               
                               const profit = calcRetail - supplier.cost;
@@ -463,13 +559,14 @@ export function MySelections() {
                                   </div>
                                 </td>
                               </tr>
-                              {processedSuppliers.map((supplier) => (
+                              {processedSuppliers.map((supplier, index) => (
                               <tr key={supplier.id} className={`border-b border-zinc-100 transition-colors ${supplier.isRedlineBreached ? 'bg-red-50/50 hover:bg-red-50' : 'hover:bg-zinc-50'}`}>
                                 <td className="p-4">
                                   <div className="text-xs font-bold mb-1">
                                     {supplier.name} 
-                                    {supplier.isBenchmark && <span className="ml-1 text-[10px] bg-orange-100 text-orange-700 px-1 py-0.5 rounded-sm">基准</span>}
-                                    {supplier.isRedlineBreached && <span className="ml-1 text-[10px] bg-red-100 text-red-700 px-1 py-0.5 rounded-sm">触碰红线 (下架)</span>}
+                                    {index === 0 && !supplier.isRedlineBreached && <span className="ml-[6px] text-[10px] bg-black text-white px-1.5 py-0.5 font-normal rounded-sm">当前露出商家</span>}
+                                    {supplier.isBenchmark && <span className="ml-[6px] text-[10px] bg-orange-100 text-orange-700 px-1 py-0.5 rounded-sm">基准</span>}
+                                    {supplier.isRedlineBreached && <span className="ml-[6px] text-[10px] bg-red-100 text-red-700 px-1 py-0.5 rounded-sm">触碰红线 (下架)</span>}
                                   </div>
                                   <div className="flex flex-wrap gap-1">
                                     <span className="bg-zinc-100 text-zinc-600 border border-zinc-200 px-2 py-1 text-[10px] font-bold uppercase tracking-wider">{supplier.origin}</span>
