@@ -460,56 +460,30 @@ export function MySelections() {
 
               {/* SKU Info Section */}
               <div className="p-4 md:p-8 bg-zinc-50/50">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4 md:mb-6">
-                  <h3 className="text-xs md:text-sm font-black uppercase tracking-widest">SKU 规格与报价 (包含所有商家)</h3>
-                  {(() => {
-                     let spuPricingMode = '无 (按照各商家加价规则)';
-                     let badgeColor = 'text-black';
-                     
-                     if (pricingStrategy === 'special' && (fixedPriceRmb || fixedPriceHkd)) {
-                        spuPricingMode = '单品特例价';
-                        if (fixedPriceRmb) spuPricingMode += ` ¥${fixedPriceRmb}`;
-                        if (fixedPriceHkd) spuPricingMode += ` HK$${fixedPriceHkd}`;
-                        badgeColor = 'text-purple-700';
-                     } else if (pricingStrategy === 'follow') {
-                        const followQueue = ['14746', '1795', '1567'];
-                        let foundName = '';
-                        for (const fId of followQueue) {
-                           for (const s of spuData.skus) {
-                              const b = s.suppliers.find((sup: any) => sup.id === fId);
-                              if (b) { foundName = b.name; break; }
-                           }
-                           if (foundName) break;
-                        }
-                        if (foundName) {
-                           spuPricingMode = '跟随零售价 (' + foundName + ')';
-                           badgeColor = 'text-orange-600';
-                        }
-                     } else {
-                        spuPricingMode = '无 (按照各商家加价规则)';
-                        if (rounding && rounding !== 'none') {
-                           spuPricingMode += ` + 尾数化 ${rounding}`;
-                        }
-                     }
-                     
-                     return (
-                        <div className="flex items-center gap-3">
-                           <span className="text-[10px] font-bold text-zinc-500 uppercase">当前SPU应用策略</span>
-                           <span className={`font-bold text-xs bg-white px-3 py-1 border border-zinc-200 ${badgeColor}`}>
-                             {spuPricingMode}
-                           </span>
-                        </div>
-                     )
-                  })()}
-                </div>
-
+                <h3 className="text-xs md:text-sm font-black uppercase tracking-widest mb-4 md:mb-6">SKU 规格与报价 (包含所有商家)</h3>
                 <div className="bg-white border border-zinc-200 shadow-sm overflow-x-auto">
                   <table className="w-full text-left border-collapse min-w-[800px] table-fixed">
                     <thead>
                       <tr className="bg-zinc-50 border-b border-zinc-200 text-xs font-bold text-zinc-500 uppercase tracking-widest">
                         <th className="p-4 font-bold border-r border-zinc-200 w-1/4">规格</th>
-                        <th className="p-4 font-bold border-r border-zinc-200 w-[37.5%]">境内商家</th>
-                        <th className="p-4 font-bold w-[37.5%]">境外商家</th>
+                        <th className="p-0 font-bold border-r border-zinc-200 w-[37.5%] text-[10px]">
+                           <div className="flex px-6 py-4 w-full">
+                              <div className="w-1/4">境内商家</div>
+                              <div className="w-1/5">供货价</div>
+                              <div className="w-1/5">零售价</div>
+                              <div className="w-1/4">利润</div>
+                              <div className="w-[10%] text-right">库存</div>
+                           </div>
+                        </th>
+                        <th className="p-0 font-bold w-[37.5%] text-[10px]">
+                           <div className="flex px-6 py-4 w-full">
+                              <div className="w-1/4">境外商家</div>
+                              <div className="w-1/5">供货价</div>
+                              <div className="w-1/5">零售价</div>
+                              <div className="w-1/4">利润</div>
+                              <div className="w-[10%] text-right">库存</div>
+                           </div>
+                        </th>
                       </tr>
                     </thead>
                     <tbody className="text-sm align-top">
@@ -549,8 +523,8 @@ export function MySelections() {
                                          followedBenchmarkIdHKD = fId;
                                       }
                                    }
+                                   break; // Stop after finding the first supplier in queue that has *any* quote
                                 }
-                                if (targetRetailPriceRMB !== null && targetRetailPriceHKD !== null) break;
                              }
                           }
                           
@@ -626,57 +600,31 @@ export function MySelections() {
 
                           const renderSupplierList = (suppliers: any[]) => {
                              if (suppliers.length === 0) return <div className="text-zinc-400 text-xs italic text-center py-4">无报价</div>;
-                             return suppliers.map((supplier, index) => (
-                               <details key={supplier.id} className={`group mb-2 last:mb-0 border ${index === 0 && !supplier.isRedlineBreached ? 'border-black bg-white shadow-sm' : 'border-zinc-200 bg-white/50 opacity-80'}`}>
-                                 <summary className="flex items-center justify-between p-2 text-xs cursor-pointer select-none outline-none hover:bg-zinc-50/80 transition-colors">
-                                   <div className="flex items-center gap-2 flex-1">
-                                      <div className="font-bold whitespace-nowrap flex items-center gap-1">
-                                         {index === 0 && !supplier.isRedlineBreached && <span className="w-1.5 h-1.5 rounded-full bg-black"></span>}
-                                         {supplier.name.split(' ')[0]} {/* Short name */}
+                             return suppliers.map((supplier, index) => {
+                                 const isPrimary = index === 0 && !supplier.isRedlineBreached;
+                                 const isGray = !isPrimary;
+                                 
+                                 return (
+                                   <div key={supplier.id} className={`flex items-center px-2 py-1.5 mb-1 last:mb-0 text-[11px] ${isPrimary ? 'bg-zinc-100 rounded text-zinc-900 border border-zinc-200/50' : 'text-zinc-500'} ${supplier.isRedlineBreached ? 'opacity-50' : ''}`}>
+                                      <div className={`w-1/4 truncate pr-2 ${supplier.isBenchmark ? 'text-orange-500 font-bold' : ''}`} title={supplier.name}>
+                                         {supplier.name.split(' ')[0]}
                                       </div>
-                                      <div className="text-zinc-500 font-medium">
+                                      <div className="w-1/5">
                                          {supplier.costStr}
                                       </div>
-                                   </div>
-                                   <div className="flex items-center gap-4">
-                                      <div className={`font-black ${supplier.isRedlineBreached ? 'text-red-500 line-through' : 'text-black'}`}>
+                                      <div className={`w-1/5 font-bold ${supplier.isRedlineBreached ? 'line-through text-red-400' : (isPrimary ? 'text-black' : '')}`}>
                                          {supplier.currency === 'HKD' ? 'HK$' : '¥'}{supplier.calcRetailNative.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
                                       </div>
-                                      <div className={`w-12 text-right ${supplier.stock <= 1 ? 'text-orange-600 font-bold' : 'text-zinc-500'}`}>
-                                         库存 {supplier.stock}
+                                      <div className={`w-1/4 flex gap-1 ${supplier.profit < 0 ? 'text-red-500' : (isPrimary ? 'text-zinc-700 font-medium' : '')}`}>
+                                         <span>{supplier.profit < 0 ? '-' : ''}¥{Math.abs(supplier.profit).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</span>
+                                         <span className="opacity-70">({(supplier.profitMargin * 100).toFixed(0)}%)</span>
+                                      </div>
+                                      <div className={`w-[10%] text-right ${supplier.stock <= 1 && !supplier.isRedlineBreached ? 'text-zinc-700 font-bold' : ''}`}>
+                                         库{supplier.stock}
                                       </div>
                                    </div>
-                                 </summary>
-                                 <div className="p-3 pt-0 text-[10px] text-zinc-500 bg-zinc-50/50 border-t border-zinc-100 mt-1 cursor-default">
-                                    <div className="grid grid-cols-2 gap-2 mt-2">
-                                       <div>
-                                          <div className="text-zinc-400">商家信息</div>
-                                          <div className="font-medium text-zinc-700">{supplier.name}</div>
-                                          <div>{supplier.origin}</div>
-                                       </div>
-                                       <div>
-                                          <div className="text-zinc-400">策略应用</div>
-                                          <div className="font-medium text-zinc-700">{supplier.usedStrategy} {supplier.isBenchmark && <span className="text-orange-500 font-bold">(基准)</span>}</div>
-                                          <div className="flex items-center gap-1 mt-1">
-                                             利润: <span className={`font-bold ${supplier.inverted ? 'text-red-500' : 'text-green-600'}`}>{supplier.profit < 0 ? '-' : ''}¥{Math.abs(supplier.profit).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</span>
-                                             <span className="opacity-70">({supplier.inverted ? '倒挂' : `${(supplier.profitMargin * 100).toFixed(1)}%`})</span>
-                                          </div>
-                                       </div>
-                                       {supplier.currency !== 'CNY' && (
-                                          <div className="col-span-2 flex justify-between mt-1 pt-1 border-t border-zinc-200/50">
-                                             <span>成本约 ¥{supplier.cost.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</span>
-                                             <span>零售折合 ¥{supplier.calcRetailRMB.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</span>
-                                          </div>
-                                       )}
-                                       {supplier.isRedlineBreached && (
-                                          <div className="col-span-2 mt-1 text-red-600 font-bold">
-                                             因利润率低于红线，已自动下架。
-                                          </div>
-                                       )}
-                                    </div>
-                                 </div>
-                               </details>
-                             ));
+                                 );
+                             });
                           };
   
                           return (
