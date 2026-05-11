@@ -620,7 +620,7 @@ export function MySelections() {
                                          <span className="opacity-70">({(supplier.profitMargin * 100).toFixed(0)}%)</span>
                                       </div>
                                       <div className={`w-[10%] text-right ${supplier.stock <= 1 && !supplier.isRedlineBreached ? 'text-zinc-700 font-bold' : ''}`}>
-                                         库{supplier.stock}
+                                         {supplier.stock}
                                       </div>
                                    </div>
                                  );
