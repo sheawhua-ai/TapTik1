@@ -161,8 +161,8 @@ export function ProductManagement() {
           <div className="col-span-2 text-center">规格与仓库</div>
           <div className="col-span-1 text-right">零售价</div>
           <div className="col-span-1 text-center">零售库存</div>
-          <div className="col-span-1 text-right">批发价</div>
-          <div className="col-span-1 text-center">批发库存</div>
+          <div className="col-span-1 text-right">供货价</div>
+          <div className="col-span-1 text-center">供货库存</div>
           <div className="col-span-2 text-center">操作</div>
         </div>
 
@@ -209,11 +209,11 @@ export function ProductManagement() {
                     <span className="font-black text-lg">15</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-xs text-zinc-500">批发价</span>
+                    <span className="text-xs text-zinc-500">供货价</span>
                     <span className="text-sm font-bold text-zinc-300">—</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-xs text-zinc-500">批发库存</span>
+                    <span className="text-xs text-zinc-500">供货库存</span>
                     <span className="font-black text-lg text-blue-600">10</span>
                   </div>
                   <div className="flex justify-between items-center">
@@ -287,11 +287,11 @@ export function ProductManagement() {
                     <span className="font-black text-lg">137</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-xs text-zinc-500">批发价</span>
+                    <span className="text-xs text-zinc-500">供货价</span>
                     <span className="text-sm font-bold text-zinc-300">—</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-xs text-zinc-500">批发库存</span>
+                    <span className="text-xs text-zinc-500">供货库存</span>
                     <span className="font-black text-lg text-blue-600">85</span>
                   </div>
                   <div className="flex justify-between items-center">
@@ -366,11 +366,11 @@ export function ProductManagement() {
                   <span className="font-black text-lg">24</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-xs text-zinc-500">批发价</span>
+                  <span className="text-xs text-zinc-500">供货价</span>
                   <span className="text-sm font-bold text-zinc-300">—</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-xs text-zinc-500">批发库存</span>
+                  <span className="text-xs text-zinc-500">供货库存</span>
                   <span className="font-black text-lg text-blue-600">12</span>
                 </div>
                 <div className="flex justify-between items-center">
@@ -443,11 +443,11 @@ export function ProductManagement() {
                   <span className="font-black text-lg text-red-500">0</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-xs text-zinc-500">批发价</span>
+                  <span className="text-xs text-zinc-500">供货价</span>
                   <span className="text-sm font-bold text-zinc-300 line-through">¥1,180,000</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-xs text-zinc-500">批发库存</span>
+                  <span className="text-xs text-zinc-500">供货库存</span>
                   <span className="font-black text-lg text-red-500">0</span>
                 </div>
               </div>
@@ -660,11 +660,11 @@ export function ProductManagement() {
                     <input type="number" placeholder="输入数量" className="w-full border border-zinc-200 px-3 py-2 text-xs font-bold focus:border-black focus:ring-0 outline-none" />
                   </div>
                   <div className="flex-1">
-                    <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1.5">批量修改批发价</label>
+                    <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1.5">批量修改供货价</label>
                     <input type="number" placeholder="输入金额" className="w-full border border-zinc-200 px-3 py-2 text-xs font-bold focus:border-black focus:ring-0 outline-none" />
                   </div>
                   <div className="flex-1">
-                    <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1.5">批量修改批发库存</label>
+                    <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1.5">批量修改供货库存</label>
                     <input type="number" placeholder="输入数量" className="w-full border border-zinc-200 px-3 py-2 text-xs font-bold focus:border-black focus:ring-0 outline-none" />
                   </div>
                   <button className="bg-black text-white px-4 py-2 text-xs font-bold hover:bg-zinc-800 transition-colors h-[34px]">应用批量修改</button>
@@ -679,8 +679,8 @@ export function ProductManagement() {
                         <th className="p-4 font-bold">条码 (Barcode)</th>
                         <th className="p-4 font-bold text-right">零售价</th>
                         <th className="p-4 font-bold text-right">零售库存</th>
-                        <th className="p-4 font-bold text-right">批发价</th>
-                        <th className="p-4 font-bold text-right">批发库存</th>
+                        <th className="p-4 font-bold text-right">供货价</th>
+                        <th className="p-4 font-bold text-right">供货库存</th>
                       </tr>
                     </thead>
                     <tbody className="text-sm">

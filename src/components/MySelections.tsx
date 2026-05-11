@@ -5,9 +5,9 @@ import { CategoryMultiSelectDropdown } from "./CategoryMultiSelectDropdown";
 import { CATEGORY_HIERARCHY, ALL_BRANDS } from "../lib/constants";
 
 const YOUR_SELECTIONS = [
-  { id: 'hermes', brand: 'Hermès', category: '箱包', name: 'Hermès Birkin 25 金扣', no: 'H-B25-GOLD', image: 'https://images.unsplash.com/photo-1584916201218-f4242ceb4809?auto=format&fit=crop&w=400&q=80', minRetail: '¥168,000.00', minCost: '¥142,000.00', suppliers: ['UNIBUY (1567)', '002 (14746)'] },
-  { id: 'ggdb', brand: 'Golden Goose', category: '鞋履', name: 'Golden Goose Super-Star 经典做旧运动鞋', no: 'GWF00102.F000317', image: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=400&q=80', minRetail: '¥3,058.00', minCost: '¥2,750.00', suppliers: ['HANNAH (1795)', '002 (14746)', 'UNIBUY (1567)'] },
-  { id: 'maxmara', brand: 'Max Mara', category: '服饰', name: 'Max Mara Madame 101801 经典大衣', no: '101801-MADAME', image: 'https://images.unsplash.com/photo-1539533113208-f6df8cc8b543?auto=format&fit=crop&w=400&q=80', minRetail: '¥18,500.00', minCost: '¥15,000.00', suppliers: ['002 (14746)'] },
+  { id: 'hermes', brand: 'Hermès', category: '箱包', name: 'Hermès Birkin 25 金扣', no: 'H-B25-GOLD', image: 'https://images.unsplash.com/photo-1584916201218-f4242ceb4809?auto=format&fit=crop&w=400&q=80', minRetail: '¥168,000', minCost: '¥142,000', suppliers: ['UNIBUY (1567)', '002 (14746)'] },
+  { id: 'ggdb', brand: 'Golden Goose', category: '鞋履', name: 'Golden Goose Super-Star 经典做旧运动鞋', no: 'GWF00102.F000317', image: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=400&q=80', minRetail: '¥3,058', minCost: '¥2,750', suppliers: ['HANNAH (1795)', '002 (14746)', 'UNIBUY (1567)'] },
+  { id: 'maxmara', brand: 'Max Mara', category: '服饰', name: 'Max Mara Madame 101801 经典大衣', no: '101801-MADAME', image: 'https://images.unsplash.com/photo-1539533113208-f6df8cc8b543?auto=format&fit=crop&w=400&q=80', minRetail: '¥18,500', minCost: '¥15,000', suppliers: ['002 (14746)'] },
 ];
 
 export function MySelections() {
@@ -15,13 +15,6 @@ export function MySelections() {
 
   const [filterBrands, setFilterBrands] = useState<string[]>([]);
   const [filterCategories, setFilterCategories] = useState<string[]>([]);
-
-  const [filterMerchants, setFilterMerchants] = useState<string[]>([]);
-  const merchants = [
-    { value: '1567', label: 'UNIBUY (1567)' },
-    { value: '14746', label: '002 (14746)' },
-    { value: '1795', label: 'HANNAH (1795)' },
-  ];
 
   const [pricingStrategy, setPricingStrategy] = useState<'special' | 'follow' | 'default'>('default');
   const [followSupplierId, setFollowSupplierId] = useState('');
@@ -184,14 +177,6 @@ export function MySelections() {
         <div className="grid grid-cols-2 lg:flex gap-4">
           <div className="w-full lg:w-40">
             <MultiSelectDropdown 
-              options={merchants} 
-              selected={filterMerchants} 
-              onChange={setFilterMerchants} 
-              placeholder="全部商家" 
-            />
-          </div>
-          <div className="w-full lg:w-40">
-            <MultiSelectDropdown 
               options={ALL_BRANDS} 
               selected={filterBrands} 
               onChange={setFilterBrands} 
@@ -223,7 +208,7 @@ export function MySelections() {
             <input type="checkbox" className="w-4 h-4 accent-black" />
           </div>
           <div className="col-span-6">商品信息</div>
-          <div className="col-span-3 text-right">分销零售价</div>
+          <div className="col-span-3 text-right">分销价</div>
           <div className="col-span-2 text-center">操作</div>
         </div>
 
@@ -246,23 +231,11 @@ export function MySelections() {
                     <span className="text-[10px] text-zinc-600 bg-zinc-100 px-1.5 py-0.5 font-medium">{item.brand}</span>
                     <span className="text-[10px] text-zinc-600 bg-zinc-100 px-1.5 py-0.5 font-medium">{item.category}</span>
                   </div>
-                  <div className="flex flex-wrap items-center gap-1 mb-1">
-                    {item.suppliers.slice(0, 2).map((sup, idx) => (
-                      <span key={idx} className="text-[9px] text-zinc-500 border border-zinc-200 px-1.5 py-0.5 whitespace-nowrap">
-                        {sup}
-                      </span>
-                    ))}
-                    {item.suppliers.length > 2 && (
-                      <span className="text-[9px] text-zinc-400 border border-dashed border-zinc-200 bg-zinc-50 px-1.5 py-0.5 cursor-help" title={item.suppliers.slice(2).join(', ')}>
-                        +{item.suppliers.length - 2}
-                      </span>
-                    )}
-                  </div>
                   <div className="text-[10px] text-zinc-400">货号: {item.no}</div>
                 </div>
               </div>
               <div className="flex justify-between items-center md:contents">
-                <div className="text-xs text-zinc-500 md:hidden ml-8">分销零售价</div>
+                <div className="text-xs text-zinc-500 md:hidden ml-8">分销价</div>
                 <div className="md:col-span-3 text-right">
                   <div className="text-xs font-bold">{item.minRetail}</div>
                   <div className="text-[10px] text-zinc-400">供货价: {item.minCost} 起</div>
@@ -350,8 +323,8 @@ export function MySelections() {
                           <div className="w-4 h-4 bg-white rounded-full border border-zinc-300"></div>
                        )}
                     </div>
-                    <div className={`text-sm font-black mb-1 ${pricingStrategy === 'follow' ? 'text-black' : 'text-zinc-600'}`}>跟随指定商家零售价</div>
-                    <div className="text-[10px] text-zinc-500 leading-relaxed">若配置了跟随商家，将优先读取该商家的指导零售价。</div>
+                    <div className={`text-sm font-black mb-1 ${pricingStrategy === 'follow' ? 'text-black' : 'text-zinc-600'}`}>跟随指定商家分销价</div>
+                    <div className="text-[10px] text-zinc-500 leading-relaxed">若配置了跟随商家，将优先读取该商家的指导分销价。</div>
                   </div>
                   
                   <div className={`group flex-1 p-4 cursor-pointer transition-all ${pricingStrategy === 'default' ? 'bg-zinc-50 shadow-[inset_0_2px_0_black]' : 'bg-white hover:bg-zinc-50'}`} onClick={() => {
@@ -444,7 +417,7 @@ export function MySelections() {
                             </div>
                          </div>
                          <p className="mt-4 text-[10px] text-zinc-500 bg-white p-3 border border-zinc-100">
-                            <strong>计价逻辑说明:</strong> 此排序由「加价策略」全局设定所控制。系统将依序检查上述商家是否在同一SKU上提供了报价。如果此商家的报价包含境内(人民币)价格，将作为境内零售价基准；若包含境外(港币)价格，将作为境外零售价基准，两侧独立跟随。若上述商家均无报价，则采用「默认加价规则」。
+                            <strong>计价逻辑说明:</strong> 此排序由「加价策略」全局设定所控制。系统将依序检查上述商家是否在同一SKU上提供了报价。如果此商家的报价包含境内(人民币)价格，将作为境内分销价基准；若包含境外(港币)价格，将作为境外分销价基准，两侧独立跟随。若上述商家均无报价，则采用「默认加价规则」。
                          </p>
                       </div>
                    )}
@@ -470,7 +443,7 @@ export function MySelections() {
                            <div className="flex px-6 py-4 w-full">
                               <div className="w-1/4">境内商家</div>
                               <div className="w-1/5">供货价</div>
-                              <div className="w-1/5">零售价</div>
+                              <div className="w-1/5">分销价</div>
                               <div className="w-1/4">利润</div>
                               <div className="w-[10%] text-right">库存</div>
                            </div>
@@ -479,7 +452,7 @@ export function MySelections() {
                            <div className="flex px-6 py-4 w-full">
                               <div className="w-1/4">境外商家</div>
                               <div className="w-1/5">供货价</div>
-                              <div className="w-1/5">零售价</div>
+                              <div className="w-1/5">分销价</div>
                               <div className="w-1/4">利润</div>
                               <div className="w-[10%] text-right">库存</div>
                            </div>
@@ -515,11 +488,11 @@ export function MySelections() {
                                       let rawRetailNative = q.cost * q.markupFactor;
                                       if (q.currency === 'CNY' && targetRetailPriceRMB === null) {
                                          targetRetailPriceRMB = rawRetailNative;
-                                         pricingModeRMB = '跟随零售价 (' + q.name.split(' ')[0] + ')';
+                                         pricingModeRMB = '跟随分销价 (' + q.name.split(' ')[0] + ')';
                                          followedBenchmarkIdRMB = fId;
                                       } else if (q.currency === 'HKD' && targetRetailPriceHKD === null) {
                                          targetRetailPriceHKD = rawRetailNative;
-                                         pricingModeHKD = '跟随零售价 (' + q.name.split(' ')[0] + ')';
+                                         pricingModeHKD = '跟随分销价 (' + q.name.split(' ')[0] + ')';
                                          followedBenchmarkIdHKD = fId;
                                       }
                                    }
