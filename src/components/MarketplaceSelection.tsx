@@ -164,7 +164,7 @@ export function MarketplaceSelection() {
             <div className="flex justify-between items-center md:contents">
               <div className="text-xs text-zinc-500 md:hidden">集市价</div>
               <div className="md:col-span-2 text-right text-xs font-bold">
-                <div>HK$1,290.00</div>
+                <div>HK$1,290</div>
                 <div className="text-[10px] text-zinc-400 font-normal">约 ¥1,180</div>
               </div>
             </div>
@@ -207,7 +207,7 @@ export function MarketplaceSelection() {
             </div>
             <div className="flex justify-between items-center md:contents">
               <div className="text-xs text-zinc-500 md:hidden">集市价</div>
-              <div className="md:col-span-2 text-right text-xs font-bold">¥899.00</div>
+              <div className="md:col-span-2 text-right text-xs font-bold">¥899</div>
             </div>
             <div className="flex justify-between items-center md:contents">
               <div className="text-xs text-zinc-500 md:hidden">供应商数</div>
@@ -299,22 +299,22 @@ export function MarketplaceSelection() {
                         <td className="p-4 font-bold text-zinc-800" rowSpan={3}>M码</td>
                         <td className="p-4"><span className="bg-emerald-50 text-emerald-600 border border-emerald-100 px-2 py-1 text-[10px] font-bold uppercase tracking-wider">保税仓</span></td>
                         <td className="p-4 text-xs">UNIBUY (1567)</td>
-                        <td className="p-4 text-right font-bold text-emerald-600">¥1,180.00</td>
-                        <td className="p-4 text-right text-zinc-500">¥1,399.00</td>
+                        <td className="p-4 text-right font-bold text-emerald-600">¥1,180</td>
+                        <td className="p-4 text-right text-zinc-500">¥1,399</td>
                         <td className="p-4 text-right font-bold">1</td>
                       </tr>
                       <tr className="border-b border-zinc-100 hover:bg-zinc-50 transition-colors">
                         <td className="p-4"><span className="bg-blue-50 text-blue-600 border border-blue-100 px-2 py-1 text-[10px] font-bold uppercase tracking-wider">港澳</span></td>
                         <td className="p-4 text-xs">HK Premium - 8821</td>
-                        <td className="p-4 text-right font-bold text-emerald-600">¥1,150.00</td>
-                        <td className="p-4 text-right text-zinc-500">¥1,399.00</td>
+                        <td className="p-4 text-right font-bold text-emerald-600">¥1,150</td>
+                        <td className="p-4 text-right text-zinc-500">¥1,399</td>
                         <td className="p-4 text-right font-bold">5</td>
                       </tr>
                       <tr className="border-b border-zinc-100 hover:bg-zinc-50 transition-colors">
                         <td className="p-4"><span className="bg-purple-50 text-purple-600 border border-purple-100 px-2 py-1 text-[10px] font-bold uppercase tracking-wider">欧洲</span></td>
                         <td className="p-4 text-xs">002 (14746)</td>
-                        <td className="p-4 text-right font-bold text-emerald-600">¥1,100.00</td>
-                        <td className="p-4 text-right text-zinc-500">¥1,399.00</td>
+                        <td className="p-4 text-right font-bold text-emerald-600">¥1,100</td>
+                        <td className="p-4 text-right text-zinc-500">¥1,399</td>
                         <td className="p-4 text-right font-bold">12</td>
                       </tr>
                     </tbody>

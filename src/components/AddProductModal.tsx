@@ -61,7 +61,7 @@ export function AddProductModal({ isOpen, onClose }: AddProductModalProps) {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
               <div>
                 <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1.5">品牌原价 (¥)</label>
-                <input type="number" placeholder="0.00" className="w-full border border-zinc-200 px-3 py-2 text-sm font-bold focus:border-black focus:ring-0 outline-none" />
+                <input type="number" placeholder="0" className="w-full border border-zinc-200 px-3 py-2 text-sm font-bold focus:border-black focus:ring-0 outline-none" />
               </div>
               <div>
                 <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1.5">颜色 (SPU级)</label>
@@ -113,7 +113,7 @@ export function AddProductModal({ isOpen, onClose }: AddProductModalProps) {
                     <th className="p-4 font-bold">规格 (尺码)</th>
                     <th className="p-4 font-bold">所在仓库</th>
                     <th className="p-4 font-bold">条码 (Barcode)</th>
-                    <th className="p-4 font-bold text-right">批发供货价</th>
+                    <th className="p-4 font-bold text-right">供货价</th>
                     <th className="p-4 font-bold text-right">零售价</th>
                     <th className="p-4 font-bold text-right">库存</th>
                     <th className="p-4 font-bold text-center">操作</th>
@@ -142,13 +142,13 @@ export function AddProductModal({ isOpen, onClose }: AddProductModalProps) {
                     <td className="p-4">
                       <div className="flex items-center border border-zinc-200 bg-white px-2 py-1.5 w-28 ml-auto">
                         <span className="text-xs text-zinc-400 mr-1">¥</span>
-                        <input type="number" placeholder="0.00" className="w-full text-xs font-bold outline-none text-right" />
+                        <input type="number" placeholder="0" className="w-full text-xs font-bold outline-none text-right" />
                       </div>
                     </td>
                     <td className="p-4">
                       <div className="flex items-center border border-zinc-200 bg-white px-2 py-1.5 w-28 ml-auto">
                         <span className="text-xs text-zinc-400 mr-1">¥</span>
-                        <input type="number" placeholder="0.00" className="w-full text-xs font-bold outline-none text-right" />
+                        <input type="number" placeholder="0" className="w-full text-xs font-bold outline-none text-right" />
                       </div>
                     </td>
                     <td className="p-4"><input type="number" placeholder="0" className="w-20 ml-auto border border-zinc-200 px-2 py-1.5 text-xs font-bold text-right focus:border-black focus:ring-0 outline-none" /></td>

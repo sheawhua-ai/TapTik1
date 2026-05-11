@@ -48,8 +48,8 @@ export function MySelections() {
             id: 'default',
             name: '默认',
             suppliers: [
-              { id: '1567', name: 'UNIBUY (1567)', origin: '中国大陆', channel: 'domestic', costStr: '¥145,000.00', cost: 145000, markupRuleName: '品牌加价 10%', markupFactor: 1.1, stock: 5, currency: 'CNY', exchangeRate: 1 },
-              { id: '14746', name: '002 (14746)', origin: '港澳直邮', channel: 'international', costStr: 'HK$155,000.00', cost: 142600, markupRuleName: '品类加价 18.3%', markupFactor: 1.183, stock: 10, currency: 'HKD', exchangeRate: 0.92 }
+              { id: '1567', name: 'UNIBUY (1567)', origin: '中国大陆', channel: 'domestic', costStr: '¥145,000', cost: 145000, markupRuleName: '品牌加价 10%', markupFactor: 1.1, stock: 5, currency: 'CNY', exchangeRate: 1 },
+              { id: '14746', name: '002 (14746)', origin: '港澳直邮', channel: 'international', costStr: 'HK$155,000', cost: 142600, markupRuleName: '品类加价 18.3%', markupFactor: 1.183, stock: 10, currency: 'HKD', exchangeRate: 0.92 }
             ]
           }
         ]
@@ -63,27 +63,27 @@ export function MySelections() {
             id: '36',
             name: '36',
             suppliers: [
-              { id: '1795', name: 'HANNAH (1795)', origin: '港澳直通', channel: 'international', costStr: 'HK$3,000.00', cost: 2760, markupRuleName: '商家特殊 12%', markupFactor: 1.12, stock: 4, currency: 'HKD', exchangeRate: 0.92 },
-              { id: '14746', name: '002 (14746)', origin: '港澳物流', channel: 'international', costStr: 'HK$3,100.00', cost: 2852, markupRuleName: '全局 10%', markupFactor: 1.1, stock: 1, currency: 'HKD', exchangeRate: 0.92 },
-              { id: '1567', name: 'UNIBUY (1567)', origin: '中国大陆', channel: 'domestic', costStr: '¥2,850.00', cost: 2850, markupRuleName: '全局 10%', markupFactor: 1.1, stock: 12, currency: 'CNY', exchangeRate: 1 },
+              { id: '1795', name: 'HANNAH (1795)', origin: '港澳直通', channel: 'international', costStr: 'HK$3,000', cost: 2760, markupRuleName: '商家特殊 12%', markupFactor: 1.12, stock: 4, currency: 'HKD', exchangeRate: 0.92 },
+              { id: '14746', name: '002 (14746)', origin: '港澳物流', channel: 'international', costStr: 'HK$3,100', cost: 2852, markupRuleName: '全局 10%', markupFactor: 1.1, stock: 1, currency: 'HKD', exchangeRate: 0.92 },
+              { id: '1567', name: 'UNIBUY (1567)', origin: '中国大陆', channel: 'domestic', costStr: '¥2,850', cost: 2850, markupRuleName: '全局 10%', markupFactor: 1.1, stock: 12, currency: 'CNY', exchangeRate: 1 },
             ]
           },
           {
             id: '37',
             name: '37',
             suppliers: [
-               { id: '14746', name: '002 (14746)', origin: '港澳物流', channel: 'international', costStr: 'HK$3,100.00', cost: 2852, markupRuleName: '全局 10%', markupFactor: 1.1, stock: 1, currency: 'HKD', exchangeRate: 0.92 },
-               { id: '1567', name: 'UNIBUY (1567)', origin: '中国大陆', channel: 'domestic', costStr: '¥2,850.00', cost: 2850, markupRuleName: '全局 10%', markupFactor: 1.1, stock: 12, currency: 'CNY', exchangeRate: 1 },
-               { id: '1795', name: 'HANNAH (1795)', origin: '港澳直通', channel: 'international', costStr: 'HK$3,150.00', cost: 2898, markupRuleName: '商家特殊 12%', markupFactor: 1.12, stock: 5, currency: 'HKD', exchangeRate: 0.92 },
+               { id: '14746', name: '002 (14746)', origin: '港澳物流', channel: 'international', costStr: 'HK$3,100', cost: 2852, markupRuleName: '全局 10%', markupFactor: 1.1, stock: 1, currency: 'HKD', exchangeRate: 0.92 },
+               { id: '1567', name: 'UNIBUY (1567)', origin: '中国大陆', channel: 'domestic', costStr: '¥2,850', cost: 2850, markupRuleName: '全局 10%', markupFactor: 1.1, stock: 12, currency: 'CNY', exchangeRate: 1 },
+               { id: '1795', name: 'HANNAH (1795)', origin: '港澳直通', channel: 'international', costStr: 'HK$3,150', cost: 2898, markupRuleName: '商家特殊 12%', markupFactor: 1.12, stock: 5, currency: 'HKD', exchangeRate: 0.92 },
             ]
           },
           {
             id: '38',
             name: '38',
             suppliers: [
-               { id: '1795', name: 'HANNAH (1795)', origin: '港澳直通', channel: 'international', costStr: 'HK$3,000.00', cost: 2760, markupRuleName: '商家特殊 12%', markupFactor: 1.12, stock: 8, currency: 'HKD', exchangeRate: 0.92 },
-               { id: '1567', name: 'UNIBUY (1567)', origin: '中国大陆', channel: 'domestic', costStr: '¥2,850.00', cost: 2850, markupRuleName: '全局 10%', markupFactor: 1.1, stock: 15, currency: 'CNY', exchangeRate: 1 },
-               { id: '14746', name: '002 (14746)', origin: '港澳物流', channel: 'international', costStr: 'HK$3,100.00', cost: 2852, markupRuleName: '全局 10%', markupFactor: 1.1, stock: 1, currency: 'HKD', exchangeRate: 0.92 },
+               { id: '1795', name: 'HANNAH (1795)', origin: '港澳直通', channel: 'international', costStr: 'HK$3,000', cost: 2760, markupRuleName: '商家特殊 12%', markupFactor: 1.12, stock: 8, currency: 'HKD', exchangeRate: 0.92 },
+               { id: '1567', name: 'UNIBUY (1567)', origin: '中国大陆', channel: 'domestic', costStr: '¥2,850', cost: 2850, markupRuleName: '全局 10%', markupFactor: 1.1, stock: 15, currency: 'CNY', exchangeRate: 1 },
+               { id: '14746', name: '002 (14746)', origin: '港澳物流', channel: 'international', costStr: 'HK$3,100', cost: 2852, markupRuleName: '全局 10%', markupFactor: 1.1, stock: 1, currency: 'HKD', exchangeRate: 0.92 },
             ]
           }
         ]
@@ -97,23 +97,23 @@ export function MySelections() {
             id: 'S',
             name: 'S',
             suppliers: [
-              { id: '14746', name: '002 (14746)', origin: '港澳物流', channel: 'international', costStr: 'HK$16,500.00', cost: 15180, markupRuleName: '全局加价 15%', markupFactor: 1.15, stock: 2, currency: 'HKD', exchangeRate: 0.92 },
-              { id: '1567', name: 'UNIBUY (1567)', origin: '中国大陆', channel: 'domestic', costStr: '¥16,500.00', cost: 16500, markupRuleName: '商家特殊 10%', markupFactor: 1.1, stock: 5, currency: 'CNY', exchangeRate: 1 }
+              { id: '14746', name: '002 (14746)', origin: '港澳物流', channel: 'international', costStr: 'HK$16,500', cost: 15180, markupRuleName: '全局加价 15%', markupFactor: 1.15, stock: 2, currency: 'HKD', exchangeRate: 0.92 },
+              { id: '1567', name: 'UNIBUY (1567)', origin: '中国大陆', channel: 'domestic', costStr: '¥16,500', cost: 16500, markupRuleName: '商家特殊 10%', markupFactor: 1.1, stock: 5, currency: 'CNY', exchangeRate: 1 }
             ]
           },
           {
             id: 'M',
             name: 'M',
             suppliers: [
-              { id: '14746', name: '002 (14746)', origin: '港澳物流', channel: 'international', costStr: 'HK$16,500.00', cost: 15180, markupRuleName: '全局加价 15%', markupFactor: 1.15, stock: 3, currency: 'HKD', exchangeRate: 0.92 },
-              { id: '1567', name: 'UNIBUY (1567)', origin: '中国大陆', channel: 'domestic', costStr: '¥16,500.00', cost: 16500, markupRuleName: '商家特殊 10%', markupFactor: 1.1, stock: 1, currency: 'CNY', exchangeRate: 1 }
+              { id: '14746', name: '002 (14746)', origin: '港澳物流', channel: 'international', costStr: 'HK$16,500', cost: 15180, markupRuleName: '全局加价 15%', markupFactor: 1.15, stock: 3, currency: 'HKD', exchangeRate: 0.92 },
+              { id: '1567', name: 'UNIBUY (1567)', origin: '中国大陆', channel: 'domestic', costStr: '¥16,500', cost: 16500, markupRuleName: '商家特殊 10%', markupFactor: 1.1, stock: 1, currency: 'CNY', exchangeRate: 1 }
             ]
           },
           {
             id: 'L',
             name: 'L',
             suppliers: [
-              { id: '14746', name: '002 (14746)', origin: '港澳物流', channel: 'international', costStr: 'HK$16,500.00', cost: 15180, markupRuleName: '全局加价 15%', markupFactor: 1.15, stock: 4, currency: 'HKD', exchangeRate: 0.92 }
+              { id: '14746', name: '002 (14746)', origin: '港澳物流', channel: 'international', costStr: 'HK$16,500', cost: 15180, markupRuleName: '全局加价 15%', markupFactor: 1.15, stock: 4, currency: 'HKD', exchangeRate: 0.92 }
             ]
           }
         ]
