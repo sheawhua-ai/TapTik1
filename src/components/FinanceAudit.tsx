@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { 
-  ArrowLeft, Info, Calendar as CalendarIcon, User, Phone, Building2, CheckCircle2, ChevronRight, FileText, ChevronDown, ChevronUp, Image as ImageIcon, Check, Clock, X, MessageSquare, Filter, ChevronLeft, Package, Settings, CreditCard, Banknote
+  ArrowLeft, Info, Calendar as CalendarIcon, User, Phone, Building2, CheckCircle2, ChevronRight, FileText, ChevronDown, ChevronUp, Image as ImageIcon, Check, Clock, X, MessageSquare, Filter, ChevronLeft, Package, Settings, CreditCard, Banknote, Search
 } from 'lucide-react';
 
 const MOCK_ORDERS = [
@@ -138,6 +138,10 @@ export function FinanceAudit() {
   const [calendarMonth, setCalendarMonth] = useState(new Date(2024, 4)); // May 2024
   const calendarRef = useRef<HTMLDivElement>(null);
 
+  // Search Field State
+  const [searchQuery, setSearchQuery] = useState('');
+  const [buyerQuery, setBuyerQuery] = useState('');
+
   // Status Filter State
   const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'partial' | 'completed'>('all');
 
@@ -246,6 +250,22 @@ export function FinanceAudit() {
 
     if (statusFilter !== 'all' && status !== statusFilter) return false;
 
+    // 3. Search Query Filter (Order ID, Manifest Name)
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      if (!order.orderId.toLowerCase().includes(q) && !order.manifestName.toLowerCase().includes(q)) {
+        return false;
+      }
+    }
+
+    // 4. Buyer Filter
+    if (buyerQuery) {
+      const bq = buyerQuery.toLowerCase();
+      if (!order.customerName.toLowerCase().includes(bq) && !(order.distributor && order.distributor.toLowerCase().includes(bq))) {
+        return false;
+      }
+    }
+
     return true;
   });
 
@@ -276,7 +296,7 @@ export function FinanceAudit() {
       {activeMainTab === 'reconciliation' ? (
         <>
           {/* Filters Bar */}
-          <div className="flex flex-col md:flex-row md:items-center gap-4 mb-6 md:mb-8">
+          <div className="flex flex-col md:flex-row md:items-center gap-4 mb-6 md:mb-8 flex-wrap">
         {/* Date Range Picker */}
         <div className="relative w-full md:w-auto" ref={calendarRef}>
           <button 
@@ -351,28 +371,61 @@ export function FinanceAudit() {
         </div>
 
         {/* Status Filter */}
-        <div className="flex items-center gap-2 bg-white border border-zinc-200 px-4 py-2 shadow-sm w-full md:w-auto">
+        <div className="flex items-center gap-2 bg-white border border-zinc-200 px-4 py-2 shadow-sm w-full md:w-auto flex-1 max-w-[200px]">
           <Filter size={18} className="text-zinc-400 shrink-0" />
           <select 
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value as any)}
-            className="bg-transparent text-sm font-bold focus:outline-none cursor-pointer w-full"
+            className="bg-transparent text-sm font-bold focus:outline-none cursor-pointer w-full text-ellipsis"
           >
             <option value="all">全部对账状态</option>
             <option value="pending">待核销 (未付款)</option>
-            <option value="partial">部分核销 (部分付款)</option>
-            <option value="completed">已结清 (全额付款)</option>
+            <option value="partial">部分核销 (部分付)</option>
+            <option value="completed">已结清 (全额)</option>
           </select>
         </div>
 
-        <div className="text-xs md:text-sm text-zinc-500 md:ml-auto w-full md:w-auto text-left md:text-right">
-          共找到 {filteredOrders.length} 个符合条件的订单记录
+        {/* Search Query Filter */}
+        <div className="flex items-center gap-2 bg-white border border-zinc-200 px-4 py-2 shadow-sm w-full md:w-auto flex-1">
+          <Search size={18} className="text-zinc-400 shrink-0" />
+          <input
+            type="text"
+            placeholder="搜索订单号或包含货单..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="bg-transparent text-sm font-bold focus:outline-none w-full"
+          />
+        </div>
+
+        {/* Buyer Filter */}
+        <div className="flex items-center gap-2 bg-white border border-zinc-200 px-4 py-2 shadow-sm w-full md:w-auto flex-1">
+          <Search size={18} className="text-zinc-400 shrink-0" />
+          <input
+            type="text"
+            placeholder="搜索买家..."
+            value={buyerQuery}
+            onChange={(e) => setBuyerQuery(e.target.value)}
+            className="bg-transparent text-sm font-bold focus:outline-none w-full"
+          />
+        </div>
+
+        <div className="text-xs md:text-sm text-zinc-500 w-full md:w-auto text-left md:text-right mt-2 md:mt-0">
+          共 {filteredOrders.length} 个订单
         </div>
       </div>
 
       {/* Orders List / Horizontal Layout */}
       <div className="mb-8">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <div className="bg-white border border-zinc-200 shadow-sm">
+          <div className="hidden md:grid grid-cols-12 gap-4 px-6 py-4 border-b border-zinc-200 bg-zinc-50 text-[10px] font-bold text-zinc-500 uppercase tracking-widest items-center">
+            <div className="col-span-3">出货单 / 来源</div>
+            <div className="col-span-2">买家</div>
+            <div className="col-span-2 text-right">应收金额</div>
+            <div className="col-span-2 text-right">待核销金额</div>
+            <div className="col-span-2 pl-4">核销状态</div>
+            <div className="col-span-1 text-right">操作</div>
+          </div>
+
           {filteredOrders.map(order => {
             const totalDue = order.depositDue + order.balanceDue;
             const pendingAmount = Math.max(0, totalDue - order.confirmedPaid);
@@ -389,48 +442,55 @@ export function FinanceAudit() {
             }
 
             return (
-              <div key={order.orderId} className="bg-white border border-zinc-200 shadow-sm flex flex-col hover:border-black transition-colors cursor-pointer group" onClick={() => setSelectedOrderId(order.orderId)}>
-                <div className="bg-zinc-50/50 px-4 py-3 border-b border-zinc-100 flex items-center justify-between">
-                  <div className="text-[10px] font-bold font-mono">{order.orderId}</div>
-                  <span className={`text-[10px] font-bold px-2 py-0.5 border ${statusClass}`}>
-                    {statusLabel}
-                  </span>
+              <div key={order.orderId} className="border-b border-zinc-200 hover:border-black transition-colors bg-white group" onClick={() => setSelectedOrderId(order.orderId)}>
+                <div className="bg-zinc-50 px-4 md:px-6 py-3 border-b border-zinc-200 flex flex-wrap items-center gap-2 md:gap-4 cursor-pointer">
+                  <span className="font-bold text-xs">{order.orderId}</span>
+                  <span className="text-[10px] text-zinc-500">{order.date}</span>
                 </div>
                 
-                <div className="p-4 flex-1 flex flex-col">
-                  <div className="mb-4">
-                    <div className="text-xs font-bold text-zinc-500 mb-1 flex items-center gap-1"><FileText size={12} /> {order.manifestName}</div>
-                    <div className="text-lg font-black tracking-tight leading-tight truncate">{order.customerName}</div>
-                    <div className="text-[10px] text-zinc-400 font-mono mt-1">{order.date}</div>
+                <div className="flex flex-col md:grid md:grid-cols-12 gap-4 px-4 md:px-6 py-4 md:py-6 md:items-center cursor-pointer">
+                  <div className="md:col-span-3 md:pr-4">
+                    <div className="text-xs font-bold flex items-center gap-1"><FileText size={14} className="text-zinc-400" /> {order.manifestName}</div>
                   </div>
                   
-                  <div className="mt-auto grid grid-cols-2 gap-4 border-t border-zinc-100 pt-4">
-                    <div>
-                      <div className="text-[10px] text-zinc-500 mb-1">订单总价</div>
-                      <div className="text-sm font-bold">¥ {totalDue.toLocaleString()}</div>
-                    </div>
-                    <div>
-                      <div className="text-[10px] text-zinc-500 mb-1">待付金额</div>
-                      <div className={`text-sm font-bold ${pendingAmount > 0 ? 'text-red-500' : 'text-zinc-600'}`}>
-                        ¥ {pendingAmount.toLocaleString()}
-                      </div>
+                  <div className="md:col-span-2 md:pr-4">
+                    <div className="text-xs text-zinc-500 md:hidden mb-1">买家</div>
+                    <div className="text-xs font-bold truncate">{order.customerName}</div>
+                  </div>
+                  
+                  <div className="md:col-span-2 md:pr-4 md:text-right">
+                    <div className="text-xs text-zinc-500 md:hidden mb-1">应收金额</div>
+                    <div className="text-sm font-bold">¥ {totalDue.toLocaleString()}</div>
+                  </div>
+                  
+                  <div className="md:col-span-2 md:pr-4 md:text-right">
+                    <div className="text-xs text-zinc-500 md:hidden mb-1">待核销金额</div>
+                    <div className={`text-sm font-bold ${pendingAmount > 0 ? 'text-red-500' : 'text-zinc-600'}`}>
+                      ¥ {pendingAmount.toLocaleString()}
                     </div>
                   </div>
-                </div>
-                <div className="px-4 py-3 border-t border-zinc-100 bg-zinc-50 flex justify-between items-center group-hover:bg-zinc-100 transition-colors">
-                  <span className="text-xs font-bold text-zinc-500">查看详情</span>
-                  <ChevronRight size={16} className="text-zinc-400 group-hover:text-black" />
+                  
+                  <div className="md:col-span-2 md:pl-4">
+                    <div className="text-xs text-zinc-500 md:hidden mb-1">核销状态</div>
+                    <span className={`text-[10px] font-bold px-2 py-0.5 border ${statusClass}`}>
+                      {statusLabel}
+                    </span>
+                  </div>
+                  
+                  <div className="md:col-span-1 md:text-right pt-4 border-t border-zinc-100 md:border-none md:pt-0">
+                    <button className="text-xs font-bold text-zinc-600 hover:text-black">查看详情</button>
+                  </div>
                 </div>
               </div>
             );
           })}
+          
+          {filteredOrders.length === 0 && (
+            <div className="text-center py-20 text-zinc-500 border-t border-zinc-200">
+              所选区间内没有符合条件的订单记录
+            </div>
+          )}
         </div>
-        
-        {filteredOrders.length === 0 && (
-          <div className="text-center py-20 text-zinc-500 border border-zinc-200 bg-white">
-            所选区间内没有符合条件的订单记录
-          </div>
-        )}
       </div>
       </>
       ) : (
