@@ -1,4 +1,4 @@
-import { Search, ChevronRight, X, Package, Truck, CheckCircle, AlertCircle, Download, Upload, FileText } from "lucide-react";
+import { Search, ChevronRight, X, Package, Truck, CheckCircle, AlertCircle, Download, Upload, FileText, Check, Info, Image } from "lucide-react";
 import { useState } from "react";
 
 const INITIAL_ORDERS = [
@@ -82,6 +82,70 @@ const INITIAL_ORDERS = [
       { id: 'p1', time: '2024-08-10 16:50', description: '买家付款成功', items: '全部 (1件)', amountChange: '+¥19,500' },
       { id: 'p2', time: '2024-08-11 09:00', description: '商品发货', items: 'BV Jodie', amountChange: '-' },
       { id: 'p3', time: '2024-08-13 10:00', description: '买家确认收货', items: '全部 (1件)', amountChange: '-' }
+    ]
+  },
+
+  // --- 售后处理 (after_sales) ---
+  {
+    id: 'ORD-AS-1001', type: 'retail', date: '2024-08-16 10:00', brand: 'Gucci', productName: 'GG Marmont', spuCount: 1, itemCount: 1,
+    manager: '张三 (M001)', distributor: null,
+    buyerName: '周婷', buyerPhone: '136****5555', buyerType: '个人买家', deliveryMethod: '跨境快递', warehouse: '香港直邮仓', shippingAddress: '上海市黄浦区...',
+    totalPrice: 18000, depositPaid: null, status: 'after_sales', statusLabel: '待销售审批',
+    image: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=100&q=80',
+    items: [
+      { id: 'item-as-1', name: 'GG Marmont', sku: 'GG-MM-BLK', productNumber: 'GG-MM', supplier: '自营库存', count: 1, price: 18000, status: 'after_sales', statusLabel: '待销售审批' }
+    ],
+    progress: [
+      { id: 'p1', time: '2024-08-15 09:30', description: '买家付款成功', items: '全部 (1件)', amountChange: '+¥18,000' },
+      { id: 'p2', time: '2024-08-15 14:00', description: '商品发货', items: '全部 (1件)', amountChange: '-' },
+      { id: 'p3', time: '2024-08-16 09:30', description: '申请售后 - 退货退款', items: '全部 (1件)', amountChange: '-' },
+      { id: 'p4', time: '2024-08-16 10:00', description: '进入售后流程：待销售审批', items: '-', amountChange: '-' }
+    ]
+  },
+  {
+    id: 'ORD-AS-1002', type: 'retail', date: '2024-08-15 11:00', brand: 'Dior', productName: 'Saddle Bag', spuCount: 1, itemCount: 1,
+    manager: '王五 (M002)', distributor: null,
+    buyerName: '林依', buyerPhone: '139****1122', buyerType: 'VIP买家', deliveryMethod: '国内快递', warehouse: '上海保税仓', shippingAddress: '北京市朝阳区...',
+    totalPrice: 28000, depositPaid: null, status: 'after_sales', statusLabel: '待顾客退回',
+    image: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=100&q=80',
+    items: [
+      { id: 'item-as-2', name: 'Saddle Bag', sku: 'DI-SAD-OBL', productNumber: 'DI-SAD', supplier: '自营库存', count: 1, price: 28000, status: 'after_sales', statusLabel: '待顾客退回' }
+    ],
+    progress: [
+      { id: 'p1', time: '2024-08-10 10:00', description: '买家付款成功', items: '全部 (1件)', amountChange: '+¥28,000' },
+      { id: 'p2', time: '2024-08-14 09:00', description: '申请售后 - 换货', items: '全部 (1件)', amountChange: '-' },
+      { id: 'p3', time: '2024-08-14 11:00', description: '销售已审批通过，等待顾客寄回', items: '-', amountChange: '-' }
+    ]
+  },
+  {
+    id: 'ORD-AS-1003', type: 'retail', date: '2024-08-14 15:30', brand: 'Prada', productName: 'Cleo Bag', spuCount: 1, itemCount: 1,
+    manager: '张三 (M001)', distributor: null,
+    buyerName: '韩梅', buyerPhone: '135****4433', buyerType: '个人买家', deliveryMethod: '跨境快递', warehouse: '香港直邮仓', shippingAddress: '广州市天河区...',
+    totalPrice: 19500, depositPaid: null, status: 'after_sales', statusLabel: '待仓库验货',
+    image: 'https://images.unsplash.com/photo-1584916201218-f4242ceb4809?auto=format&fit=crop&w=100&q=80',
+    items: [
+      { id: 'item-as-3', name: 'Cleo Bag', sku: 'PR-CLE-WHT', productNumber: 'PR-CLE', supplier: '自营库存', count: 1, price: 19500, status: 'after_sales', statusLabel: '待仓库验货' }
+    ],
+    afterSalesTrackingNo: 'SF1234567890',
+    progress: [
+      { id: 'p1', time: '2024-08-10 15:00', description: '买家付款成功', items: '全部 (1件)', amountChange: '+¥19,500' },
+      { id: 'p2', time: '2024-08-13 14:00', description: '申请售后 - 退货退款', items: '全部 (1件)', amountChange: '-' },
+      { id: 'p3', time: '2024-08-14 09:00', description: '顾客已寄出 (顺丰: SF1234567890)，等待仓库验货', items: '-', amountChange: '-' }
+    ]
+  },
+  {
+    id: 'ORD-AS-1004', type: 'retail', date: '2024-08-13 16:00', brand: 'Celine', productName: 'Triomphe Bag', spuCount: 1, itemCount: 1,
+    manager: '赵六 (M003)', distributor: null,
+    buyerName: '李雷', buyerPhone: '138****9988', buyerType: '个人买家', deliveryMethod: '门店自提', warehouse: '上海寄售仓', shippingAddress: '上海市徐汇区...',
+    totalPrice: 24500, depositPaid: null, status: 'closed', statusLabel: '售后已退款',
+    image: 'https://images.unsplash.com/photo-1523170335258-f5ed11844a49?auto=format&fit=crop&w=100&q=80',
+    items: [
+      { id: 'item-as-4', name: 'Triomphe Bag', sku: 'CE-TRI-BLK', productNumber: 'CE-TRI', supplier: '寄售入库', count: 1, price: 24500, status: 'refunded', statusLabel: '售后已退款' }
+    ],
+    progress: [
+      { id: 'p1', time: '2024-08-08 10:00', description: '买家付款成功', items: '全部 (1件)', amountChange: '+¥24,500' },
+      { id: 'p2', time: '2024-08-11 12:00', description: '申请售后 - 退货退款', items: '全部 (1件)', amountChange: '-' },
+      { id: 'p3', time: '2024-08-13 10:00', description: '仓库验货合格，已即刻执行退款闭环', items: '-', amountChange: '-¥24,500' }
     ]
   },
 
@@ -174,7 +238,10 @@ export function OrderManagement() {
       const parts = [];
       if (order.items.some((i: any) => i.status === 'pending_shipment')) parts.push('部分待发货');
       if (order.items.some((i: any) => i.status === 'shipped')) parts.push('部分已发货');
-      if (order.items.some((i: any) => i.status === 'after_sales')) parts.push('部分待退款');
+      if (order.items.some((i: any) => i.status === 'after_sales')) {
+        const afterSalesItem = order.items.find((i: any) => i.status === 'after_sales');
+        parts.push(`部分${afterSalesItem.statusLabel}`);
+      }
       
       return parts.join(' / ') || order.statusLabel;
     }
@@ -187,12 +254,15 @@ export function OrderManagement() {
         if (currentTab === 'pending_confirmation') return '部分待确认';
         if (currentTab === 'pending_shipment') return '部分待发货';
         if (currentTab === 'shipped') return '部分已发货';
-        if (currentTab === 'after_sales') return '部分待退款';
+        if (currentTab === 'after_sales') {
+          const afterSalesItem = order.items.find((i: any) => i.status === 'after_sales');
+          return `部分${afterSalesItem.statusLabel}`;
+        }
       } else {
         if (currentTab === 'pending_confirmation') return '待确认';
         if (currentTab === 'pending_shipment') return '待发货';
         if (currentTab === 'shipped') return '已发货';
-        if (currentTab === 'after_sales') return '售后处理';
+        if (currentTab === 'after_sales') return order.statusLabel;
       }
     }
     
@@ -206,7 +276,7 @@ export function OrderManagement() {
       if (order.id === selectedOrder) {
         const updatedItems = order.items.map(item => {
           if (selectedItems.includes(item.id) && item.status !== 'after_sales' && item.status !== 'refunded') {
-            return { ...item, status: 'after_sales', statusLabel: '售后处理' };
+            return { ...item, status: 'after_sales', statusLabel: '待销售预审' };
           }
           return item;
         });
@@ -214,7 +284,7 @@ export function OrderManagement() {
         const newProgress = {
           id: `p-${Date.now()}`,
           time: now,
-          description: '申请售后',
+          description: '发起售后，待销售预审',
           items: `已选 (${selectedItems.length}件)`,
           amountChange: '-'
         };
@@ -773,6 +843,96 @@ export function OrderManagement() {
               </div>
             </div>
 
+            {(() => {
+              const showsAfterSalesFlow = selectedOrderData.status === 'after_sales' || selectedOrderData.items.some((i: any) => i.status === 'after_sales');
+              if (!showsAfterSalesFlow) return null;
+
+              const label = selectedOrderData.statusLabel || '';
+              
+              let currentStage = 1;
+              if (label.includes('顾客退回') || label.includes('待寄回') || label.includes('Customer Return')) currentStage = 2;
+              else if (label.includes('仓库验货') || label.includes('验货') || label.includes('待退款')) currentStage = 3;
+              else if (label.includes('完成') || label.includes('已完成') || label.includes('已驳回')) currentStage = 4;
+
+              const stages = [
+                { id: 1, name: '销售预审' },
+                { id: 2, name: '顾客退回' },
+                { id: 3, name: '仓库验单与退款' },
+                { id: 4, name: '售后完结' }
+              ];
+
+              return (
+                <div className="bg-orange-50 border border-orange-200 p-6 mb-8 flex flex-col relative overflow-hidden animate-in fade-in slide-in-from-top-4">
+                  <h3 className="text-[10px] font-bold text-orange-800 uppercase tracking-widest mb-6">售后流程状态监控</h3>
+                  <div className="flex items-center justify-between relative px-2">
+                    <div className="absolute top-3 left-4 right-4 h-[2px] bg-orange-200 z-0 rounded-full"></div>
+                    <div className="absolute top-3 left-4 h-[2px] bg-orange-500 z-0 transition-all duration-700 ease-out rounded-full" style={{ width: `calc(${(currentStage - 1) * 33.33}% - 0.5rem)` }}></div>
+                    {stages.map(step => {
+                      const isActive = currentStage === step.id;
+                      const isPast = currentStage > step.id;
+                      return (
+                        <div key={step.id} className="relative z-10 flex flex-col items-center gap-3">
+                          <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 ${
+                            isPast ? 'bg-orange-500 text-white shadow-sm' : 
+                            isActive ? 'bg-white border-4 border-orange-500 text-orange-600 shadow-md transform scale-110' : 
+                            'bg-orange-100/50 border-2 border-orange-200 text-orange-300'
+                          }`}>
+                            {isPast ? <Check size={14} strokeWidth={3} className="animate-in zoom-in" /> : step.id}
+                          </div>
+                          <span className={`text-[10px] font-bold transition-colors ${
+                            isActive ? 'text-orange-900 bg-orange-200/50 px-2 py-0.5 rounded-full' : 
+                            isPast ? 'text-orange-800' : 'text-orange-400/60'
+                          }`}>
+                            {step.name}
+                          </span>
+                        </div>
+                      )
+                    })}
+                  </div>
+                  
+                  {/* Logistics or Sub-status details based on current stage */}
+                  <div className="mt-6">
+                    {currentStage === 1 && (
+                      <div className="text-xs text-orange-700 bg-orange-100/30 p-3 rounded flex items-start gap-2">
+                        <AlertCircle size={14} className="mt-0.5 flex-shrink-0" />
+                        <span>销售预审流程中。目前正在等待您或其他主理人审核顾客发送的售后凭证信息。</span>
+                      </div>
+                    )}
+                    {currentStage === 2 && selectedOrderData.afterSalesTrackingNo && (
+                      <div className="bg-white border border-orange-200 px-4 py-3 text-xs text-orange-800 flex justify-between items-center shadow-sm">
+                        <div className="flex items-center gap-2 font-bold"><Truck size={14} className="text-orange-500" /> 退回快递单号: <span className="font-mono text-black">{selectedOrderData.afterSalesTrackingNo}</span></div>
+                        <button className="text-orange-600 hover:underline px-2 py-1 hover:bg-orange-50 rounded transition-colors">追踪轨迹</button>
+                      </div>
+                    )}
+                    {currentStage === 2 && !selectedOrderData.afterSalesTrackingNo && (
+                      <div className="text-xs text-orange-700 bg-orange-100/30 p-3 flex items-start gap-2">
+                        <Info size={14} className="mt-0.5 flex-shrink-0" />
+                        <span>销售已审核通过。正在等待顾客填入退货快递单号...</span>
+                      </div>
+                    )}
+                    {currentStage === 3 && (
+                      <div className="bg-white border border-orange-200 px-4 py-3 text-xs text-orange-800 shadow-sm">
+                         <div className="flex items-center justify-between mb-2">
+                           <div className="flex items-center gap-2 font-bold"><Package size={14} className="text-orange-500" /> 仓库验单追踪: <span className="font-mono text-black">{selectedOrderData.afterSalesTrackingNo || '无单号'}</span></div>
+                           <span className="text-[10px] bg-green-100 text-green-700 px-2 py-0.5 rounded font-bold">待验货</span>
+                         </div>
+                         <div className="text-zinc-500 mb-3">包裹进入仓库环节。质检部将进行二次拆包校验防伪扣与商品情况。</div>
+                         <div className="flex justify-end border-t border-orange-100 pt-3">
+                           <button className="bg-black text-white text-xs px-4 py-2 hover:bg-zinc-800 transition-colors">验货通过并立即退款</button>
+                         </div>
+                      </div>
+                    )}
+                    {currentStage === 4 && (
+                      <div className="text-xs text-orange-700 bg-orange-100/30 p-3 flex items-start gap-2">
+                        <CheckCircle size={14} className="mt-0.5 flex-shrink-0 text-orange-600" />
+                        <span>流转完毕。此售后流程已彻底闭环。</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })()}
+
             {/* Payment Info */}
             <div className="bg-zinc-50 p-6 border border-zinc-200 mb-8">
               <h3 className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-4">支付与结算</h3>
@@ -1244,26 +1404,30 @@ export function OrderManagement() {
             
             <div className="p-6">
               <div className="bg-orange-50 border border-orange-100 p-4 mb-6">
-                <div className="text-xs font-bold text-orange-800 mb-1">售后流程第一环：销售审核</div>
-                <div className="text-xs text-orange-700">顾客发起售后申请。系统判定可进行退换货操作。请审批决定退款、换货或驳回。通过后将进入【仓库验货】环节。</div>
+                <div className="text-xs font-bold text-orange-800 mb-1">高奢控制环：销售预审与凭证留存</div>
+                <div className="text-xs text-orange-700">根据高客单价属性，售后要求销售通过企微留存沟通。通过后，顾客需提供防伪扣完好的实名照片，避免调包。审批决定后流程流向【仓库验货】。</div>
+              </div>
+
+              <div className="mb-6 bg-zinc-50 border border-zinc-200 p-4 border-dashed relative group overflow-hidden hover:border-black transition-colors">
+                <div className="flex flex-col items-center justify-center py-4">
+                  <div className="w-10 h-10 bg-white shadow-sm border border-zinc-200 rounded-full flex gap-1 items-center justify-center mb-3">
+                    <Image size={16} className="text-zinc-500" />
+                  </div>
+                  <div className="text-xs font-bold mb-1">上传与客沟通截图 / 商品防伪扣实拍</div>
+                  <div className="text-[10px] text-zinc-500 mb-4 text-center max-w-[260px]">该凭证将作为判定恶意退单调包的核心证据，不可缺失（此部分可做必填拦截校验）。</div>
+                  <button className="bg-white border border-zinc-200 text-xs font-bold px-4 py-2 hover:border-black transition-colors"onClick={() => setIsUploadModalOpen(true)}>选择文件上传</button>
+                </div>
               </div>
 
               <div className="mb-6">
                 <label className="block text-xs font-bold text-zinc-500 mb-3">审核处理</label>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <button 
                     onClick={() => setAfterSalesDecision('refund')}
                     className={`border p-3 text-center flex flex-col items-center justify-center gap-2 transition-colors ${afterSalesDecision === 'refund' ? 'border-black border-2 bg-zinc-50' : 'border-zinc-200 hover:border-black'}`}
                   >
-                    <span className="text-sm font-bold">同意退货转退款</span>
-                    <span className="text-[10px] text-zinc-500">顾客寄回, 仓库验货, 中台执行退款</span>
-                  </button>
-                  <button 
-                    onClick={() => setAfterSalesDecision('exchange')}
-                    className={`border p-3 text-center flex flex-col items-center justify-center gap-2 transition-colors ${afterSalesDecision === 'exchange' ? 'border-black border-2 bg-zinc-50' : 'border-zinc-200 hover:border-black'}`}
-                  >
-                    <span className="text-sm font-bold">同意退货转换货</span>
-                    <span className="text-[10px] text-zinc-500">顾客寄回, 仓库验货并发出新货</span>
+                    <span className="text-sm font-bold">同意售后退回</span>
+                    <span className="text-[10px] text-zinc-500">顾客寄回, 仓库验单后原路退款或换新</span>
                   </button>
                   <button 
                     onClick={() => setAfterSalesDecision('reject')}
@@ -1287,7 +1451,7 @@ export function OrderManagement() {
                 </div>
               )}
 
-              {(afterSalesDecision === 'refund' || afterSalesDecision === 'exchange') && (
+              {(afterSalesDecision === 'refund') && (
                 <div className="mb-6">
                   <label className="block text-xs font-bold text-zinc-500 mb-2">审批备注 (选填，仅内网可见)</label>
                   <textarea 
@@ -1315,14 +1479,14 @@ export function OrderManagement() {
                       if (orderIndex === -1) return prevOrders;
                       const order = prevOrders[orderIndex];
 
-                      const actionText = afterSalesDecision === 'refund' ? '同意退货转退款' : afterSalesDecision === 'exchange' ? '同意退货转换货' : '驳回申请';
-                      const newProgress = { id: `p-${Date.now()}`, time: now, description: `销售审核完毕: ${actionText}`, items: `已选 (${selectedItems.length}件)`, amountChange: '-' };
+                      const actionText = afterSalesDecision === 'refund' ? '同意售后退回并等待寄回' : '驳回申请';
+                      const newProgress = { id: `p-${Date.now()}`, time: now, description: `销售确认完毕: ${actionText}`, items: `已选 (${selectedItems.length}件)`, amountChange: '-' };
 
                       const updatedItems = order.items.map(item => {
                         if (selectedItems.includes(item.id)) {
                           // In a real app we'd map to 'warehouse_inspect', 'refunded' etc based on the action,
                           // For demo, we just mark as closed indicating the flow moved forward
-                          return { ...item, status: 'closed', statusLabel: afterSalesDecision === 'reject' ? '售后已驳回' : (afterSalesDecision === 'refund' ? '待退款 (中台操作)' : '待发换货 (操作)') };
+                          return { ...item, status: 'after_sales', statusLabel: afterSalesDecision === 'reject' ? '售后已驳回' : '待顾客退回' };
                         }
                         return item;
                       });
@@ -1331,8 +1495,8 @@ export function OrderManagement() {
                       newOrders[orderIndex] = {
                         ...order,
                         items: updatedItems,
-                        status: updatedItems.every(i => i.status === 'closed') ? 'closed' : order.status,
-                        statusLabel: afterSalesDecision === 'reject' ? '已驳回' : '进入售后处理环节中',
+                        status: updatedItems.every(i => i.status === 'after_sales') ? 'after_sales' : order.status,
+                        statusLabel: afterSalesDecision === 'reject' ? '已驳回' : '待顾客退回',
                         progress: [...(order.progress || []), newProgress]
                       };
                       return newOrders;

@@ -6,8 +6,6 @@ import { CATEGORY_HIERARCHY, ALL_BRANDS } from "../lib/constants";
 
 export function MarketplaceSelection() {
   const [selectedSpu, setSelectedSpu] = useState<string | null>(null);
-  const [activeWarehouseTab, setActiveWarehouseTab] = useState<'domestic' | 'overseas'>('domestic');
-  const [isScopeModalOpen, setIsScopeModalOpen] = useState(false);
   const [isMarkupModalOpen, setIsMarkupModalOpen] = useState(false);
   
   // Scope State
@@ -60,12 +58,6 @@ export function MarketplaceSelection() {
           <h1 className="text-2xl md:text-3xl font-black tracking-tighter uppercase mb-2">从集市选品</h1>
           <p className="text-xs md:text-sm text-zinc-500">浏览并选择集市上的商品加入您的分销库</p>
         </div>
-        <button 
-          onClick={() => setIsScopeModalOpen(true)}
-          className="w-full md:w-auto bg-white border border-zinc-200 text-black px-6 py-2 text-sm font-bold hover:border-black transition-colors"
-        >
-          设置选品范围
-        </button>
       </div>
 
       <div className="flex flex-col md:flex-row gap-4 mb-6">
@@ -266,120 +258,77 @@ export function MarketplaceSelection() {
               <div className="p-4 md:p-8 bg-zinc-50/50">
                 <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 md:mb-6 gap-3">
                   <h3 className="text-xs md:text-sm font-black uppercase tracking-widest">SKU 规格与报价</h3>
-                  <div className="flex gap-4">
-                    <button 
-                      onClick={() => setActiveWarehouseTab('domestic')}
-                      className={`text-[10px] md:text-xs font-bold pb-1 transition-colors ${activeWarehouseTab === 'domestic' ? 'text-black border-b-2 border-black' : 'text-zinc-400 hover:text-black'}`}
-                    >
-                      境内商品 (Domestic)
-                    </button>
-                    <button 
-                      onClick={() => setActiveWarehouseTab('overseas')}
-                      className={`text-[10px] md:text-xs font-bold pb-1 transition-colors ${activeWarehouseTab === 'overseas' ? 'text-black border-b-2 border-black' : 'text-zinc-400 hover:text-black'}`}
-                    >
-                      境外商品 (Overseas)
-                    </button>
-                  </div>
                 </div>
 
                 <div className="bg-white border border-zinc-200 shadow-sm overflow-x-auto">
-                  <table className="w-full text-left border-collapse min-w-[700px]">
+                  <table className="w-full text-left border-collapse min-w-[800px] table-fixed">
                     <thead>
-                      <tr className="bg-zinc-50 border-b border-zinc-200 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
-                        <th className="p-4 font-bold">规格 (尺码)</th>
-                        <th className="p-4 font-bold">所在地</th>
-                        <th className="p-4 font-bold">当前排队商家</th>
-                        <th className="p-4 font-bold text-right">集市供货价</th>
-                        <th className="p-4 font-bold text-right">建议零售价</th>
-                        <th className="p-4 font-bold text-right">库存</th>
+                      <tr className="bg-zinc-50 border-b border-zinc-200 text-xs font-bold text-zinc-500 uppercase tracking-widest">
+                        <th className="p-4 font-bold border-r border-zinc-200 w-1/4">规格</th>
+                        <th className="p-0 font-bold border-r border-zinc-200 w-[37.5%] text-[10px]">
+                           <div className="flex px-6 py-4 w-full">
+                              <div className="w-1/2">境内商家</div>
+                              <div className="w-1/4 text-right">供货价</div>
+                              <div className="w-1/4 text-right">库存</div>
+                           </div>
+                        </th>
+                        <th className="p-0 font-bold w-[37.5%] text-[10px]">
+                           <div className="flex px-6 py-4 w-full">
+                              <div className="w-1/2">境外商家</div>
+                              <div className="w-1/4 text-right">供货价</div>
+                              <div className="w-1/4 text-right">库存</div>
+                           </div>
+                        </th>
                       </tr>
                     </thead>
-                    <tbody className="text-sm">
-                      <tr className="border-b border-zinc-100 hover:bg-zinc-50 transition-colors">
-                        <td className="p-4 font-bold text-zinc-800" rowSpan={3}>M码</td>
-                        <td className="p-4"><span className="bg-emerald-50 text-emerald-600 border border-emerald-100 px-2 py-1 text-[10px] font-bold uppercase tracking-wider">保税仓</span></td>
-                        <td className="p-4 text-xs">UNIBUY (1567)</td>
-                        <td className="p-4 text-right font-bold text-emerald-600">¥1,180</td>
-                        <td className="p-4 text-right text-zinc-500">¥1,399</td>
-                        <td className="p-4 text-right font-bold">1</td>
-                      </tr>
-                      <tr className="border-b border-zinc-100 hover:bg-zinc-50 transition-colors">
-                        <td className="p-4"><span className="bg-blue-50 text-blue-600 border border-blue-100 px-2 py-1 text-[10px] font-bold uppercase tracking-wider">港澳</span></td>
-                        <td className="p-4 text-xs">HK Premium - 8821</td>
-                        <td className="p-4 text-right font-bold text-emerald-600">¥1,150</td>
-                        <td className="p-4 text-right text-zinc-500">¥1,399</td>
-                        <td className="p-4 text-right font-bold">5</td>
-                      </tr>
-                      <tr className="border-b border-zinc-100 hover:bg-zinc-50 transition-colors">
-                        <td className="p-4"><span className="bg-purple-50 text-purple-600 border border-purple-100 px-2 py-1 text-[10px] font-bold uppercase tracking-wider">欧洲</span></td>
-                        <td className="p-4 text-xs">002 (14746)</td>
-                        <td className="p-4 text-right font-bold text-emerald-600">¥1,100</td>
-                        <td className="p-4 text-right text-zinc-500">¥1,399</td>
-                        <td className="p-4 text-right font-bold">12</td>
+                    <tbody className="text-sm align-top">
+                      <tr className="border-b border-zinc-200">
+                          <td className="p-4 border-r border-zinc-200 bg-white">
+                            <div className="font-black text-sm">M码</div>
+                            <div className="text-[10px] text-zinc-400 mt-1">供货商家数: 3</div>
+                          </td>
+                          <td className="p-4 border-r border-zinc-200 bg-zinc-50/50">
+                            <div className="flex items-center px-2 py-1.5 mb-1 last:mb-0 text-[11px] bg-zinc-100 rounded text-zinc-900 border border-zinc-200/50">
+                              <div className="w-1/2 truncate pr-2" title="UNIBUY (1567)">
+                                  UNIBUY (1567)
+                              </div>
+                              <div className="w-1/4 text-right font-bold text-emerald-600">
+                                  ¥1,180
+                              </div>
+                              <div className="w-1/4 text-right">
+                                  1
+                              </div>
+                            </div>
+                          </td>
+                          <td className="p-4 bg-zinc-50/50">
+                            <div className="flex items-center px-2 py-1.5 mb-1 last:mb-0 text-[11px] bg-zinc-100 rounded text-zinc-900 border border-zinc-200/50">
+                              <div className="w-1/2 truncate pr-2" title="HK Premium - 8821">
+                                  HK Premium
+                              </div>
+                              <div className="w-1/4 text-right font-bold text-emerald-600">
+                                  HK$1,290
+                              </div>
+                              <div className="w-1/4 text-right">
+                                  5
+                              </div>
+                            </div>
+                            <div className="flex items-center px-2 py-1.5 mb-1 last:mb-0 text-[11px] text-zinc-500">
+                              <div className="w-1/2 truncate pr-2" title="002 (14746)">
+                                  002 (14746)
+                              </div>
+                              <div className="w-1/4 text-right font-bold text-emerald-600">
+                                  €135
+                              </div>
+                              <div className="w-1/4 text-right">
+                                  12
+                              </div>
+                            </div>
+                          </td>
                       </tr>
                     </tbody>
                   </table>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Selection Scope Modal */}
-      {isScopeModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setIsScopeModalOpen(false)}></div>
-          <div className="relative bg-white w-full max-w-[600px] shadow-2xl animate-in fade-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between px-4 md:px-6 py-4 border-b border-zinc-100">
-              <h2 className="text-base md:text-lg font-black uppercase tracking-tight">设置选品范围</h2>
-              <button onClick={() => setIsScopeModalOpen(false)} className="text-zinc-400 hover:text-black transition-colors"><X size={20} /></button>
-            </div>
-            
-            <div className="p-4 md:p-6 space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-2">适用品牌</label>
-                  <div className="flex flex-wrap gap-2">
-                    {ALL_BRANDS.map(brand => (
-                      <button
-                        key={brand.value}
-                        onClick={() => toggleBrand(brand.value)}
-                        className={`px-3 py-1.5 text-xs font-bold border transition-colors flex items-center gap-1.5 ${
-                          selectedBrands.includes(brand.value)
-                            ? 'bg-black text-white border-black'
-                            : 'bg-white text-zinc-600 border-zinc-200 hover:border-zinc-400'
-                        }`}
-                      >
-                        {brand.label}
-                        {selectedBrands.includes(brand.value) && <X size={12} className="opacity-70" />}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  <CategoryMultiSelectDropdown 
-                    label="适用分类" 
-                    options={CATEGORY_HIERARCHY} 
-                    selected={selectedCategories} 
-                    onChange={setSelectedCategories} 
-                    placeholder="选择分类" 
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-2">指定商家</label>
-                <textarea 
-                  placeholder="输入商家号，多个商家号请用逗号隔开" 
-                  className="w-full border border-zinc-200 px-3 py-2 text-sm focus:border-black focus:ring-0 outline-none h-20 resize-none"
-                ></textarea>
-              </div>
-            </div>
-
-            <div className="p-6 border-t border-zinc-100 bg-zinc-50 flex justify-end gap-3">
-              <button onClick={() => setIsScopeModalOpen(false)} className="px-6 py-2 text-xs font-bold text-zinc-600 hover:text-black transition-colors">取消</button>
-              <button onClick={() => setIsScopeModalOpen(false)} className="bg-black text-white px-6 py-2 text-xs font-bold hover:bg-zinc-800 transition-colors">保存设置</button>
             </div>
           </div>
         </div>
