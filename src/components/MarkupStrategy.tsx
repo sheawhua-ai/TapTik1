@@ -5,7 +5,11 @@ import { CategoryMultiSelectDropdown } from "./CategoryMultiSelectDropdown";
 import { SearchableCombobox } from "./SearchableCombobox";
 import { CATEGORY_HIERARCHY, ALL_BRANDS } from "../lib/constants";
 
-export function MarkupStrategy() {
+interface MarkupStrategyProps {
+  setActiveTab?: (tab: string) => void;
+}
+
+export function MarkupStrategy({ setActiveTab }: MarkupStrategyProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [strategyName, setStrategyName] = useState('');
   const [markupRate, setMarkupRate] = useState('');
@@ -51,15 +55,33 @@ export function MarkupStrategy() {
       <div className="flex flex-col md:flex-row justify-between md:items-end mb-6 md:mb-8 gap-4">
         <div>
           <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-[0.2em] mb-2">Distributor Dashboard</div>
-          <h1 className="text-2xl md:text-3xl font-black tracking-tighter uppercase mb-2">配置加价策略</h1>
-          <p className="text-xs md:text-sm text-zinc-500">按商家、品牌或子分类独立配置您的加价规则与尾数</p>
+          <h1 className="text-2xl md:text-3xl font-black tracking-tighter uppercase mb-2">选品与配置加价策略</h1>
+          <p className="text-xs md:text-sm text-zinc-500">配置分销加价规则，并获取符合规则的商品至您的分销库</p>
         </div>
-        <button 
-          onClick={() => setIsModalOpen(true)}
-          className="w-full md:w-auto bg-black text-white px-6 py-3 text-xs font-bold uppercase tracking-widest hover:bg-zinc-800 transition-colors flex items-center justify-center gap-2"
-        >
-          <Plus size={16} />
-          新增策略
+        <div className="flex flex-col sm:flex-row gap-3">
+          <button 
+            onClick={() => setIsModalOpen(true)}
+            className="w-full sm:w-auto bg-black text-white px-6 py-3 text-xs font-bold uppercase tracking-widest hover:bg-zinc-800 transition-colors flex items-center justify-center gap-2"
+          >
+            <Plus size={16} />
+            新增策略
+          </button>
+        </div>
+      </div>
+
+      <div className="bg-emerald-50 border border-emerald-100 p-4 mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <div className="text-sm font-bold text-emerald-800 tracking-tight flex items-center gap-2">
+            <span className="relative flex h-3 w-3">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+            </span>
+            已自动同步最新集市SPU总数: <span className="text-lg">15,234</span> 个
+          </div>
+          <div className="text-xs text-emerald-600 mt-1">每次进入时系统自动刷新。所有商品的分销价格已根据下方的具体策略自动计算并更新至您的选品库。</div>
+        </div>
+        <button onClick={() => setActiveTab && setActiveTab('dist_mine')} className="text-xs font-bold text-emerald-700 bg-white border border-emerald-200 px-4 py-2 hover:bg-emerald-100 transition-colors shrink-0">
+          前往我的选品查看全部
         </button>
       </div>
 

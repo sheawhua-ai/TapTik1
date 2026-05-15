@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { 
-  ArrowLeft, Info, Calendar as CalendarIcon, User, Phone, Building2, CheckCircle2, ChevronRight, FileText, ChevronDown, ChevronUp, Image as ImageIcon, Check, Clock, X, MessageSquare, Filter, ChevronLeft, Package, Settings, CreditCard, Banknote, Search
+  ArrowLeft, Info, Calendar as CalendarIcon, User, Phone, Building2, CheckCircle2, ChevronRight, FileText, ChevronDown, ChevronUp, Image as ImageIcon, Check, Clock, X, MessageSquare, Filter, ChevronLeft, Package, Settings, CreditCard, Banknote, Search, Wrench
 } from 'lucide-react';
+import { useWorkOrders, workOrderStore } from '../lib/workOrderStore';
 
 const MOCK_ORDERS = [
   {
@@ -124,7 +125,8 @@ const MOCK_ORDERS = [
 ];
 
 export function FinanceAudit() {
-  const [activeMainTab, setActiveMainTab] = useState<'reconciliation' | 'withdrawal'>('reconciliation');
+  const [activeMainTab, setActiveMainTab] = useState<'reconciliation' | 'withdrawal' | 'work_order'>('reconciliation');
+  const workOrders = useWorkOrders();
   
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
   
@@ -291,6 +293,12 @@ export function FinanceAudit() {
       <div className="flex gap-8 border-b border-zinc-200 mb-6 overflow-x-auto no-scrollbar whitespace-nowrap">
         <button onClick={() => setActiveMainTab('reconciliation')} className={`pb-3 text-sm font-bold transition-colors ${activeMainTab === 'reconciliation' ? 'text-black border-b-2 border-black' : 'text-zinc-500 hover:text-black'}`}>收款核销</button>
         <button onClick={() => setActiveMainTab('withdrawal')} className={`pb-3 text-sm font-bold transition-colors ${activeMainTab === 'withdrawal' ? 'text-black border-b-2 border-black' : 'text-zinc-500 hover:text-black'}`}>对账</button>
+        <button onClick={() => setActiveMainTab('work_order')} className={`pb-3 text-sm font-bold transition-colors flex items-center gap-1 ${activeMainTab === 'work_order' ? 'text-black border-b-2 border-black' : 'text-zinc-500 hover:text-black'}`}>
+          工单处理
+          {workOrders.filter(o => o.status === 'pending').length > 0 && (
+            <span className="bg-red-500 text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full leading-none">{workOrders.filter(o => o.status === 'pending').length}</span>
+          )}
+        </button>
       </div>
 
       {activeMainTab === 'reconciliation' ? (
@@ -493,7 +501,7 @@ export function FinanceAudit() {
         </div>
       </div>
       </>
-      ) : (
+      ) : activeMainTab === 'withdrawal' ? (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
           {/* Account Sub-Tabs */}
           <div className="flex gap-6 border-b border-zinc-200">
@@ -946,7 +954,85 @@ export function FinanceAudit() {
             )}
           </div>
         </div>
-      )}
+      ) : activeMainTab === 'work_order' ? (
+        <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
+          <div className="bg-white border border-zinc-200 shadow-sm">
+            <div className="p-4 border-b border-zinc-200 bg-zinc-50 flex items-center justify-between">
+              <h2 className="text-sm font-black uppercase tracking-tight flex items-center gap-2">
+                <Wrench size={18} />
+                财务工单处理
+              </h2>
+              <div className="text-xs text-zinc-500">展示由跨部门（如销售组）发起的金额相关申请</div>
+            </div>
+            {workOrders.length === 0 ? (
+              <div className="p-12 text-center text-zinc-500">
+                <CheckCircle2 size={32} className="mx-auto mb-4 text-zinc-300" />
+                <div className="font-bold">暂无待处理工单</div>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-sm min-w-[800px]">
+                  <thead className="bg-zinc-50/50 text-xs text-zinc-500 uppercase tracking-wider">
+                    <tr>
+                      <th className="px-6 py-3 font-bold border-b border-zinc-200">工单号/申请时间</th>
+                      <th className="px-6 py-3 font-bold border-b border-zinc-200">关联货单/订单</th>
+                      <th className="px-6 py-3 font-bold border-b border-zinc-200">申请类型</th>
+                      <th className="px-6 py-3 font-bold border-b border-zinc-200 text-right">涉及金额</th>
+                      <th className="px-6 py-3 font-bold border-b border-zinc-200">说明理由</th>
+                      <th className="px-6 py-3 font-bold border-b border-zinc-200">状态</th>
+                      <th className="px-6 py-3 font-bold border-b border-zinc-200 text-center">操作</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {workOrders.map((wo) => {
+                      const isCompleted = wo.status === 'completed';
+                      return (
+                        <tr key={wo.id} className="hover:bg-zinc-50 border-b border-zinc-100">
+                          <td className="px-6 py-4">
+                            <div className="font-mono text-xs font-bold">{wo.id}</div>
+                            <div className="text-xs text-zinc-400">{wo.date}</div>
+                          </td>
+                          <td className="px-6 py-4">
+                            <div className="font-mono text-xs text-blue-600 hover:underline cursor-pointer">{wo.orderId}</div>
+                          </td>
+                          <td className="px-6 py-4">
+                            <span className="text-[10px] bg-orange-50 text-orange-600 border border-orange-100 px-2 py-1 font-bold">{wo.type === 'refund_deposit' ? '退还多收定金' : wo.type}</span>
+                          </td>
+                          <td className="px-6 py-4 text-right">
+                            <span className="font-bold text-red-600">- ¥ {wo.amount.toLocaleString()}</span>
+                          </td>
+                          <td className="px-6 py-4 text-xs text-zinc-600 max-w-[200px] truncate" title={wo.reason}>
+                            {wo.reason}
+                          </td>
+                          <td className="px-6 py-4">
+                            {isCompleted ? (
+                              <span className="bg-emerald-50 text-emerald-600 px-2 py-1 text-[10px] font-bold">已核销</span>
+                            ) : (
+                              <span className="bg-zinc-100 text-zinc-600 px-2 py-1 text-[10px] font-bold">待处理</span>
+                            )}
+                          </td>
+                          <td className="px-6 py-4 text-center">
+                            {isCompleted ? (
+                              <span className="text-xs text-zinc-400 font-bold">已完成</span>
+                            ) : (
+                              <button 
+                                onClick={() => workOrderStore.complete(wo.id)}
+                                className="text-xs font-bold bg-black text-white px-3 py-1.5 hover:bg-zinc-800 transition-colors"
+                              >
+                                确认核销
+                              </button>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </div>
+      ) : null}
 
       {/* Settlement Details Drawer */}
       {selectedSettlementOrderId && (() => {

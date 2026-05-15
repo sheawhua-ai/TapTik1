@@ -6,7 +6,6 @@ import { OrderManagement } from './components/OrderManagement';
 import { FinanceAudit } from './components/FinanceAudit';
 import { OfferToMarketplace } from './components/OfferToMarketplace';
 import { MarketplaceOnSale } from './components/MarketplaceOnSale';
-import { MarketplaceSelection } from './components/MarketplaceSelection';
 import { MarkupStrategy } from './components/MarkupStrategy';
 import { MySelections } from './components/MySelections';
 import { WarehouseManagement } from './components/WarehouseManagement';
@@ -37,8 +36,7 @@ export default function App() {
           {activeTab === 'self_order' && <OrderManagement />}
           
           {/* 分销业务管理 */}
-          {activeTab === 'dist_market' && <MarketplaceSelection />}
-          {activeTab === 'markup_strategy' && <MarkupStrategy />}
+          {activeTab === 'markup_strategy' && <MarkupStrategy setActiveTab={setActiveTab} />}
           {activeTab === 'dist_mine' && <MySelections />}
           {activeTab === 'dist_order' && <DistributorOrderManagement />}
           

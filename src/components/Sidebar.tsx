@@ -34,7 +34,6 @@ export function Sidebar({ activeTab, setActiveTab, isOpen, onClose }: SidebarPro
       label: '分销业务管理',
       icon: Share2,
       items: [
-        { id: 'dist_market', label: '从集市选品' },
         { id: 'markup_strategy', label: '配置加价策略' },
         { id: 'dist_mine', label: '我的选品' },
         { id: 'dist_order', label: '分销订单' },

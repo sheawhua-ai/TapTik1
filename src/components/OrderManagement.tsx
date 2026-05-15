@@ -1,5 +1,6 @@
-import { Search, ChevronRight, X, Package, Truck, CheckCircle, AlertCircle, Download, Upload, FileText, Check, Info, Image } from "lucide-react";
+import { Search, ChevronRight, X, Package, Truck, CheckCircle, AlertCircle, Download, Upload, FileText, Check, Info, Image, Wrench } from "lucide-react";
 import { useState } from "react";
+import { workOrderStore } from '../lib/workOrderStore';
 
 const INITIAL_ORDERS = [
   // --- 待付款 (pending_payment) ---
@@ -226,6 +227,41 @@ export function OrderManagement() {
     }));
     setNewProgressDesc('');
     setNewProgressAmount('');
+  };
+
+  const handleCreateWorkOrder = () => {
+    if (!selectedOrder || !newProgressDesc) return;
+    const now = new Date().toISOString().replace('T', ' ').slice(0, 16);
+    const amtStr = newProgressAmount.replace(/[^\d.-]/g, '');
+    const amount = parseFloat(amtStr) || 0;
+
+    setOrders(orders.map(order => {
+      if (order.id === selectedOrder) {
+        const newProgress = {
+          id: `p-${Date.now()}`,
+          time: now,
+          description: `已发起财务工单: ${newProgressDesc}`,
+          items: '-',
+          amountChange: newProgressAmount || '-'
+        };
+        return {
+          ...order,
+          progress: [...(order.progress || []), newProgress]
+        };
+      }
+      return order;
+    }));
+    
+    workOrderStore.add({
+      orderId: selectedOrder,
+      type: amount < 0 ? '退款/赔付' : '收款/补差',
+      amount: Math.abs(amount) || 0,
+      reason: newProgressDesc
+    });
+
+    setNewProgressDesc('');
+    setNewProgressAmount('');
+    alert('已成功发起财务工单');
   };
 
   const getOrderOverallStatusLabel = (order: any, currentTab: string) => {
@@ -1218,15 +1254,26 @@ export function OrderManagement() {
                       placeholder="金额变动 (如: -¥1,000)" 
                       value={newProgressAmount}
                       onChange={(e) => setNewProgressAmount(e.target.value)}
-                      className="w-full md:w-48 bg-white border border-zinc-200 px-3 py-2 text-xs text-black focus:border-black outline-none"
+                      className="w-full md:w-36 bg-white border border-zinc-200 px-3 py-2 text-xs text-black focus:border-black outline-none"
                     />
-                    <button 
-                      onClick={handleAddManualProgress}
-                      disabled={!newProgressDesc}
-                      className="bg-black text-white px-4 py-2 text-xs font-bold hover:bg-zinc-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shrink-0 whitespace-nowrap"
-                    >
-                      添加记录
-                    </button>
+                    <div className="flex shadow-sm">
+                      <button 
+                        onClick={handleAddManualProgress}
+                        disabled={!newProgressDesc}
+                        className="bg-black text-white px-4 py-2 text-xs font-bold hover:bg-zinc-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shrink-0 whitespace-nowrap"
+                      >
+                        记录
+                      </button>
+                      <button 
+                        onClick={handleCreateWorkOrder}
+                        disabled={!newProgressDesc}
+                        className="bg-orange-600 text-white px-4 py-2 text-xs font-bold hover:bg-orange-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shrink-0 whitespace-nowrap border-l border-white/20 flex items-center gap-1"
+                        title="发起财务工单"
+                      >
+                        <Wrench size={14} />
+                        转工单
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
